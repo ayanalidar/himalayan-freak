@@ -1,0 +1,86 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { db } from '@/lib/db'
+
+export async function GET() {
+  const destinations = await db.destination.findMany({
+    orderBy: { createdAt: 'desc' },
+  })
+  return NextResponse.json(destinations)
+}
+
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user as any)?.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin only' }, { status: 403 })
+  }
+  try {
+    const body = await req.json()
+    const {
+      slug, name, region, state, elevation, latitude, longitude,
+      tagline, description, bestTime, duration, difficulty, rating,
+      heroImage, gallery, attractions, activities, howToReach, featured,
+    } = body
+
+    if (!slug || !name || !region) {
+      return NextResponse.json({ error: 'slug, name, region required' }, { status: 400 })
+    }
+
+    const dest = await db.destination.create({
+      data: {
+        slug,
+        name,
+        region,
+        state: state || '',
+        elevation: Number(elevation) || 0,
+        latitude: Number(latitude) || 0,
+        longitude: Number(longitude) || 0,
+        tagline: tagline || '',
+        description: description || '',
+        bestTime: bestTime || '',
+        duration: duration || '',
+        difficulty: difficulty || 'Easy',
+        rating: Number(rating) || 4.5,
+        heroImage: heroImage || '',
+        gallery: JSON.stringify(gallery || []),
+        attractions: JSON.stringify(attractions || []),
+        activities: JSON.stringify(activities || []),
+        howToReach: howToReach || '',
+        featured: Boolean(featured),
+      },
+    })
+    return NextResponse.json(dest, { status: 201 })
+  } catch (err) {
+    console.error('Create destination error:', err)
+    return NextResponse.json({ error: 'Failed to create destination' }, { status: 500 })
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user as any)?.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin only' }, { status: 403 })
+  }
+  try {
+    const body = await req.json()
+    const { id, ...rest } = body
+    if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+    const data: any = { ...rest }
+    if (rest.elevation !== undefined) data.elevation = Number(rest.elevation)
+    if (rest.latitude !== undefined) data.latitude = Number(rest.latitude)
+    if (rest.longitude !== undefined) data.longitude = Number(rest.longitude)
+    if (rest.rating !== undefined) data.rating = Number(rest.rating)
+    if (rest.featured !== undefined) data.featured = Boolean(rest.featured)
+    if (Array.isArray(rest.gallery)) data.gallery = JSON.stringify(rest.gallery)
+    if (Array.isArray(rest.attractions)) data.attractions = JSON.stringify(rest.attractions)
+    if (Array.isArray(rest.activities)) data.activities = JSON.stringify(rest.activities)
+
+    const dest = await db.destination.update({ where: { id: String(id) }, data })
+    return NextResponse.json(dest)
+  } catch (err) {
+    console.error('Update destination error:', err)
+    return NextResponse.json({ error: 'Failed to update destination' }, { status: 500 })
+  }
+}

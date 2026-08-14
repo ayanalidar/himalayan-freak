@@ -10,7 +10,13 @@ export type PageId =
   | 'packages'
   | 'package-detail'
   | 'trip-planner'
+  | 'tickets'
   | 'crm'
+  | 'admin-destinations'
+  | 'admin-packages'
+  | 'dashboard'
+  | 'login'
+  | 'signup'
 
 interface AppState {
   page: PageId

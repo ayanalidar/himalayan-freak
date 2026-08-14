@@ -1,4 +1,4 @@
-// Himalayan Freak — Prisma schema
+// Himalayan Freak — Prisma schema (extended)
 
 generator client {
   provider = "prisma-client-js"
@@ -9,29 +9,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  phone         String?
+  role          String    @default("user") // user | admin
+  city          String?
+  state         String?
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookings      Booking[]
+  customTrips   CustomTrip[]
+  reviews       Review[]
+  savedDestinations SavedDestination[]
+  documents     Document[]
+  tasks         Task[]      @relation("TaskAssignee")
+  communications Communication[]
+}
+
 model Destination {
   id          String   @id @default(cuid())
   slug        String   @unique
   name        String
   region      String   // Kashmir | Jammu | Ladakh | Himachal | Uttarakhand
   state       String
-  elevation  Int      // meters
+  elevation   Int
   latitude    Float
   longitude   Float
   tagline     String
   description String
   bestTime    String
   duration    String
-  difficulty  String   // Easy | Moderate | Challenging
+  difficulty  String
   rating      Float    @default(4.5)
   heroImage   String
-  gallery     String   // JSON array of image URLs
+  gallery     String   // JSON array
   attractions String   // JSON array
   activities  String   // JSON array
   howToReach  String
   featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  reviews     Review[]
+  savedBy     SavedDestination[]
 }
 
 model Package {
@@ -39,14 +64,14 @@ model Package {
   slug        String   @unique
   title       String
   region      String
-  duration    Int      // days
+  duration    Int
   nights      Int
-  price       Float    // base price INR
+  price       Float
   description String
   highlights  String   // JSON array
   inclusions  String   // JSON array
   exclusions  String   // JSON array
-  itinerary   String   // JSON array of {day, title, description}
+  itinerary   String   // JSON array
   heroImage   String
   rating      Float    @default(4.6)
   featured    Boolean  @default(false)
@@ -63,12 +88,17 @@ model Lead {
   travelDate  String?
   pax         Int      @default(2)
   budget      String?
-  source      String   @default("Website") // Website | WhatsApp | Referral | Social
-  status      String   @default("New")     // New | Contacted | Qualified | Proposal | Negotiation | Won | Lost
+  source      String   @default("Website")
+  status      String   @default("New")
   notes       String?
   assignedTo  String?
+  score       Int      @default(50) // lead score 0-100
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  tasks       Task[]
+  communications Communication[]
+  bookings    Booking[]
 }
 
 model Customer {
@@ -80,46 +110,185 @@ model Customer {
   state       String?
   totalTrips  Int      @default(0)
   totalSpent  Float    @default(0)
-  type        String   @default("Individual") // Individual | Family | Group | Corporate
-  tags        String?  // JSON array
+  type        String   @default("Individual")
+  tags        String?
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Booking {
+  id            String   @id @default(cuid())
+  refCode       String   @unique
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  customerId    String?
+  leadId        String?
+  lead          Lead?    @relation(fields: [leadId], references: [id])
+  packageSlug   String?
+  tripName      String
+  startDate     String
+  endDate       String
+  pax           Int      @default(2)
+  amount        Float
+  status        String   @default("Pending")
+  paymentStatus String   @default("Unpaid")
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payments      Payment[]
+  documents     Document[]
+}
+
+model CustomTrip {
   id          String   @id @default(cuid())
-  refCode     String   @unique
-  customerId   String?
-  leadId      String?
-  packageSlug String?
-  tripName    String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  name        String
+  email       String
+  phone       String
+  destinations String
   startDate   String
-  endDate     String
+  duration    Int
   pax         Int      @default(2)
-  amount      Float
-  status      String   @default("Pending") // Pending | Confirmed | InProgress | Completed | Cancelled
-  paymentStatus String @default("Unpaid") // Unpaid | Partial | Paid
+  hotelTier   String   @default("Standard")
+  meals       String
+  addOns      String
+  estimatedPrice Float
+  status      String   @default("Draft")
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model CustomTrip {
+model Vendor {
   id          String   @id @default(cuid())
   name        String
-  email       String
+  type        String   // Hotel | Driver | Guide | Photographer | Cab | Homestay
+  category    String   // Budget | Standard | Premium | Luxury
+  location    String
   phone       String
-  destinations String  // JSON array of slugs
-  startDate   String
-  duration    Int
-  pax         Int      @default(2)
-  hotelTier   String   @default("Standard") // Budget | Standard | Premium | Luxury
-  meals       String   // JSON array
-  addOns      String   // JSON array: photographer, guide, cab, etc.
-  estimatedPrice Float
-  status      String   @default("Draft") // Draft | Submitted | Quoted | Confirmed
+  email       String?
+  rating      Float    @default(4.5)
+  pricePerDay Float?
   notes       String?
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  dueDate     String?
+  priority    String   @default("Medium") // Low | Medium | High | Urgent
+  status      String   @default("Pending") // Pending | InProgress | Done
+  assigneeId  String?
+  assignee    User?    @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  customerId  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Communication {
+  id          String   @id @default(cuid())
+  type        String   // Call | Email | WhatsApp | SMS | Meeting
+  direction   String   @default("Outbound") // Inbound | Outbound
+  subject     String
+  notes       String?
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  customerId  String?
+  duration    Int?     // in seconds for calls
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  destinationId String?
+  destination Destination? @relation(fields: [destinationId], references: [id])
+  packageSlug String?
+  rating      Int      // 1-5
+  title       String
+  body        String
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SavedDestination {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  destinationId String
+  destination Destination? @relation(fields: [destinationId], references: [id])
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  bookingId   String?
+  booking     Booking? @relation(fields: [bookingId], references: [id])
+  name        String
+  type        String   // Itinerary | Voucher | Ticket | Invoice | Permit | Passport
+  url         String
+  status      String   @default("Pending") // Pending | Verified | Rejected
+  createdAt   DateTime @default(now())
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  amount      Float
+  method      String   // Card | UPI | BankTransfer | Cash
+  status      String   @default("Pending") // Pending | Success | Failed | Refunded
+  txnId       String?
+  createdAt   DateTime @default(now())
+}
+
+model AirTicket {
+  id          String   @id @default(cuid())
+  airline     String
+  flightNo    String
+  origin      String
+  originCode  String
+  destination String
+  destCode    String
+  departTime  String
+  arriveTime  String
+  duration    String
+  stops       Int      @default(0)
+  price       Float
+  cabin       String   @default("Economy")
+  available   Int      @default(9)
+  aircraft    String?
+  createdAt   DateTime @default(now())
+}
+
+model TrainTicket {
+  id          String   @id @default(cuid())
+  trainNo     String
+  trainName   String
+  origin      String
+  originCode  String
+  destination String
+  destCode    String
+  departTime  String
+  arriveTime  String
+  duration    String
+  classes     String   // JSON: [{code,name,price,available}]
+  runsOn      String   // JSON: [0-6] days of week (0=Sun)
+  createdAt   DateTime @default(now())
 }

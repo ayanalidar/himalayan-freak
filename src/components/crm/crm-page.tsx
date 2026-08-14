@@ -24,6 +24,17 @@ import {
   Briefcase,
   UserPlus,
   CalendarDays,
+  Mountain,
+  CheckSquare,
+  MessageSquare,
+  ListChecks,
+  Star,
+  Building,
+  Car,
+  Hotel,
+  Camera,
+  PenSquare,
+  ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -79,6 +90,8 @@ import {
 import { leadStages, leadSources } from '@/lib/data'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useApp } from '@/lib/store'
+import { useAuth } from '@/components/auth-provider'
 
 type Lead = {
   id: string
@@ -154,6 +167,8 @@ const stageColors: Record<string, string> = {
 const sourceColors = ['#f59e0b', '#0ea5e9', '#8b5cf6', '#10b981', '#ec4899', '#f97316']
 
 export function CrmPage() {
+  const { navigate } = useApp()
+  const { session, status } = useAuth()
   const [tab, setTab] = useState('dashboard')
   const [leads, setLeads] = useState<Lead[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -163,26 +178,41 @@ export function CrmPage() {
   const [search, setSearch] = useState('')
   const [leadDialog, setLeadDialog] = useState(false)
   const [custDialog, setCustDialog] = useState(false)
+  const [tasks, setTasks] = useState<any[]>([])
+  const [vendors, setVendors] = useState<any[]>([])
+  const [comms, setComms] = useState<any[]>([])
+  const [taskDialog, setTaskDialog] = useState(false)
+  const [vendorDialog, setVendorDialog] = useState(false)
+  const [commDialog, setCommDialog] = useState(false)
 
   const refresh = useCallback(async () => {
     setLoading(true)
     try {
-      const [lRes, cRes, bRes, dRes] = await Promise.all([
+      const [lRes, cRes, bRes, dRes, tRes, vRes, commRes] = await Promise.all([
         fetch('/api/leads'),
         fetch('/api/customers'),
         fetch('/api/bookings'),
         fetch('/api/dashboard'),
+        fetch('/api/admin/tasks'),
+        fetch('/api/admin/vendors'),
+        fetch('/api/admin/communications'),
       ])
-      const [l, c, b, d] = await Promise.all([
+      const [l, c, b, d, t, v, comm] = await Promise.all([
         lRes.json(),
         cRes.json(),
         bRes.json(),
         dRes.json(),
+        tRes.json(),
+        vRes.json(),
+        commRes.json(),
       ])
       setLeads(l)
       setCustomers(c)
       setBookings(b)
       setDash(d)
+      setTasks(t)
+      setVendors(v)
+      setComms(comm)
     } catch (err) {
       console.error(err)
     } finally {
@@ -190,9 +220,21 @@ export function CrmPage() {
     }
   }, [])
 
+  // Auth guard
   useEffect(() => {
-    refresh()
-  }, [refresh])
+    if (status === 'unauthenticated') {
+      navigate('login')
+    } else if (status === 'authenticated' && (session?.user as any)?.role !== 'admin') {
+      toast.error('Admin access only', {
+        description: "You don't have permission to view the CRM.",
+      })
+      navigate('dashboard')
+    }
+  }, [status, session, navigate])
+
+  useEffect(() => {
+    if (status === 'authenticated') refresh()
+  }, [refresh, status])
 
   const filteredLeads = leads.filter(
     (l) =>
@@ -255,6 +297,14 @@ export function CrmPage() {
                 className="h-9 pl-8"
               />
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => navigate('admin-destinations')}
+            >
+              <Mountain className="h-3.5 w-3.5" /> Edit Destinations
+            </Button>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={refresh}>
               <Filter className="h-3.5 w-3.5" /> Refresh
             </Button>
@@ -276,6 +326,15 @@ export function CrmPage() {
             </TabsTrigger>
             <TabsTrigger value="bookings" className="flex-1 gap-1.5">
               <CalendarCheck className="h-3.5 w-3.5" /> Bookings ({bookings.length})
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="flex-1 gap-1.5">
+              <CheckSquare className="h-3.5 w-3.5" /> Tasks ({tasks.length})
+            </TabsTrigger>
+            <TabsTrigger value="vendors" className="flex-1 gap-1.5">
+              <Briefcase className="h-3.5 w-3.5" /> Vendors ({vendors.length})
+            </TabsTrigger>
+            <TabsTrigger value="comms" className="flex-1 gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5" /> Comms ({comms.length})
             </TabsTrigger>
           </TabsList>
 
@@ -754,8 +813,253 @@ export function CrmPage() {
               </Table>
             </Card>
           </TabsContent>
+
+          {/* TASKS */}
+          <TabsContent value="tasks" className="mt-0">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                {tasks.filter((t) => t.status !== 'Done').length} open ·{' '}
+                {tasks.filter((t) => t.status === 'Done').length} completed
+              </p>
+              <Button size="sm" className="gap-1.5" onClick={() => setTaskDialog(true)}>
+                <Plus className="h-3.5 w-3.5" /> New task
+              </Button>
+            </div>
+            <div className="grid gap-3">
+              {tasks.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <ListChecks className="mx-auto h-10 w-10 text-muted-foreground" />
+                  <h3 className="mt-3 font-display text-lg font-semibold">No tasks yet</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Add follow-ups, calls, document requests etc.</p>
+                </Card>
+              ) : (
+                tasks.map((t) => (
+                  <Card key={t.id} className="flex items-center gap-3 p-4 ring-1 ring-border/40">
+                    <div
+                      className={cn(
+                        'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                        t.priority === 'Urgent' && 'bg-rose-500/15 text-rose-600',
+                        t.priority === 'High' && 'bg-orange-500/15 text-orange-600',
+                        t.priority === 'Medium' && 'bg-amber-500/15 text-amber-600',
+                        t.priority === 'Low' && 'bg-sky-500/15 text-sky-600'
+                      )}
+                    >
+                      <CheckSquare className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={cn('text-sm font-medium truncate', t.status === 'Done' && 'line-through text-muted-foreground')}>
+                          {t.title}
+                        </span>
+                        <Badge variant="outline" className="text-[10px]">{t.priority}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{t.status}</Badge>
+                      </div>
+                      {t.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{t.description}</p>
+                      )}
+                      <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+                        {t.dueDate && (
+                          <span className="flex items-center gap-1">
+                            <CalendarDays className="h-3 w-3" /> {new Date(t.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                          </span>
+                        )}
+                        {t.lead && (
+                          <span className="flex items-center gap-1">
+                            <Target className="h-3 w-3" /> {t.lead.name}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 gap-1"
+                        onClick={async () => {
+                          const newStatus = t.status === 'Done' ? 'Pending' : 'Done'
+                          await fetch('/api/admin/tasks', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: t.id, status: newStatus }),
+                          })
+                          refresh()
+                        }}
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 text-rose-500 hover:text-rose-600"
+                        onClick={async () => {
+                          await fetch(`/api/admin/tasks?id=${t.id}`, { method: 'DELETE' })
+                          refresh()
+                          toast.success('Task deleted')
+                        }}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+
+          {/* VENDORS */}
+          <TabsContent value="vendors" className="mt-0">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">{vendors.length} partners across all categories</p>
+              <Button size="sm" className="gap-1.5" onClick={() => setVendorDialog(true)}>
+                <Plus className="h-3.5 w-3.5" /> Add vendor
+              </Button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {vendors.length === 0 ? (
+                <Card className="col-span-full p-12 text-center">
+                  <Building className="mx-auto h-10 w-10 text-muted-foreground" />
+                  <h3 className="mt-3 font-display text-lg font-semibold">No vendors yet</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Add hotels, drivers, guides, photographers & homestays.</p>
+                </Card>
+              ) : (
+                vendors.map((v) => {
+                  const icon = v.type === 'Hotel' ? Hotel : v.type === 'Driver' || v.type === 'Cab' ? Car : v.type === 'Photographer' ? Camera : v.type === 'Guide' ? MapPin : Building
+                  const Icon = icon
+                  return (
+                    <Card key={v.id} className="p-4 ring-1 ring-border/40">
+                      <div className="flex items-start justify-between">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={cn(
+                                'h-3 w-3',
+                                i < Math.round(v.rating)
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-muted'
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <h3 className="mt-3 font-display text-base font-bold leading-tight">{v.name}</h3>
+                      <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Badge variant="outline" className="text-[10px]">{v.type}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{v.category}</Badge>
+                      </div>
+                      <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="h-3 w-3" /> {v.location}
+                        </div>
+                        <a href={`tel:${v.phone}`} className="flex items-center gap-1.5 hover:text-primary">
+                          <Phone className="h-3 w-3" /> {v.phone}
+                        </a>
+                        {v.pricePerDay && (
+                          <div className="flex items-center gap-1.5">
+                            <IndianRupee className="h-3 w-3" /> {v.pricePerDay.toLocaleString('en-IN')}/day
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-3 flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 h-7 text-xs"
+                          onClick={async () => {
+                            await fetch('/api/admin/vendors', {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ id: v.id, active: !v.active }),
+                            })
+                            refresh()
+                          }}
+                        >
+                          {v.active ? 'Deactivate' : 'Activate'}
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 text-rose-500 hover:text-rose-600"
+                          onClick={async () => {
+                            await fetch(`/api/admin/vendors?id=${v.id}`, { method: 'DELETE' })
+                            refresh()
+                            toast.success('Vendor deleted')
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </Card>
+                  )
+                })
+              )}
+            </div>
+          </TabsContent>
+
+          {/* COMMUNICATIONS */}
+          <TabsContent value="comms" className="mt-0">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">{comms.length} logged interactions</p>
+              <Button size="sm" className="gap-1.5" onClick={() => setCommDialog(true)}>
+                <Plus className="h-3.5 w-3.5" /> Log interaction
+              </Button>
+            </div>
+            <Card className="overflow-hidden ring-1 ring-border/40">
+              {comms.length === 0 ? (
+                <div className="p-12 text-center">
+                  <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground" />
+                  <h3 className="mt-3 font-display text-lg font-semibold">No communications logged</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Log calls, emails, WhatsApp messages & meetings.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {comms.map((c) => (
+                    <div key={c.id} className="flex items-start gap-3 p-4">
+                      <div
+                        className={cn(
+                          'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                          c.type === 'Call' && 'bg-sky-500/15 text-sky-600',
+                          c.type === 'Email' && 'bg-violet-500/15 text-violet-600',
+                          c.type === 'WhatsApp' && 'bg-emerald-500/15 text-emerald-600',
+                          c.type === 'SMS' && 'bg-amber-500/15 text-amber-600',
+                          c.type === 'Meeting' && 'bg-rose-500/15 text-rose-600'
+                        )}
+                      >
+                        {c.type === 'Call' && <Phone className="h-4 w-4" />}
+                        {c.type === 'Email' && <Mail className="h-4 w-4" />}
+                        {c.type === 'WhatsApp' && <MessageSquare className="h-4 w-4" />}
+                        {c.type === 'SMS' && <MessageSquare className="h-4 w-4" />}
+                        {c.type === 'Meeting' && <Users className="h-4 w-4" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{c.subject}</span>
+                          <Badge variant="outline" className="text-[10px]">{c.type}</Badge>
+                          <Badge variant="outline" className="text-[10px]">{c.direction}</Badge>
+                        </div>
+                        {c.notes && (
+                          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{c.notes}</p>
+                        )}
+                        <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+                          {c.lead && <span>{c.lead.name}</span>}
+                          {c.duration && <span>· {Math.floor(c.duration / 60)}m {c.duration % 60}s</span>}
+                          <span>· {new Date(c.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
+      <TaskDialog open={taskDialog} onOpenChange={setTaskDialog} onCreated={refresh} leads={leads} />
+      <VendorDialog open={vendorDialog} onOpenChange={setVendorDialog} onCreated={refresh} />
+      <CommDialog open={commDialog} onOpenChange={setCommDialog} onCreated={refresh} leads={leads} />
     </div>
   )
 }
@@ -1124,6 +1428,305 @@ function CustomerDialog({ onCreated }: { onCreated: () => void }) {
           <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
           <Button onClick={onSubmit} disabled={loading || !form.name || !form.email || !form.phone}>
             {loading ? 'Adding...' : 'Add customer'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function TaskDialog({ open, onOpenChange, onCreated, leads }: { open: boolean; onOpenChange: (o: boolean) => void; onCreated: () => void; leads: Lead[] }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    priority: 'Medium',
+    status: 'Pending',
+    leadId: '',
+  })
+
+  const onSubmit = async () => {
+    if (!form.title) {
+      toast.error('Task title required')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast.success('Task created!')
+      setForm({ title: '', description: '', dueDate: '', priority: 'Medium', status: 'Pending', leadId: '' })
+      onOpenChange(false)
+      onCreated()
+    } catch {
+      toast.error('Failed to create task')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>New task</DialogTitle>
+          <DialogDescription>Create a follow-up, document request or any to-do.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-3 py-2">
+          <div>
+            <Label>Title *</Label>
+            <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Send quote for Ladakh trip" />
+          </div>
+          <div>
+            <Label>Description</Label>
+            <Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Due date</Label>
+              <Input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
+            </div>
+            <div>
+              <Label>Priority</Label>
+              <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['Low', 'Medium', 'High', 'Urgent'].map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <Label>Link to lead (optional)</Label>
+            <Select value={form.leadId} onValueChange={(v) => setForm({ ...form, leadId: v })}>
+              <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+              <SelectContent>
+                {leads.slice(0, 50).map((l) => (
+                  <SelectItem key={l.id} value={l.id}>{l.name} — {l.destination || 'General'}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+          <Button onClick={onSubmit} disabled={loading || !form.title}>
+            {loading ? 'Creating...' : 'Create task'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function VendorDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpenChange: (o: boolean) => void; onCreated: () => void }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    name: '',
+    type: 'Hotel',
+    category: 'Standard',
+    location: '',
+    phone: '',
+    email: '',
+    rating: 4.5,
+    pricePerDay: 0,
+    notes: '',
+  })
+
+  const onSubmit = async () => {
+    if (!form.name || !form.phone) {
+      toast.error('Name and phone required')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/vendors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast.success('Vendor added!')
+      setForm({ name: '', type: 'Hotel', category: 'Standard', location: '', phone: '', email: '', rating: 4.5, pricePerDay: 0, notes: '' })
+      onOpenChange(false)
+      onCreated()
+    } catch {
+      toast.error('Failed to add vendor')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add vendor</DialogTitle>
+          <DialogDescription>Hotels, drivers, guides, photographers, homestays & cabs.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-3 py-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Name *</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div>
+              <Label>Phone *</Label>
+              <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Type</Label>
+              <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['Hotel', 'Homestay', 'Driver', 'Guide', 'Photographer', 'Cab'].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Category</Label>
+              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['Budget', 'Standard', 'Premium', 'Luxury'].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Rating</Label>
+              <Input type="number" step="0.1" min={0} max={5} value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Location</Label>
+              <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Srinagar" />
+            </div>
+            <div>
+              <Label>Price / day (₹)</Label>
+              <Input type="number" value={form.pricePerDay} onChange={(e) => setForm({ ...form, pricePerDay: Number(e.target.value) })} />
+            </div>
+          </div>
+          <div>
+            <Label>Email (optional)</Label>
+            <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+          <Button onClick={onSubmit} disabled={loading || !form.name}>
+            {loading ? 'Adding...' : 'Add vendor'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CommDialog({ open, onOpenChange, onCreated, leads }: { open: boolean; onOpenChange: (o: boolean) => void; onCreated: () => void; leads: Lead[] }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    type: 'Call',
+    direction: 'Outbound',
+    subject: '',
+    notes: '',
+    duration: 0,
+    leadId: '',
+  })
+
+  const onSubmit = async () => {
+    if (!form.subject) {
+      toast.error('Subject required')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/communications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast.success('Logged!')
+      setForm({ type: 'Call', direction: 'Outbound', subject: '', notes: '', duration: 0, leadId: '' })
+      onOpenChange(false)
+      onCreated()
+    } catch {
+      toast.error('Failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Log interaction</DialogTitle>
+          <DialogDescription>Record a call, email, WhatsApp, SMS or meeting.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-3 py-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Type</Label>
+              <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['Call', 'Email', 'WhatsApp', 'SMS', 'Meeting'].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Direction</Label>
+              <Select value={form.direction} onValueChange={(v) => setForm({ ...form, direction: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['Inbound', 'Outbound'].map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <Label>Subject *</Label>
+            <Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="e.g. Ladakh trip quotation follow-up" />
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Duration (sec)</Label>
+              <Input type="number" value={form.duration} onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })} />
+            </div>
+            <div>
+              <Label>Link to lead</Label>
+              <Select value={form.leadId} onValueChange={(v) => setForm({ ...form, leadId: v })}>
+                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectContent>
+                  {leads.slice(0, 50).map((l) => (
+                    <SelectItem key={l.id} value={l.id}>{l.name} — {l.destination || 'General'}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+          <Button onClick={onSubmit} disabled={loading || !form.subject}>
+            {loading ? 'Saving...' : 'Log interaction'}
           </Button>
         </DialogFooter>
       </DialogContent>
