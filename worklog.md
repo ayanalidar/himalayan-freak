@@ -265,3 +265,71 @@ Stage Summary:
 - Image uploads work in sandbox; on Vercel need Vercel Blob (URL paste always works)
 - Admin can edit both destinations AND packages now
 - AI chatbot correctly references new destinations (tested with Drung query)
+
+---
+Task ID: v7-pwa-legal-bugfixes
+Agent: Main agent (Super Z)
+Task: PWA conversion, legal pages, contact info update, comprehensive bug audit and fixes, image upload production-ready.
+
+Work Log:
+- Conducted second comprehensive audit (subagent) - 28 findings: 6 Critical, 9 High, 8 Medium, 5 Low.
+- All Critical and High bugs fixed:
+  * C-2: Sonner Toaster was never mounted - every toast.success/error in the app silently failed. Fixed by importing from @/components/ui/sonner in layout.
+  * C-1: destination-detail.tsx referenced undefined 'destinations' identifier - crashed on every load. Fixed to use 'staticDestinations'.
+  * E-1: admin/packages PATCH and DELETE returned 405 (handlers were in [id]/route.ts but client called parent route). Moved to parent route file.
+  * E-2: admin/destinations DELETE returned 405 (same issue). Moved to parent route file.
+  * E-3: admin/destinations GET had no auth check. Added admin gate.
+  * N-1: Trip Planner always redirected to CRM after submit. Now: admin->CRM, user->dashboard, guest->home.
+  * F-2: Group Booking 'pickup' field name mismatch with API (expected 'pickupRequired'). Fixed.
+  * A-1: CRM refresh() race condition for non-admins (fetched admin endpoints, got 403, set error objects as state). Added admin role guard + safe JSON parsing.
+  * A-2: Admin editors (destinations + packages) had no client-side auth guard. Added useEffect redirect.
+  * M-1: Mobile admin menu missing 'Edit Packages' link. Added.
+  * P-1: PWA shortcuts dead-linked to home page. Now read ?page= query param and navigate.
+  * P-2: PWA banner overlapped ChatBot. Moved to top-20 (below navbar).
+  * A-4: Login page had local Shield() helper that rendered Mountain icon. Imported real Shield from lucide.
+
+- PWA conversion:
+  * manifest.json with name, short_name, description, icons, shortcuts (Plan Trip, Destinations, Flights & Trains), theme/background colors, standalone display
+  * sw.js service worker: app-shell caching on install, network-first for API, cache-first for images, navigation fallback to cached '/'
+  * PWAInstallBanner component: shows after 3s, dismissable for 7 days, captures beforeinstallprompt event, calls prompt() on Install click
+  * ServiceWorkerRegister: registers /sw.js in production only
+  * Layout: manifest link, apple-touch-icon, apple-mobile-web-app-capable, theme-color meta, safe-area-inset padding
+  * globals.css: safe-area padding, prevent pull-to-refresh in standalone mode, touch-action manipulation, -webkit-tap-highlight-color transparent
+
+- Legal pages:
+  * Privacy Policy: 12 sections (data collection, GDPR/DPDP, retention, rights, security, etc.)
+  * Terms & Conditions: 14 sections (bookings, payments, traveller responsibilities, permits, force majeure, etc.)
+  * Cancellation Policy: 11 sections (cancellation tiers, refunds, modifications, group bookings, etc.)
+  * All with real contact info and CEO name
+  * Reusable LegalPage component with cross-links between pages
+  * Linked from footer (Privacy Policy, Terms, Cancellation)
+
+- Contact info update (everywhere):
+  * Email: hello@himalayanfreak.com -> info@himalayanfreak.in (footer, PDF, AI chatbot)
+  * Instagram: @himalayanfreaktravels (footer with link, company page)
+  * Facebook: https://www.facebook.com/thehimalayan1 (footer with link, company page)
+  * Founder & CEO: Syed Shamshul Razvi (footer, company team #1, AI chatbot, PDF)
+  * Updated social icons in footer (real URLs, not '#')
+
+- Image upload production-ready:
+  * /api/upload now tries Vercel Blob first (if BLOB_READ_WRITE_TOKEN env var set)
+  * Falls back to local file storage (sandbox dev environment)
+  * Falls back to error with 'use URL paste' message if both fail
+  * New GET /api/upload returns provider info
+  * ImageUpload component shows clearer help text
+
+- New features added:
+  * Wishlist save button on destination detail page (heart icon, toggles saved state via /api/saved)
+  * Review submission form on destination detail page (5-star rating, title, body)
+  * Approved reviews displayed below destination details
+  * Broken image fallback added to destination detail hero image
+
+Stage Summary:
+- Production: https://my-project-hazel-nine-12.vercel.app
+- GitHub: https://github.com/ayanalidar/himalayan-freak
+- PWA: installable, offline-capable, app-like UX
+- 31 destinations (20 in Kashmir)
+- All legal pages live
+- All contact info updated
+- All critical bugs from audit fixed
+- AI chatbot correctly references new contact info (tested)
