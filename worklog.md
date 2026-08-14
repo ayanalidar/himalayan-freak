@@ -168,3 +168,35 @@ Stage Summary:
 - Auth: fully functional (admin: admin@himalayanfreak.com / admin123)
 - AI chatbot: needs XAI_API_KEY env var on Vercel to enable Grok-powered chat
 - All other features working on production
+
+---
+Task ID: v5-fixes
+Agent: Main agent (Super Z)
+Task: Add Groq API key as AI provider, fix Tickets tab client-side error.
+
+Work Log:
+- Set Groq API key ([REDACTED-GROQ-KEY]) as XAI_API_KEY env var on Vercel (production + development)
+- Also set as GROQ_API_KEY for clarity
+- Updated /api/chat to use Groq (llama-3.3-70b-versatile) as primary AI provider
+- Groq is checked first because the user's key has gsk_ prefix (Groq, not xAI)
+- Falls back to xAI Grok (if xai- prefix), z-ai SDK (sandbox), OpenAI
+
+- Diagnosed Tickets tab client-side error: API returned {flights: [...], source, configured} (object) but frontend expected flat array, causing Array.prototype.map() to fail
+- Fixed by adding Array.isArray check in onSearch handler
+- Removed unused useEffect/useMemo imports
+- Made FlightCard robust against missing finalPrice field (uses finalPrice || price fallback)
+- All API responses now safely handled whether they return array or object wrapper
+
+- Verified on production:
+  * AI chatbot: returns detailed Ladakh recommendations with real package prices
+  * Booking intent: correctly detected and triggers contact form
+  * Tickets API: returns 2 flights + 2 trains (seeded data, source: 'seeded')
+  * Auth: admin login works (HTTP 302), all protected APIs return 200
+  * PDF: 8894 bytes valid PDF
+  * Group booking: creates lead (Ref: GBOMKNC9)
+
+Stage Summary:
+- Production URL: https://my-project-hazel-nine-12.vercel.app
+- AI chatbot: ✅ Groq llama-3.3-70b working
+- Tickets tab: ✅ Fixed (no more client-side error)
+- All other features: ✅ Confirmed working
