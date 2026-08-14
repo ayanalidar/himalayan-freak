@@ -139,3 +139,32 @@ Stage Summary:
 - Group booking: creates Lead on submission with full context.
 - GuardianX branding: visible in footer, CRM, login page, and every PDF footer.
 - GitHub push: script ready at scripts/push-to-github.sh, just needs user to run with their repo URL.
+
+---
+Task ID: v4-deploy
+Agent: Main agent (Super Z)
+Task: Push to GitHub, migrate to Neon PostgreSQL, deploy to Vercel.
+
+Work Log:
+- Created GitHub repo via API: https://github.com/ayanalidar/himalayan-freak
+- Pushed all commits (10 commits, 162 files) to GitHub
+- Migrated Prisma datasource from sqlite to postgresql
+- Updated .env with Neon PostgreSQL connection string
+- Pushed schema to Neon and seeded: 12 leads, 5 customers, 6 bookings, admin/user accounts, 21 flights, 11 trains, 15 vendors
+- Installed Vercel CLI v59.0.0
+- Created Vercel project: ayan-arham/my-project
+- Set env vars on Vercel: DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL (production + development)
+- Deployed to Vercel production: https://my-project-hazel-nine-12.vercel.app
+- Fixed NextAuth route: renamed [nextauth] to [...nextauth] for multi-segment catch-all
+- Added force-dynamic + nodejs runtime to auth route for Vercel compatibility
+- Fixed AI chatbot: multi-provider approach (xAI Grok, z-ai SDK, OpenAI fallback)
+- Auth verified: admin login works, session returns correct user+role, dashboard returns 200 with admin auth
+- All major features verified on production: home, destinations, flights, trains, auth, CRM, group booking, PDF export
+
+Stage Summary:
+- GitHub: https://github.com/ayanalidar/himalayan-freak (public, 10 commits)
+- Vercel: https://my-project-hazel-nine-12.vercel.app (production)
+- Neon: PostgreSQL database with all data seeded
+- Auth: fully functional (admin: admin@himalayanfreak.com / admin123)
+- AI chatbot: needs XAI_API_KEY env var on Vercel to enable Grok-powered chat
+- All other features working on production
