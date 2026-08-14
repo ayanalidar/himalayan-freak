@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import {
   Target,
   Eye,
@@ -55,49 +56,29 @@ const values = [
   },
 ]
 
-const team = [
-  {
-    name: 'Syed Shamshul Razvi',
-    role: 'Founder & CEO',
-    bio: 'Founder & CEO of Himalayan Freak. Visionary behind every custom itinerary. Born and raised in Magam, Kashmir - knows every pass, every homestay, every driver by name.',
-    avatar: 'S',
-  },
-  {
-    name: 'Imtiyaz Ahmad',
-    role: 'Lead Trip Designer',
-    bio: '14 years guiding in Pir Panjal & Ladakh. Speaks Kashmiri, Urdu, Hindi, Ladakhi & basic Tibetan. Designs every offbeat itinerary.',
-    avatar: 'I',
-  },
-  {
-    name: 'Suhail Bhat',
-    role: 'Operations & Logistics Head',
-    bio: 'Master of permits, convoy timings and oxygen cylinders. The voice you will hear at 4am if Zoji La opens.',
-    avatar: 'S',
-  },
-  {
-    name: 'Aaliya Khan',
-    role: 'Customer Experience Lead',
-    bio: 'Designs every pre-trip onboarding call. Believes the journey starts the day you book, not the day you fly.',
-    avatar: 'A',
-  },
-  {
-    name: 'Tashi Norbu',
-    role: 'Senior Mountain Guide (Ladakh)',
-    bio: 'Born in Nubra. Holds mountaineering certifications from NIM Uttarkashi. Knows every chang-la shortcut and homestay cook.',
-    avatar: 'T',
-  },
+// Static fallback team (shown while API loads)
+const fallbackTeam = [
+  { id: '0', name: 'Syed Shamshul Razvi', role: 'Founder & CEO', bio: 'Founder & CEO of Himalayan Freak.', avatar: 'S', order: 1, active: true, createdAt: '', updatedAt: '' },
 ]
 
 const milestones = [
   { year: '2018', text: 'Himalayan Freak founded as a one-person shop in Magam.' },
   { year: '2020', text: 'Pivoted to fully custom itineraries during the pandemic - first 100% refund policy in Kashmir.' },
   { year: '2022', text: 'Crossed 1,000 travellers; expanded to Ladakh & Spiti circuits.' },
-  { year: '2024', text: 'Launched 4×4 fleet for Zanskar & Khardung La; partnered with 40+ homestays.' },
+  { year: '2024', text: 'Launched 4x4 fleet for Zanskar & Khardung La; partnered with 40+ homestays.' },
   { year: '2026', text: 'Launching the Custom Trip Planner - first AI-assisted itinerary builder in J&K.' },
 ]
 
 export function CompanyPage() {
   const { navigate } = useApp()
+  const [team, setTeam] = useState<any[]>(fallbackTeam)
+
+  useEffect(() => {
+    fetch('/api/team')
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data) && data.length > 0) setTeam(data) })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="bg-background">
@@ -296,14 +277,14 @@ export function CompanyPage() {
               The humans behind your Himalayan journey
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Six people. Three states. One obsession with the mountains. You will likely
+              {team.length} people. Three states. One obsession with the mountains. You will likely
               speak to all of us at some point during your trip.
             </p>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {team.map((t, i) => (
               <motion.div
-                key={t.name}
+                key={t.id || t.name}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -312,9 +293,13 @@ export function CompanyPage() {
                 <Card className="h-full overflow-hidden ring-1 ring-border/40">
                   <div className="relative h-44 bg-gradient-to-br from-primary/30 via-accent/20 to-secondary">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-background text-2xl font-display font-bold text-primary ring-4 ring-background">
-                        {t.avatar}
-                      </div>
+                      {t.avatar && t.avatar.startsWith('http') ? (
+                        <img src={t.avatar} alt={t.name} className="h-full w-full object-cover" onError={(e) => { const target = e.target as HTMLImageElement; target.style.display = 'none'; }} />
+                      ) : (
+                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-background text-2xl font-display font-bold text-primary ring-4 ring-background">
+                          {(t.avatar || t.name).charAt(0).toUpperCase()}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="p-5">

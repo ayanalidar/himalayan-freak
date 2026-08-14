@@ -336,6 +336,14 @@ export function CrmPage() {
             >
               <Plane className="h-3.5 w-3.5" /> Packages
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => navigate('admin-team')}
+            >
+              <Users className="h-3.5 w-3.5" /> Team
+            </Button>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={refresh}>
               <Filter className="h-3.5 w-3.5" /> Refresh
             </Button>

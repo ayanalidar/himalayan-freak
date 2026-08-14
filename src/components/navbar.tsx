@@ -17,6 +17,7 @@ import {
   Shield,
   Plane,
   Sparkles,
+  Users,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -144,14 +145,14 @@ export function Navbar() {
               onClick={() => go('crm')}
               className={cn(
                 'relative rounded-md px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1.5',
-                page === 'crm' || page === 'admin-destinations' || page === 'admin-packages'
+                page === 'crm' || page === 'admin-destinations' || page === 'admin-packages' || page === 'admin-team'
                   ? 'text-amber-400'
                   : 'text-white/80 hover:text-amber-300'
               )}
             >
               <Shield className="h-3.5 w-3.5" />
               Admin
-              {(page === 'crm' || page === 'admin-destinations' || page === 'admin-packages') && (
+              {(page === 'crm' || page === 'admin-destinations' || page === 'admin-packages' || page === 'admin-team') && (
                 <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-amber-400" />
               )}
             </button>
@@ -236,6 +237,9 @@ export function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => go('admin-packages')} className="gap-2 cursor-pointer">
                       <Plane className="h-4 w-4" /> Manage Packages
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => go('admin-team')} className="gap-2 cursor-pointer">
+                      <Users className="h-4 w-4" /> Manage Team
                     </DropdownMenuItem>
                   </>
                 )}
@@ -335,6 +339,18 @@ export function Navbar() {
                         )}
                       >
                         <span className="flex items-center gap-2"><Plane className="h-4 w-4" /> Edit Packages</span>
+                        <ChevronDown className="h-4 w-4 -rotate-90" />
+                      </button>
+                      <button
+                        onClick={() => go('admin-team')}
+                        className={cn(
+                          'flex items-center justify-between rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors gap-2',
+                          page === 'admin-team'
+                            ? 'bg-amber-500/15 text-amber-400'
+                            : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        )}
+                      >
+                        <span className="flex items-center gap-2"><Users className="h-4 w-4" /> Edit Team</span>
                         <ChevronDown className="h-4 w-4 -rotate-90" />
                       </button>
                     </>
