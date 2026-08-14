@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Himalayan Freak — Custom Himalayan Travel Experiences",
+  title: "Himalayan Freak - Custom Himalayan Travel Experiences",
   description:
     "Himalayan Freak is a Kashmir-based travel agency crafting bespoke journeys across Jammu, Kashmir, Ladakh and the entire Himalayan range. Custom packages, expert guides, and unforgettable adventures.",
   keywords: [
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     apple: "/logo.webp",
   },
   openGraph: {
-    title: "Himalayan Freak — Custom Himalayan Travel Experiences",
+    title: "Himalayan Freak - Custom Himalayan Travel Experiences",
     description:
       "Bespoke journeys across Jammu, Kashmir, Ladakh and the entire Himalayan range.",
     siteName: "Himalayan Freak",

@@ -197,7 +197,7 @@ export function DestinationDetailPage() {
                 <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                   <h2 className="font-display text-2xl font-bold">Top attractions in {d.name}</h2>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Hand-picked by our local team — the spots we send our own family to.
+                    Hand-picked by our local team - the spots we send our own family to.
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     {d.attractions.map((a, i) => (

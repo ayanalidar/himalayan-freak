@@ -24,6 +24,8 @@ import {
   Hotel,
   Clock,
   HeartPulse,
+  FileDown,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -155,6 +157,46 @@ export function TripPlannerPage() {
     }
   }
 
+  const [pdfLoading, setPdfLoading] = useState(false)
+  const onDownloadPdf = async () => {
+    setPdfLoading(true)
+    try {
+      const payload = {
+        name: trip.contact.name || 'Traveller',
+        email: trip.contact.email,
+        phone: trip.contact.phone,
+        destinationSlugs: trip.selectedDestinations,
+        startDate: trip.startDate,
+        duration: trip.duration,
+        pax: trip.pax,
+        hotelTier: trip.hotelTier,
+        meals: trip.meals,
+        addOnIds: trip.addOns.map((a) => a.id),
+        estimatedPrice: estimate.total,
+      }
+      const res = await fetch('/api/trips/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('PDF failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `himalayan-freak-itinerary.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      toast.success('Itinerary PDF downloaded!')
+    } catch {
+      toast.error('Could not generate PDF. Please try again.')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* HERO */}
@@ -178,7 +220,7 @@ export function TripPlannerPage() {
               <Sparkles className="mr-1.5 h-3 w-3" /> Custom Trip Planner
             </Badge>
             <h1 className="font-display text-4xl font-extrabold tracking-tight text-white text-shadow-lg sm:text-5xl lg:text-6xl text-balance">
-              Build your own Himalayan journey — step by step.
+              Build your own Himalayan journey - step by step.
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
               Choose destinations, dates, hotels, meals, photographer, guide and cabs.
@@ -235,14 +277,14 @@ export function TripPlannerPage() {
                 exit={{ opacity: 0, x: -24 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* STEP 0 — DESTINATIONS */}
+                {/* STEP 0 - DESTINATIONS */}
                 {currentStep === 0 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <div className="flex items-center justify-between">
                       <div>
                         <h2 className="font-display text-2xl font-bold">Pick your destinations</h2>
                         <p className="mt-1 text-sm text-muted-foreground">
-                          Choose one or many — we&apos;ll connect them by road, train or flight.
+                          Choose one or many - we&apos;ll connect them by road, train or flight.
                         </p>
                       </div>
                       <Badge variant="outline" className="gap-1.5">
@@ -297,7 +339,7 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 1 — DATES & PAX */}
+                {/* STEP 1 - DATES & PAX */}
                 {currentStep === 1 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <h2 className="font-display text-2xl font-bold">Dates & travellers</h2>
@@ -336,7 +378,7 @@ export function TripPlannerPage() {
 
                       <div className="sm:col-span-2">
                         <Label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          <Clock className="h-3.5 w-3.5" /> Duration — {trip.duration} days / {Math.max(0, trip.duration - 1)} nights
+                          <Clock className="h-3.5 w-3.5" /> Duration - {trip.duration} days / {Math.max(0, trip.duration - 1)} nights
                         </Label>
                         <input
                           type="range"
@@ -370,12 +412,12 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 2 — HOTELS */}
+                {/* STEP 2 - HOTELS */}
                 {currentStep === 2 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <h2 className="font-display text-2xl font-bold">Choose your hotel tier</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Same itinerary, different comfort levels. Mix and match — our team can split hotels across destinations.
+                      Same itinerary, different comfort levels. Mix and match - our team can split hotels across destinations.
                     </p>
 
                     <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -411,7 +453,7 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 3 — MEALS */}
+                {/* STEP 3 - MEALS */}
                 {currentStep === 3 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <h2 className="font-display text-2xl font-bold">Pick your meals</h2>
@@ -453,12 +495,12 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 4 — ADD-ONS */}
+                {/* STEP 4 - ADD-ONS */}
                 {currentStep === 4 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <h2 className="font-display text-2xl font-bold">Add experiences & services</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Photographer, guide, cabs, medical kit, trek equipment — pick what makes your trip sing.
+                      Photographer, guide, cabs, medical kit, trek equipment - pick what makes your trip sing.
                     </p>
 
                     <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -496,7 +538,7 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 5 — CONTACT */}
+                {/* STEP 5 - CONTACT */}
                 {currentStep === 5 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <h2 className="font-display text-2xl font-bold">Your contact details</h2>
@@ -547,14 +589,14 @@ export function TripPlannerPage() {
                   </Card>
                 )}
 
-                {/* STEP 6 — REVIEW */}
+                {/* STEP 6 - REVIEW */}
                 {currentStep === 6 && (
                   <Card className="p-6 ring-1 ring-border/40 sm:p-8">
                     <div className="flex items-center justify-between">
                       <div>
                         <h2 className="font-display text-2xl font-bold">Review your trip</h2>
                         <p className="mt-1 text-sm text-muted-foreground">
-                          Look good? Submit — we&apos;ll send a personalised quote within 30 minutes.
+                          Look good? Submit - we&apos;ll send a personalised quote within 30 minutes.
                         </p>
                       </div>
                       <Button variant="ghost" size="sm" className="gap-1" onClick={() => { trip.reset(); setStep(0) }}>
@@ -610,7 +652,7 @@ export function TripPlannerPage() {
                       </ReviewRow>
                       <ReviewRow icon={User} label="Contact">
                         <div className="text-sm">
-                          <div className="font-medium">{trip.contact.name || '—'}</div>
+                          <div className="font-medium">{trip.contact.name || '-'}</div>
                           <div className="text-muted-foreground">{trip.contact.email} · {trip.contact.phone}</div>
                         </div>
                       </ReviewRow>
@@ -656,14 +698,26 @@ export function TripPlannerPage() {
                   Continue <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button onClick={onSubmit} className="gap-1.5" size="lg">
-                  <Check className="h-4 w-4" /> Submit my trip
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={onSubmit} className="gap-1.5" size="lg">
+                    <Check className="h-4 w-4" /> Submit my trip
+                  </Button>
+                  <Button
+                    onClick={onDownloadPdf}
+                    disabled={pdfLoading}
+                    variant="outline"
+                    size="lg"
+                    className="gap-1.5"
+                  >
+                    {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                    Download PDF
+                  </Button>
+                </div>
               )}
             </div>
           </div>
 
-          {/* SIDEBAR — Live summary */}
+          {/* SIDEBAR - Live summary */}
           <div className="lg:col-span-1">
             <div className="sticky top-32 space-y-4">
               <Card className="overflow-hidden ring-1 ring-primary/30">
@@ -678,7 +732,7 @@ export function TripPlannerPage() {
                   <SummaryRow icon={Calendar} label="Start date" value={trip.startDate || 'Not set'} />
                   <SummaryRow icon={Clock} label="Duration" value={`${trip.duration}D / ${Math.max(0, trip.duration - 1)}N`} />
                   <SummaryRow icon={Users} label="Travellers" value={`${trip.pax} pax`} />
-                  <SummaryRow icon={Hotel} label="Hotel tier" value={hotelTiers.find((t) => t.id === trip.hotelTier)?.name || '—'} />
+                  <SummaryRow icon={Hotel} label="Hotel tier" value={hotelTiers.find((t) => t.id === trip.hotelTier)?.name || '-'} />
                   <SummaryRow icon={Utensils} label="Meals" value={`${trip.meals.length} selected`} />
                   <SummaryRow icon={Camera} label="Add-ons" value={`${trip.addOns.length} selected`} />
 
@@ -718,7 +772,7 @@ export function TripPlannerPage() {
                   <h3 className="text-sm font-semibold">Prefer to talk?</h3>
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Call us — we usually pick up within 30 seconds.
+                  Call us - we usually pick up within 30 seconds.
                 </p>
                 <a href="tel:+916006266072" className="mt-3 block">
                   <Button variant="outline" className="w-full justify-start gap-2 text-sm">
@@ -743,7 +797,7 @@ function useStepState() {
 function ShieldNote() {
   return (
     <span>
-      Your data is shared only with our trip-design team — never sold or used for marketing
+      Your data is shared only with our trip-design team - never sold or used for marketing
       outside Himalayan Freak. We typically respond within 30 minutes during business hours.
     </span>
   )

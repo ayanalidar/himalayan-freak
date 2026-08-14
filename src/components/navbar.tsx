@@ -48,6 +48,7 @@ const navItems: { id: PageId; label: string }[] = [
   { id: 'packages', label: 'Packages' },
   { id: 'tickets', label: 'Flights & Trains' },
   { id: 'trip-planner', label: 'Trip Planner' },
+  { id: 'group-booking', label: 'Groups' },
 ]
 
 export function Navbar() {

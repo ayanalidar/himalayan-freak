@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateMockWeather } from '@/lib/data'
 
-// Mock weather API — accepts lat/lon/elevation and returns a deterministic forecast
+// Mock weather API - accepts lat/lon/elevation and returns a deterministic forecast
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const lat = Number(searchParams.get('lat') || '34')

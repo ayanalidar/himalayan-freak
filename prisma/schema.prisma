@@ -1,4 +1,4 @@
-// Himalayan Freak — Prisma schema (extended)
+// Himalayan Freak - Prisma schema (extended)
 
 generator client {
   provider = "prisma-client-js"

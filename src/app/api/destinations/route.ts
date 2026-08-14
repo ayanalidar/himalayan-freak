@@ -9,7 +9,7 @@ export async function GET() {
   try {
     dbDestinations = await db.destination.findMany()
   } catch {
-    // DB might not have any rows yet — fall back to seed only
+    // DB might not have any rows yet - fall back to seed only
   }
 
   const dbSlugs = new Set(dbDestinations.map((d) => d.slug))

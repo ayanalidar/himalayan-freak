@@ -10,11 +10,13 @@ import { PackagesPage } from '@/components/pages/packages'
 import { PackageDetailPage } from '@/components/pages/package-detail'
 import { TripPlannerPage } from '@/components/planner/trip-planner'
 import { TicketsPage } from '@/components/tickets/tickets-page'
+import { GroupBookingPage } from '@/components/pages/group-booking'
 import { CrmPage } from '@/components/crm/crm-page'
 import { AdminDestinationsPage } from '@/components/admin/admin-destinations-page'
 import { DashboardPage } from '@/components/dashboard/dashboard-page'
 import { LoginPage } from '@/components/auth/login-page'
 import { SignupPage } from '@/components/auth/signup-page'
+import { ChatBot } from '@/components/chat/chat-bot'
 import { useApp } from '@/lib/store'
 
 export default function Home() {
@@ -36,11 +38,13 @@ export default function Home() {
         {page === 'package-detail' && <PackageDetailPage />}
         {page === 'trip-planner' && <TripPlannerPage />}
         {page === 'tickets' && <TicketsPage />}
+        {page === 'group-booking' && <GroupBookingPage />}
         {page === 'crm' && <CrmPage />}
         {page === 'admin-destinations' && <AdminDestinationsPage />}
         {page === 'dashboard' && <DashboardPage />}
       </main>
       <Footer />
+      <ChatBot />
     </div>
   )
 }

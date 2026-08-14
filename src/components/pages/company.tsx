@@ -51,7 +51,7 @@ const values = [
   {
     icon: Compass,
     title: 'Custom by Default',
-    desc: 'No two itineraries we ship are identical. We start every plan with a 30-minute call — your pace, your food, your budget.',
+    desc: 'No two itineraries we ship are identical. We start every plan with a 30-minute call - your pace, your food, your budget.',
   },
 ]
 
@@ -84,10 +84,10 @@ const team = [
 
 const milestones = [
   { year: '2018', text: 'Himalayan Freak founded as a one-person shop in Magam.' },
-  { year: '2020', text: 'Pivoted to fully custom itineraries during the pandemic — first 100% refund policy in Kashmir.' },
+  { year: '2020', text: 'Pivoted to fully custom itineraries during the pandemic - first 100% refund policy in Kashmir.' },
   { year: '2022', text: 'Crossed 1,000 travellers; expanded to Ladakh & Spiti circuits.' },
   { year: '2024', text: 'Launched 4×4 fleet for Zanskar & Khardung La; partnered with 40+ homestays.' },
-  { year: '2026', text: 'Launching the Custom Trip Planner — first AI-assisted itinerary builder in J&K.' },
+  { year: '2026', text: 'Launching the Custom Trip Planner - first AI-assisted itinerary builder in J&K.' },
 ]
 
 export function CompanyPage() {
@@ -120,7 +120,7 @@ export function CompanyPage() {
               We are not a call-centre travel agency. We are six people who live on the
               Srinagar–Gulmarg road, who have walked every meadow in Pahalgam and driven
               every pass in Ladakh. We plan trips the way we would plan them for our own
-              cousins — carefully, honestly, and with a deep love for the land.
+              cousins - carefully, honestly, and with a deep love for the land.
             </p>
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {stats.map((s, i) => (
@@ -158,11 +158,11 @@ export function CompanyPage() {
                   <h2 className="font-display text-2xl font-bold">Our Mission</h2>
                 </div>
                 <p className="mt-4 leading-relaxed text-muted-foreground">
-                  To make the entire Himalayan range — from Pahalgam to Spiti — accessible,
+                  To make the entire Himalayan range - from Pahalgam to Spiti - accessible,
                   safe and unforgettable for every kind of traveller, without ever
                   compromising the culture, ecology or economy of the regions we operate in.
-                  We exist to prove that locally-rooted, honest travel can compete with — and
-                  outshine — the largest online agencies.
+                  We exist to prove that locally-rooted, honest travel can compete with - and
+                  outshine - the largest online agencies.
                 </p>
                 <p className="mt-4 leading-relaxed text-muted-foreground">
                   Every itinerary we ship is one we would happily take ourselves. Every
@@ -193,7 +193,7 @@ export function CompanyPage() {
                 </p>
                 <p className="mt-4 leading-relaxed text-muted-foreground">
                   In ten years, we want to be the most trusted custom-Himalayan travel
-                  house in India — not the largest, but the most loved. We will earn it
+                  house in India - not the largest, but the most loved. We will earn it
                   one traveller at a time.
                 </p>
               </Card>
@@ -341,13 +341,13 @@ export function CompanyPage() {
               </h2>
               <p className="mt-4 text-muted-foreground">
                 Big online agencies sell you a package and disappear. We sell you a
-                relationship — with us, with the mountains, and with the people who live
+                relationship - with us, with the mountains, and with the people who live
                 in them. Here is what that looks like in practice.
               </p>
               <div className="mt-6 space-y-4">
                 {[
                   { title: 'Direct WhatsApp access to your trip manager', desc: 'No call-centre. The person planning your trip is the person on call at 4am if Zoji La opens or your flight is delayed.' },
-                  { title: 'Pre-trip onboarding call', desc: 'A 30-minute video call before you travel — route briefing, packing list, food preferences, accessibility needs.' },
+                  { title: 'Pre-trip onboarding call', desc: 'A 30-minute video call before you travel - route briefing, packing list, food preferences, accessibility needs.' },
                   { title: 'Locally-vetted partners only', desc: 'Every hotel, driver and homestay is someone we have personally worked with for years. No commission-led detours.' },
                   { title: '100% refund if we cancel', desc: 'If we cancel a trip for any reason (weather, route closure, force majeure), you get every rupee back within 7 days.' },
                 ].map((item) => (
@@ -384,10 +384,10 @@ export function CompanyPage() {
                 <div className="relative flex h-full flex-col justify-end p-6 text-white">
                   <Quote className="mb-3 h-8 w-8 text-amber-300" />
                   <p className="font-display text-xl font-medium leading-snug sm:text-2xl">
-                    "We do not sell trips. We invite people to walk the Himalaya with us —
+                    "We do not sell trips. We invite people to walk the Himalaya with us -
                     the way our families have for generations."
                   </p>
-                  <p className="mt-3 text-sm text-white/80">— Imtiyaz Ahmad, Founder</p>
+                  <p className="mt-3 text-sm text-white/80">- Imtiyaz Ahmad, Founder</p>
                 </div>
               </Card>
             </motion.div>
@@ -401,7 +401,7 @@ export function CompanyPage() {
           <div className="text-center">
             <Badge className="mb-3 bg-white/15 text-white backdrop-blur">Visit us in Magam</Badge>
             <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Come say hello at our office — or call ahead.
+              Come say hello at our office - or call ahead.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-white/80">
               We are 35 minutes from Srinagar airport, on the road to Gulmarg. Tea is always on.

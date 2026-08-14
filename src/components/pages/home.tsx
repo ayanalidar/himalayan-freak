@@ -87,7 +87,7 @@ export function HomePage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mt-6 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg text-balance"
           >
-            Bespoke journeys across Kashmir, Ladakh, Jammu, Himachal & Uttarakhand —
+            Bespoke journeys across Kashmir, Ladakh, Jammu, Himachal & Uttarakhand -
             designed around your pace, your stories and your budget. From a shikara at
             sunrise to Khardung La at dusk.
           </motion.p>
@@ -148,12 +148,12 @@ export function HomePage() {
         </motion.div>
       </section>
 
-      {/* WHY US — quick value strip */}
+      {/* WHY US - quick value strip */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
           {[
-            { icon: Compass, title: 'Truly Custom', desc: 'Every itinerary built from scratch — no cookie-cutter tours.' },
-            { icon: Mountain, title: 'Local Roots', desc: 'Born in Magam, Kashmir — on the road to Gulmarg every week.' },
+            { icon: Compass, title: 'Truly Custom', desc: 'Every itinerary built from scratch - no cookie-cutter tours.' },
+            { icon: Mountain, title: 'Local Roots', desc: 'Born in Magam, Kashmir - on the road to Gulmarg every week.' },
             { icon: Shield, title: 'Safe & Insured', desc: 'Verified drivers, vetted hotels, 24×7 on-trip support.' },
             { icon: Clock, title: '24×7 Support', desc: 'Direct line to your dedicated trip manager.' },
           ].map((item, i) => (
@@ -189,7 +189,7 @@ export function HomePage() {
                 Iconic stops across the Himalayan range
               </h2>
               <p className="mt-2 max-w-xl text-muted-foreground">
-                From the Dal Lake of Srinagar to the cold desert of Nubra — a handpicked
+                From the Dal Lake of Srinagar to the cold desert of Nubra - a handpicked
                 starting set. Click any card for an in-depth guide with live weather, attractions & how to reach.
               </p>
             </div>
@@ -206,7 +206,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* SPLIT — Story strip */}
+      {/* SPLIT - Story strip */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-amber-900/40 py-20 text-white">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <motion.div
@@ -220,7 +220,7 @@ export function HomePage() {
               A small Kashmiri team obsessed with the mountains.
             </h2>
             <p className="mt-4 text-white/80">
-              Himalayan Freak was founded by travellers who grew up hiking the Pir Panjal —
+              Himalayan Freak was founded by travellers who grew up hiking the Pir Panjal -
               we know which meadow blooms in May, which monastery serves the best butter tea,
               and which driver to call at 4am when Zoji La opens. Every itinerary we craft
               is one we would happily take ourselves.
@@ -229,7 +229,7 @@ export function HomePage() {
               {[
                 'Locally-based team in Magam, Kashmir',
                 'Direct relationships with hotels, drivers & homestays',
-                'Honest pricing — no commission-led detours',
+                'Honest pricing - no commission-led detours',
                 'Backup vehicles & medical kits on every remote route',
               ].map((line) => (
                 <li key={line} className="flex items-start gap-2.5 text-sm text-white/90">
@@ -278,7 +278,7 @@ export function HomePage() {
                 Tried-and-tested journeys, fully customisable
               </h2>
               <p className="mt-2 max-w-xl text-muted-foreground">
-                Start from a ready package — adjust hotels, duration, transport and add-ons
+                Start from a ready package - adjust hotels, duration, transport and add-ons
                 to make it truly yours.
               </p>
             </div>
@@ -307,10 +307,10 @@ export function HomePage() {
                   <Sparkles className="mr-1.5 h-3 w-3" /> Custom Trip Planner
                 </Badge>
                 <h2 className="font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-                  Build your own Himalayan journey — step by step.
+                  Build your own Himalayan journey - step by step.
                 </h2>
                 <p className="mt-4 text-white/90">
-                  Pick destinations, choose hotels, add meals, photographer, guide, cab —
+                  Pick destinations, choose hotels, add meals, photographer, guide, cab -
                   and get an instant estimate. No deposits. No pressure. Just the trip you want.
                 </p>
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -369,7 +369,7 @@ export function HomePage() {
                 name: 'Aarav & Isha',
                 city: 'Mumbai',
                 quote:
-                  'Himalayan Freak planned our Ladakh loop down to the last chai stop. The Pangong camp under stars was unreal — we cried actual tears. The custom trip planner made it all fit our budget.',
+                  'Himalayan Freak planned our Ladakh loop down to the last chai stop. The Pangong camp under stars was unreal - we cried actual tears. The custom trip planner made it all fit our budget.',
                 rating: 5,
                 trip: 'Ladakh Odyssey, 7D',
               },
@@ -377,7 +377,7 @@ export function HomePage() {
                 name: 'Rohit Sharma',
                 city: 'Bengaluru',
                 quote:
-                  'The Khardung La sunrise at -15°C, the Wazwan dinner on a houseboat, the photographer who captured every moment — this was the most stress-free travel we have ever done.',
+                  'The Khardung La sunrise at -15°C, the Wazwan dinner on a houseboat, the photographer who captured every moment - this was the most stress-free travel we have ever done.',
                 rating: 5,
                 trip: 'Kashmir Dreams, 5D',
               },
@@ -428,7 +428,7 @@ export function HomePage() {
             Ready to walk into the Himalaya?
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Call us, message us, or build your own itinerary — we usually respond within 30 minutes.
+            Call us, message us, or build your own itinerary - we usually respond within 30 minutes.
           </p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <a href="tel:+916006266072">

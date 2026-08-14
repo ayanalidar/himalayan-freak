@@ -269,7 +269,7 @@ export function DashboardPage() {
                 <EmptyState
                   icon={Sparkles}
                   title="No saved itineraries"
-                  desc="Use the Trip Planner to design a custom journey — your drafts will appear here."
+                  desc="Use the Trip Planner to design a custom journey - your drafts will appear here."
                   cta="Open Trip Planner"
                   onClick={() => navigate('trip-planner')}
                 />
@@ -317,7 +317,7 @@ export function DashboardPage() {
                 <EmptyState
                   icon={Heart}
                   title="Your wishlist is empty"
-                  desc="Save destinations you want to visit — they appear here for quick access."
+                  desc="Save destinations you want to visit - they appear here for quick access."
                   cta="Browse destinations"
                   onClick={() => navigate('destinations')}
                 />
@@ -442,7 +442,7 @@ export function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="font-display text-xl font-bold">Your profile</h2>
-                  <p className="text-sm text-muted-foreground">Update your details — we use these to plan better trips for you.</p>
+                  <p className="text-sm text-muted-foreground">Update your details - we use these to plan better trips for you.</p>
                 </div>
                 {!editingProfile && (
                   <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setEditingProfile(true)}>

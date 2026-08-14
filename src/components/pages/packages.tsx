@@ -89,7 +89,7 @@ export function PackagesPage() {
               Ready-made journeys, fully customisable
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
-              Start from a tried-and-tested itinerary — adjust hotels, duration, transport
+              Start from a tried-and-tested itinerary - adjust hotels, duration, transport
               and add-ons to make it truly yours. Every package is operated by our own team.
             </p>
           </motion.div>
@@ -201,7 +201,7 @@ export function PackagesPage() {
                   Don&apos;t see what you want? Build your own.
                 </h2>
                 <p className="mt-3 text-white/80">
-                  Pick destinations, hotels, meals, photographer, guide & cabs — get an
+                  Pick destinations, hotels, meals, photographer, guide & cabs - get an
                   instant estimate. No deposits, no pressure.
                 </p>
               </div>

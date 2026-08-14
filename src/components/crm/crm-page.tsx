@@ -284,7 +284,18 @@ export function CrmPage() {
           <div>
             <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">CRM Dashboard</h1>
             <p className="text-sm text-muted-foreground">
-              Manage leads, customers & bookings — all in one place.
+              Manage leads, customers & bookings - all in one place.
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Made & maintained by{' '}
+              <a
+                href="https://github.com/GuardianX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary hover:underline"
+              >
+                GuardianX
+              </a>
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -532,7 +543,7 @@ export function CrmPage() {
                                 </Badge>
                               </div>
                               <div className="text-xs text-muted-foreground truncate">
-                                {l.destination || '—'} · {l.pax} pax
+                                {l.destination || '-'} · {l.pax} pax
                               </div>
                             </div>
                             <div className="text-xs text-muted-foreground">
@@ -717,8 +728,8 @@ export function CrmPage() {
                       </TableCell>
                       <TableCell>
                         <div className="text-xs">
-                          <div>{c.city || '—'}</div>
-                          <div className="text-muted-foreground">{c.state || '—'}</div>
+                          <div>{c.city || '-'}</div>
+                          <div className="text-muted-foreground">{c.state || '-'}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -1507,7 +1518,7 @@ function TaskDialog({ open, onOpenChange, onCreated, leads }: { open: boolean; o
               <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
               <SelectContent>
                 {leads.slice(0, 50).map((l) => (
-                  <SelectItem key={l.id} value={l.id}>{l.name} — {l.destination || 'General'}</SelectItem>
+                  <SelectItem key={l.id} value={l.id}>{l.name} - {l.destination || 'General'}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -1716,7 +1727,7 @@ function CommDialog({ open, onOpenChange, onCreated, leads }: { open: boolean; o
                 <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
                 <SelectContent>
                   {leads.slice(0, 50).map((l) => (
-                    <SelectItem key={l.id} value={l.id}>{l.name} — {l.destination || 'General'}</SelectItem>
+                    <SelectItem key={l.id} value={l.id}>{l.name} - {l.destination || 'General'}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

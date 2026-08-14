@@ -139,9 +139,23 @@ export function Footer() {
             <a href="#" className="hover:text-primary">Terms</a>
             <a href="#" className="hover:text-primary">Cancellation</a>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Mountain className="h-3.5 w-3.5 text-primary" />
-            <span>Made in the Himalayas</span>
+          <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex items-center gap-1.5">
+              <Mountain className="h-3.5 w-3.5 text-primary" />
+              <span>Made in the Himalayas</span>
+            </div>
+            <span className="hidden sm:inline text-border">|</span>
+            <span className="font-medium">
+              Made &amp; maintained by{' '}
+              <a
+                href="https://github.com/GuardianX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary hover:underline"
+              >
+                GuardianX
+              </a>
+            </span>
           </div>
         </div>
       </div>

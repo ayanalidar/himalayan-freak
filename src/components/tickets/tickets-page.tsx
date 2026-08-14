@@ -161,7 +161,7 @@ export function TicketsPage() {
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
               Search real airline and railway routes to Srinagar, Leh, Jammu, Katra & beyond.
-              Compare fares, timings, classes — and add tickets to your trip plan in one click.
+              Compare fares, timings, classes - and add tickets to your trip plan in one click.
             </p>
           </motion.div>
         </div>
@@ -309,7 +309,7 @@ export function TicketsPage() {
             Want tickets + hotels + cabs in one package?
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Our team can bundle everything into one itinerary — often cheaper than booking separately.
+            Our team can bundle everything into one itinerary - often cheaper than booking separately.
           </p>
           <Button size="lg" className="mt-5 gap-2" onClick={() => navigate('trip-planner')}>
             <Sparkles className="h-4 w-4" /> Build a complete trip
@@ -328,7 +328,7 @@ function EmptyState() {
       </div>
       <h3 className="mt-4 font-display text-lg font-semibold">Search for flights & trains</h3>
       <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">
-        Pick your origin, destination and date above — we search real airline routes (IndiGo, Air India, SpiceJet, Vistara, Go First) and Indian Railways trains in real-time.
+        Pick your origin, destination and date above - we search real airline routes (IndiGo, Air India, SpiceJet, Vistara, Go First) and Indian Railways trains in real-time.
       </p>
     </Card>
   )
@@ -526,7 +526,7 @@ function TrainCard({ train, pax, onBook }: { train: Train; pax: number; onBook: 
             <div className="font-display text-2xl font-bold text-primary">
               {selectedClass
                 ? `₹${(selectedClass.price * pax).toLocaleString('en-IN')}`
-                : '—'}
+                : '-'}
             </div>
             <div className="text-xs text-muted-foreground">incl. all taxes</div>
             <Button

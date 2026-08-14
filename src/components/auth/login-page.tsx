@@ -204,6 +204,18 @@ export function LoginPage() {
             >
               ← Back to home
             </button>
+
+            <p className="mt-4 text-center text-[11px] text-white/40">
+              Made & maintained by{' '}
+              <a
+                href="https://github.com/GuardianX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-amber-400 hover:underline"
+              >
+                GuardianX
+              </a>
+            </p>
           </motion.div>
         </div>
       </div>

@@ -108,7 +108,7 @@ export function PackageDetailPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* LEFT — content */}
+          {/* LEFT - content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Highlights */}
             <Card className="p-6 ring-1 ring-border/40 sm:p-8">
@@ -208,7 +208,7 @@ export function PackageDetailPage() {
             </div>
           </div>
 
-          {/* RIGHT — customization & booking */}
+          {/* RIGHT - customization & booking */}
           <div className="lg:col-span-1">
             <div className="sticky top-32 space-y-5">
               {/* Customizer */}

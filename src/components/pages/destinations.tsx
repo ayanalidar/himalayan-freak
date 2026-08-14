@@ -89,7 +89,7 @@ export function DestinationsPage() {
               Every major stop across the Indian Himalaya
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
-              From the floating gardens of Srinagar to the sand dunes of Nubra — every
+              From the floating gardens of Srinagar to the sand dunes of Nubra - every
               destination card opens an in-depth guide with live weather, attractions,
               activities, best time to visit and how to reach.
             </p>
@@ -196,7 +196,7 @@ export function DestinationsPage() {
             Can&apos;t find your dream destination?
           </h2>
           <p className="mt-2 text-muted-foreground">
-            We cover the entire Himalayan range. Tell us where you want to go — we&apos;ll plan the route.
+            We cover the entire Himalayan range. Tell us where you want to go - we&apos;ll plan the route.
           </p>
           <Button size="lg" className="mt-5 gap-2" onClick={() => navigate('trip-planner')}>
             <Compass className="h-4 w-4" /> Build a custom itinerary

@@ -11,6 +11,7 @@ export type PageId =
   | 'package-detail'
   | 'trip-planner'
   | 'tickets'
+  | 'group-booking'
   | 'crm'
   | 'admin-destinations'
   | 'admin-packages'

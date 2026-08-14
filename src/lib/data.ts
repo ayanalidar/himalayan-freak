@@ -1,4 +1,4 @@
-// Shared types & data — Himalayan Freak
+// Shared types & data - Himalayan Freak
 import { db } from '@/lib/db'
 
 export type Region = 'Kashmir' | 'Jammu' | 'Ladakh' | 'Himachal' | 'Uttarakhand'
@@ -26,7 +26,7 @@ export interface DestinationData {
   featured: boolean
 }
 
-// Unsplash images — hand-picked for each Himalayan destination
+// Unsplash images - hand-picked for each Himalayan destination
 export const destinations: DestinationData[] = [
   {
     slug: 'srinagar',
@@ -52,7 +52,7 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Dal Lake — houseboats, shikara rides & floating gardens',
+      'Dal Lake - houseboats, shikara rides & floating gardens',
       'Mughal Gardens: Nishat, Shalimar & Chashm-e-Shahi',
       'Hazratbal Shrine & Jamia Masjid',
       'Old City bazaars: spice, saffron & papier-mâché',
@@ -81,7 +81,7 @@ export const destinations: DestinationData[] = [
     longitude: 74.3805,
     tagline: 'The Meadow of Flowers',
     description:
-      'Gulmarg is a cup-shaped alpine bowl perched at 2,650m in the Pir Panjal range, draped in wildflowers in summer and powder so deep in winter that skiers fly in from across the globe. The Gulmarg Gondola — one of the highest cable cars in the world — ferries visitors to 3,979m at Apharwat Peak, where the Himalayas fall away in a 360° white rampage. In spring the meadow explodes into a million daisies; in autumn the golf course (world’s highest) turns amber under a sky of crows. Gulmarg is adventure and stillness in equal measure.',
+      'Gulmarg is a cup-shaped alpine bowl perched at 2,650m in the Pir Panjal range, draped in wildflowers in summer and powder so deep in winter that skiers fly in from across the globe. The Gulmarg Gondola - one of the highest cable cars in the world - ferries visitors to 3,979m at Apharwat Peak, where the Himalayas fall away in a 360° white rampage. In spring the meadow explodes into a million daisies; in autumn the golf course (world’s highest) turns amber under a sky of crows. Gulmarg is adventure and stillness in equal measure.',
     bestTime: 'December to March for skiing; May to September for meadows & gondola',
     duration: '2–3 days',
     difficulty: 'Moderate',
@@ -95,7 +95,7 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1605649461784-ef21f4e6a8ec?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Gulmarg Gondola — Phase I (Kongdoori) & Phase II (Apharwat 3,979m)',
+      'Gulmarg Gondola - Phase I (Kongdoori) & Phase II (Apharwat 3,979m)',
       'Alpather Lake (frozen till June)',
       'Maharani Temple & St. Mary’s Church',
       'World’s highest 18-hole golf course',
@@ -167,7 +167,7 @@ export const destinations: DestinationData[] = [
     longitude: 75.2908,
     tagline: 'The Meadow of Gold',
     description:
-      'Sonmarg is the gateway to Zoji La and the last Kashmiri outpost before Ladakh. In summer the meadow glows butter-yellow with wildflowers, framed by the snowy sentinels of the Thajiwas glacier — a short pony ride away. The Sindh river fans out across the valley in braided silver ribbons, and the road east climbs through Baltal toward the holy cave of Amarnath. Sonmarg is also the starting point of the famous three-day trek to Vishansar, Krishansar and Gangabal twin lakes, a route so beautiful it is considered one of the finest alpine walks in Asia.',
+      'Sonmarg is the gateway to Zoji La and the last Kashmiri outpost before Ladakh. In summer the meadow glows butter-yellow with wildflowers, framed by the snowy sentinels of the Thajiwas glacier - a short pony ride away. The Sindh river fans out across the valley in braided silver ribbons, and the road east climbs through Baltal toward the holy cave of Amarnath. Sonmarg is also the starting point of the famous three-day trek to Vishansar, Krishansar and Gangabal twin lakes, a route so beautiful it is considered one of the finest alpine walks in Asia.',
     bestTime: 'May to October',
     duration: '2 days',
     difficulty: 'Moderate',
@@ -184,7 +184,7 @@ export const destinations: DestinationData[] = [
       'Thajiwas Glacier (pony ride / walk)',
       'Vishansar & Krishansar twin lakes trek',
       'Zoji La pass (gateway to Ladakh)',
-      'Baltal — Amarnath Yatra base',
+      'Baltal - Amarnath Yatra base',
       'Nilagrad River confluence',
       'Sindh River trout beats',
     ],
@@ -229,7 +229,7 @@ export const destinations: DestinationData[] = [
       'Thiksey & Hemis Monasteries',
       'Hall of Fame (Army museum)',
       'Stok Palace (Royal family residence)',
-      'Sangam — Zanskar & Indus confluence',
+      'Sangam - Zanskar & Indus confluence',
     ],
     activities: [
       'Two-day acclimatisation walk',
@@ -240,7 +240,7 @@ export const destinations: DestinationData[] = [
       'Stargazing at 3,500m',
     ],
     howToReach:
-      'Kushok Bakula Rimpochee Airport (IXL) — daily flights from Delhi, Srinagar & Jammu. By road: 434km Srinagar–Leh via Zoji La (Jun–Oct), or 474km Manali–Leh via Rohtang (Jun–Oct).',
+      'Kushok Bakula Rimpochee Airport (IXL) - daily flights from Delhi, Srinagar & Jammu. By road: 434km Srinagar–Leh via Zoji La (Jun–Oct), or 474km Manali–Leh via Rohtang (Jun–Oct).',
     featured: true,
   },
   {
@@ -253,7 +253,7 @@ export const destinations: DestinationData[] = [
     longitude: 77.55,
     tagline: 'Where Desert Meets Glacier',
     description:
-      'Crossing Khardung La — one of the highest motorable passes in the world at 5,359m — the road drops into the surreal Nubra Valley, where Bactrian camels wander cold desert dunes at Hunder, hot springs steam at Panamik, and the Shyok river bends like jade through Diskit. The 32m Maitreya Buddha at Diskit monastery keeps silent watch over the valley, and the double-humped camels (left behind from the ancient Silk Route) remain one of the most surreal sights in the Indian Himalaya.',
+      'Crossing Khardung La - one of the highest motorable passes in the world at 5,359m - the road drops into the surreal Nubra Valley, where Bactrian camels wander cold desert dunes at Hunder, hot springs steam at Panamik, and the Shyok river bends like jade through Diskit. The 32m Maitreya Buddha at Diskit monastery keeps silent watch over the valley, and the double-humped camels (left behind from the ancient Silk Route) remain one of the most surreal sights in the Indian Himalaya.',
     bestTime: 'June to September',
     duration: '2–3 days',
     difficulty: 'Challenging',
@@ -267,12 +267,12 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Khardung La — 5,359m motorable pass',
+      'Khardung La - 5,359m motorable pass',
       'Diskit Monastery & 32m Maitreya Buddha',
       'Hunder sand dunes & Bactrian camel rides',
       'Panamik hot springs',
       'Sumur Samstanling Gompa',
-      'Turtuk — last village on Silk Route',
+      'Turtuk - last village on Silk Route',
     ],
     activities: [
       'Camel safari on cold-desert dunes',
@@ -296,7 +296,7 @@ export const destinations: DestinationData[] = [
     longitude: 78.65,
     tagline: 'The Lake That Changes Colour',
     description:
-      'Pangong Tso stretches 134km across the Ladakhi plateau into Tibet, a sheet of impossible blue that turns emerald, then silver, then violet as the day moves. At 4,225m, the air is thin and silent save for the wind and the cry of Brahminy ducks. Spending a night beside the lake — in a tented camp at Spangmik or a homestay at Man, watching the Milky Way wheel overhead — is among the most transcendent experiences the Himalaya can offer.',
+      'Pangong Tso stretches 134km across the Ladakhi plateau into Tibet, a sheet of impossible blue that turns emerald, then silver, then violet as the day moves. At 4,225m, the air is thin and silent save for the wind and the cry of Brahminy ducks. Spending a night beside the lake - in a tented camp at Spangmik or a homestay at Man, watching the Milky Way wheel overhead - is among the most transcendent experiences the Himalaya can offer.',
     bestTime: 'June to September',
     duration: '1–2 days (often combined with Leh)',
     difficulty: 'Moderate',
@@ -310,7 +310,7 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Pangong Tso — 134km trans-boundary lake',
+      'Pangong Tso - 134km trans-boundary lake',
       'Spangmik village & lakeside camps',
       'Chang La pass (5,360m, on route)',
       'Man & Merak villages (offbeat)',
@@ -382,7 +382,7 @@ export const destinations: DestinationData[] = [
     longitude: 76.5,
     tagline: 'The Last Frontier of Tibetan Buddhism',
     description:
-      'Zanskar is a tri-armed valley system cut off from the world for seven months a year by snow. Its villages cling to riverbanks beneath 6,000m peaks; its monasteries — Karsha, Phugtal, Sani — hold treasures of Tibetan Buddhism. In winter, the fabled Chadar Trek walks the frozen Zanskar river through a canyon of turquoise ice. For the traveller who has seen everything, Zanskar still offers the rare feeling of arriving somewhere genuinely remote.',
+      'Zanskar is a tri-armed valley system cut off from the world for seven months a year by snow. Its villages cling to riverbanks beneath 6,000m peaks; its monasteries - Karsha, Phugtal, Sani - hold treasures of Tibetan Buddhism. In winter, the fabled Chadar Trek walks the frozen Zanskar river through a canyon of turquoise ice. For the traveller who has seen everything, Zanskar still offers the rare feeling of arriving somewhere genuinely remote.',
     bestTime: 'June to September (summer); January–February for Chadar trek',
     duration: '5–7 days',
     difficulty: 'Challenging',
@@ -396,7 +396,7 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Padum — Zanskar’s administrative capital',
+      'Padum - Zanskar’s administrative capital',
       'Phugtal Monastery (cliff-clinging cave gompa)',
       'Karsha & Sani monasteries',
       'Chadar Trek on frozen Zanskar river (Jan–Feb)',
@@ -453,7 +453,7 @@ export const destinations: DestinationData[] = [
       'Local shepherd lunches',
     ],
     howToReach:
-      '42km from Srinagar via Budgam (1.5 hours). Road is motorable till the meadow; no public transport — pre-book a cab.',
+      '42km from Srinagar via Budgam (1.5 hours). Road is motorable till the meadow; no public transport - pre-book a cab.',
     featured: false,
   },
   {
@@ -591,7 +591,7 @@ export const destinations: DestinationData[] = [
     longitude: 74.2833,
     tagline: 'The Ancient Highway of Emperors',
     description:
-      'The Mughal Road is the 84km historical route from Bafliaz (Poonch) to Shopian (Kashmir) over the Pir Panjal at Peer Ki Gali (3,490m). Built on the path Akbar once took to conquer Kashmir in 1586, it remains the least travelled route into the valley — a single-lane ribbon through dense pine forest, alpine meadow and remote Gujjar hamlets. The road closes from November to April, but in summer it offers a side of Kashmir that NH-44 cannot.',
+      'The Mughal Road is the 84km historical route from Bafliaz (Poonch) to Shopian (Kashmir) over the Pir Panjal at Peer Ki Gali (3,490m). Built on the path Akbar once took to conquer Kashmir in 1586, it remains the least travelled route into the valley - a single-lane ribbon through dense pine forest, alpine meadow and remote Gujjar hamlets. The road closes from November to April, but in summer it offers a side of Kashmir that NH-44 cannot.',
     bestTime: 'May to October',
     duration: '1–2 days (transit)',
     difficulty: 'Moderate',
@@ -607,7 +607,7 @@ export const destinations: DestinationData[] = [
     attractions: [
       'Peer Ki Gali pass (3,490m)',
       'Noor-e-Chamb waterfall (Aliabad)',
-      'Bufliaz — historic campsite',
+      'Bufliaz - historic campsite',
       'Shopian apple orchards',
       'Sukh Sarai ruins',
     ],
@@ -632,7 +632,7 @@ export const destinations: DestinationData[] = [
     longitude: 74.9496,
     tagline: 'The Holy Cave Shrine of Mata Rani',
     description:
-      'Perched at 5,300ft in the Trikuta hills, Vaishno Devi is one of the most revered Hindu shrines, drawing over 10 million pilgrims a year. The 13km uphill trek from Katra is itself a moving spiritual exercise — lit at night, lined with chants and chai stalls — and culminates in the holy cave where three pindis (rock formations) represent Maha Kali, Maha Lakshmi and Maha Saraswati. Helicopter, pony and palki options make the yatra accessible to all.',
+      'Perched at 5,300ft in the Trikuta hills, Vaishno Devi is one of the most revered Hindu shrines, drawing over 10 million pilgrims a year. The 13km uphill trek from Katra is itself a moving spiritual exercise - lit at night, lined with chants and chai stalls - and culminates in the holy cave where three pindis (rock formations) represent Maha Kali, Maha Lakshmi and Maha Saraswati. Helicopter, pony and palki options make the yatra accessible to all.',
     bestTime: 'March to October (avoid Jan–Feb snow)',
     duration: '1–2 days',
     difficulty: 'Moderate',
@@ -673,7 +673,7 @@ export const destinations: DestinationData[] = [
     longitude: 78.0349,
     tagline: 'The Middle Land Between India & Tibet',
     description:
-      'Spiti — "the middle land" — is a cold desert valley in Himachal Pradesh with Tibet to its east. Villages here sit at 4,000m, monasteries are 1,000 years old, and fossils lie scattered on the mountainsides. Tabo, Dhankar, Ki and the highest post office in the world at Hikkim are the highlights. Spiti is the gentler cousin of Ladakh: smaller in scale, easier to reach in summer, no less soul-stirring.',
+      'Spiti - "the middle land" - is a cold desert valley in Himachal Pradesh with Tibet to its east. Villages here sit at 4,000m, monasteries are 1,000 years old, and fossils lie scattered on the mountainsides. Tabo, Dhankar, Ki and the highest post office in the world at Hikkim are the highlights. Spiti is the gentler cousin of Ladakh: smaller in scale, easier to reach in summer, no less soul-stirring.',
     bestTime: 'May to October',
     duration: '6–8 days',
     difficulty: 'Moderate',
@@ -692,7 +692,7 @@ export const destinations: DestinationData[] = [
       'Chandratal Lake',
       'Dhankar Monastery & lake',
       'Pin Valley National Park',
-      'Hikkim — highest post office',
+      'Hikkim - highest post office',
     ],
     activities: [
       'Monastery circuit',
@@ -759,7 +759,7 @@ export const destinations: DestinationData[] = [
     longitude: 78.2676,
     tagline: 'Yoga Capital of the World',
     description:
-      'Rishikesh sits where the Ganges pours out of the Himalaya onto the plains, a town of ashrams, yoga shalas and the evening Ganga aarti at Triveni Ghat. The two suspension bridges — Lakshman Jhula and Ram Jhula — connect forested banks where the Beatles once studied with the Maharishi. Rishikesh is also India’s whitewater capital, with rapids from Grade I to IV, and the launch point for treks into the Garhwal Himalaya.',
+      'Rishikesh sits where the Ganges pours out of the Himalaya onto the plains, a town of ashrams, yoga shalas and the evening Ganga aarti at Triveni Ghat. The two suspension bridges - Lakshman Jhula and Ram Jhula - connect forested banks where the Beatles once studied with the Maharishi. Rishikesh is also India’s whitewater capital, with rapids from Grade I to IV, and the launch point for treks into the Garhwal Himalaya.',
     bestTime: 'September to April (avoid monsoon Jul–Aug)',
     duration: '2–3 days',
     difficulty: 'Easy',
@@ -773,7 +773,7 @@ export const destinations: DestinationData[] = [
       'https://images.unsplash.com/photo-1599661046827-dacde6976549?auto=format&fit=crop&w=1200&q=80',
     ],
     attractions: [
-      'Triveni Ghat — evening Ganga aarti',
+      'Triveni Ghat - evening Ganga aarti',
       'Lakshman Jhula & Ram Jhula bridges',
       'Beatles Ashram (Maharishi Mahesh Yogi)',
       'Neelkanth Mahadev temple',
@@ -814,13 +814,13 @@ export interface PackageData {
 export const packages: PackageData[] = [
   {
     slug: 'kashmir-dreams-5d',
-    title: 'Kashmir Dreams — 5 Days / 4 Nights',
+    title: 'Kashmir Dreams - 5 Days / 4 Nights',
     region: 'Kashmir',
     duration: 5,
     nights: 4,
     price: 18900,
     description:
-      'The classic Kashmir circuit — Srinagar’s houseboats, Gulmarg’s gondola, Pahalgam’s pine valleys and Sonmarg’s meadows. Hand-picked hotels, daily breakfast & dinner, and a dedicated SUV with driver-guide throughout.',
+      'The classic Kashmir circuit - Srinagar’s houseboats, Gulmarg’s gondola, Pahalgam’s pine valleys and Sonmarg’s meadows. Hand-picked hotels, daily breakfast & dinner, and a dedicated SUV with driver-guide throughout.',
     highlights: [
       'Night on a Dal Lake houseboat',
       'Gulmarg Gondola to 3,979m',
@@ -844,11 +844,11 @@ export const packages: PackageData[] = [
       'Anything not mentioned in inclusions',
     ],
     itinerary: [
-      { day: 1, title: 'Arrive Srinagar — Dal & Mughal Gardens', description: 'Airport pickup, check-in to houseboat, sunset shikara ride, welcome Wazwan dinner.' },
+      { day: 1, title: 'Arrive Srinagar - Dal & Mughal Gardens', description: 'Airport pickup, check-in to houseboat, sunset shikara ride, welcome Wazwan dinner.' },
       { day: 2, title: 'Srinagar → Gulmarg (52km)', description: 'Drive to Gulmarg, gondola to Apharwat, lunch at Kongdoori, evening return.' },
       { day: 3, title: 'Gulmarg → Pahalgam (140km)', description: 'Scenic drive via Anantnag, Betaab Valley, Lidder riverside dinner.' },
       { day: 4, title: 'Pahalgam → Sonmarg → Srinagar', description: 'Day trip to Sonmarg & Thajiwas glacier, evening return to Srinagar hotel.' },
-      { day: 5, title: 'Srinagar — Departure', description: 'Morning Mughal gardens, last-minute shopping, airport drop.' },
+      { day: 5, title: 'Srinagar - Departure', description: 'Morning Mughal gardens, last-minute shopping, airport drop.' },
     ],
     heroImage:
       'https://images.unsplash.com/photo-1605649461784-ef21f4e6a8ec?auto=format&fit=crop&w=1600&q=80',
@@ -857,7 +857,7 @@ export const packages: PackageData[] = [
   },
   {
     slug: 'ladakh-odyssey-7d',
-    title: 'Ladakh Odyssey — 7 Days / 6 Nights',
+    title: 'Ladakh Odyssey - 7 Days / 6 Nights',
     region: 'Ladakh',
     duration: 7,
     nights: 6,
@@ -865,11 +865,11 @@ export const packages: PackageData[] = [
     description:
       'The full Leh–Ladakh loop with acclimatisation, monasteries, Nubra’s sand dunes and the indescribable blue of Pangong. Includes inner-line permits, all meals, and a 4×4 with driver.',
     highlights: [
-      'Khardung La — 5,359m motorable pass',
+      'Khardung La - 5,359m motorable pass',
       'Bactrian camel ride at Hunder dunes',
       'Overnight at Pangong Tso',
       'Thiksey & Hemis monasteries',
-      'Sangam — Zanskar–Indus confluence',
+      'Sangam - Zanskar–Indus confluence',
     ],
     inclusions: [
       '6 nights stay in Leh, Nubra & Pangong',
@@ -887,13 +887,13 @@ export const packages: PackageData[] = [
       'Anything not mentioned in inclusions',
     ],
     itinerary: [
-      { day: 1, title: 'Arrive Leh — Acclimatisation', description: 'Airport pickup, light walk to market, evening at Shanti Stupa.' },
-      { day: 2, title: 'Leh local — Monasteries & Palace', description: 'Thiksey, Hemis, Shey, Stok Palace & Leh Palace.' },
+      { day: 1, title: 'Arrive Leh - Acclimatisation', description: 'Airport pickup, light walk to market, evening at Shanti Stupa.' },
+      { day: 2, title: 'Leh local - Monasteries & Palace', description: 'Thiksey, Hemis, Shey, Stok Palace & Leh Palace.' },
       { day: 3, title: 'Leh → Nubra via Khardung La', description: 'Cross 5,359m pass, reach Diskit, evening camel ride at Hunder.' },
       { day: 4, title: 'Nubra → Pangong via Shyok', description: 'Scenic Shyok route, arrive Pangong, lakeside camp overnight.' },
       { day: 5, title: 'Pangong → Leh via Chang La', description: 'Sunrise at lake, cross 5,360m Chang La, return to Leh.' },
       { day: 6, title: 'Leh → Sham Valley', description: 'Sangam confluence, Magnetic Hill, Pathar Sahib, Alchi monastery.' },
-      { day: 7, title: 'Leh — Departure', description: 'Morning shopping, airport drop.' },
+      { day: 7, title: 'Leh - Departure', description: 'Morning shopping, airport drop.' },
     ],
     heroImage:
       'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
@@ -902,13 +902,13 @@ export const packages: PackageData[] = [
   },
   {
     slug: 'great-lakes-trek-8d',
-    title: 'Kashmir Great Lakes Trek — 8 Days',
+    title: 'Kashmir Great Lakes Trek - 8 Days',
     region: 'Kashmir',
     duration: 8,
     nights: 7,
     price: 24500,
     description:
-      'Widely considered the most beautiful trek in the Indian Himalaya — seven alpine lakes across five mountain passes, meadows that roll on for kilometres, and wildflower blooms that have to be seen to be believed. Full camping crew, meals, and permits included.',
+      'Widely considered the most beautiful trek in the Indian Himalaya - seven alpine lakes across five mountain passes, meadows that roll on for kilometres, and wildflower blooms that have to be seen to be believed. Full camping crew, meals, and permits included.',
     highlights: [
       'Seven alpine lakes in 6 days of walking',
       'Gangabal & Nundkol twin lakes',
@@ -937,9 +937,9 @@ export const packages: PackageData[] = [
       { day: 3, title: 'Vishansar → Krishansar → Gadsar', description: 'Cross Krishansar Pass (4,150m), descend to Gadsar.' },
       { day: 4, title: 'Gadsar → Satsar Lakes', description: 'Cross Gadsar Pass (4,200m), camp at Satsar (7 lakes).' },
       { day: 5, title: 'Satsar → Gangabal Twin Lakes', description: 'Cross Zaj Pass, descend to Gangabal & Nundkol.' },
-      { day: 6, title: 'Gangabal — Rest day', description: 'Rest, fish, photograph Mount Harmukh sunrise/sunset.' },
+      { day: 6, title: 'Gangabal - Rest day', description: 'Rest, fish, photograph Mount Harmukh sunrise/sunset.' },
       { day: 7, title: 'Gangabal → Naranag → Srinagar', description: 'Steep descent to Naranag, drive to Srinagar.' },
-      { day: 8, title: 'Srinagar — Departure', description: 'Houseboat checkout, airport drop.' },
+      { day: 8, title: 'Srinagar - Departure', description: 'Houseboat checkout, airport drop.' },
     ],
     heroImage:
       'https://images.unsplash.com/photo-1626621341577-58edc5d25d4a?auto=format&fit=crop&w=1600&q=80',
@@ -948,7 +948,7 @@ export const packages: PackageData[] = [
   },
   {
     slug: 'vaishno-devi-patnitop-4d',
-    title: 'Vaishno Devi & Patnitop — 4 Days',
+    title: 'Vaishno Devi & Patnitop - 4 Days',
     region: 'Jammu',
     duration: 4,
     nights: 3,
@@ -974,7 +974,7 @@ export const packages: PackageData[] = [
       'Anything not mentioned in inclusions',
     ],
     itinerary: [
-      { day: 1, title: 'Arrive Katra — Begin Yatra', description: 'Railway/airport pickup, evening start of 13km yatra.' },
+      { day: 1, title: 'Arrive Katra - Begin Yatra', description: 'Railway/airport pickup, evening start of 13km yatra.' },
       { day: 2, title: 'Darshan & Return to Katra', description: 'Morning darshan, return to hotel, rest.' },
       { day: 3, title: 'Katra → Patnitop (80km)', description: 'Drive via Sudh Mahadev, evening at Nathatop.' },
       { day: 4, title: 'Patnitop → Jammu Drop', description: 'Morning in pine forest, drive to Jammu for departure.' },
@@ -986,17 +986,17 @@ export const packages: PackageData[] = [
   },
   {
     slug: 'spiti-circuit-9d',
-    title: 'Spiti Circuit — 9 Days / 8 Nights',
+    title: 'Spiti Circuit - 9 Days / 8 Nights',
     region: 'Himachal',
     duration: 9,
     nights: 8,
     price: 38500,
     description:
-      'The complete Spiti Valley loop from Manali — Chandratal Lake, Ki & Tabo monasteries, the highest villages in the world, and a night in a homestay at 4,300m. Off-the-grid, soul-shifting Himalayan travel.',
+      'The complete Spiti Valley loop from Manali - Chandratal Lake, Ki & Tabo monasteries, the highest villages in the world, and a night in a homestay at 4,300m. Off-the-grid, soul-shifting Himalayan travel.',
     highlights: [
       'Chandratal Lake under moonlight',
       'Ki & Tabo monasteries (1,000 years old)',
-      'Hikkim — highest post office in the world',
+      'Hikkim - highest post office in the world',
       'Pin Valley & Kibber village',
       'Homestay at Komik (4,300m)',
     ],
@@ -1022,7 +1022,7 @@ export const packages: PackageData[] = [
       { day: 6, title: 'Tabo → Dhankar → Pin Valley', description: 'Dhankar monastery & lake, drive into Pin Valley.' },
       { day: 7, title: 'Pin Valley → Nako', description: 'Drive to Nako, lake & village walk.' },
       { day: 8, title: 'Nako → Kalpa', description: 'Exit Spiti via Kinnaur, reach Kalpa (Sutlej valley).' },
-      { day: 9, title: 'Kalpa → Shimla — Drop', description: 'Drive through Kinnaur, drop at Shimla.' },
+      { day: 9, title: 'Kalpa → Shimla - Drop', description: 'Drive through Kinnaur, drop at Shimla.' },
     ],
     heroImage:
       'https://images.unsplash.com/photo-1593181629936-11c669d8d3f8?auto=format&fit=crop&w=1600&q=80',
@@ -1031,7 +1031,7 @@ export const packages: PackageData[] = [
   },
   {
     slug: 'amarnath-yatra-3d',
-    title: 'Amarnath Yatra (Baltal Route) — 3 Days',
+    title: 'Amarnath Yatra (Baltal Route) - 3 Days',
     region: 'Kashmir',
     duration: 3,
     nights: 2,
@@ -1127,7 +1127,7 @@ export function getPackageBySlug(slug: string): PackageData | undefined {
   return packages.find((p) => p.slug === slug)
 }
 
-// Mock weather generator — deterministic per destination & day
+// Mock weather generator - deterministic per destination & day
 export function generateMockWeather(lat: number, lon: number, elevation: number) {
   // Use elevation & coords as a deterministic seed
   const seed = Math.floor(Math.abs(lat * 100 + lon * 10 + elevation / 10))
