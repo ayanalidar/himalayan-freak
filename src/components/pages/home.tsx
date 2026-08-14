@@ -136,16 +136,6 @@ export function HomePage() {
             ))}
           </motion.div>
         </motion.div>
-
-        <motion.div style={{ opacity }} className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2">
-          <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-white/40 p-1.5">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="h-2 w-1 rounded-full bg-white"
-            />
-          </div>
-        </motion.div>
       </section>
 
       {/* WHY US - quick value strip */}
