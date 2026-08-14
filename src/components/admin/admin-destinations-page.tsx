@@ -43,6 +43,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
+import { useAuth } from '@/components/auth-provider'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { ImageUpload, MultiImageUpload } from '@/components/image-upload'
@@ -76,6 +77,7 @@ const difficulties = ['Easy', 'Moderate', 'Challenging']
 
 export function AdminDestinationsPage() {
   const { navigate } = useApp()
+  const { session, status } = useAuth()
   const [destinations, setDestinations] = useState<Destination[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -84,16 +86,23 @@ export function AdminDestinationsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
+    if (session?.user?.role !== 'admin') {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/destinations')
       // Admin endpoint may return only DB-edited ones; also fetch the full public list
       const [adminRes, pubRes] = await Promise.all([
         fetch('/api/admin/destinations'),
         fetch('/api/destinations'),
       ])
-      const adminList = await adminRes.json()
-      const pubList = await pubRes.json()
+      const safeJson = async (r: Response, fallback: any) => {
+        if (!r.ok) return fallback
+        try { return await r.json() } catch { return fallback }
+      }
+      const adminList = await safeJson(adminRes, [])
+      const pubList = await safeJson(pubRes, [])
       // Merge: prefer admin (DB) records, then add public ones not in DB
       const adminSlugs = new Set(adminList.map((d: Destination) => d.slug))
       const merged = [...adminList, ...pubList.filter((d: Destination) => !adminSlugs.has(d.slug))]
@@ -103,7 +112,17 @@ export function AdminDestinationsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [session])
+
+  // Auth guard - redirect non-admins
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      navigate('login')
+    } else if (status === 'authenticated' && (session?.user as any)?.role !== 'admin') {
+      toast.error('Admin access only')
+      navigate('dashboard')
+    }
+  }, [status, session, navigate])
 
   useEffect(() => {
     refresh()

@@ -21,14 +21,21 @@ import {
   Navigation,
   CheckCircle2,
   Phone,
+  Heart,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useApp } from '@/lib/store'
+import { useAuth } from '@/components/auth-provider'
 import { destinations as staticDestinations, generateMockWeather, type DestinationData } from '@/lib/data'
+import { toast } from 'sonner'
 
 export function DestinationDetailPage() {
   const { selectedDestinationSlug, navigate, openDestination } = useApp()
@@ -56,13 +63,107 @@ export function DestinationDetailPage() {
     setActiveImage(0)
   }
 
+  // Wishlist + reviews
+  const { session } = useAuth()
+  const [isSaved, setIsSaved] = useState(false)
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewTitle, setReviewTitle] = useState('')
+  const [reviewBody, setReviewBody] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [reviews, setReviews] = useState<any[]>([])
+  const [showReviewForm, setShowReviewForm] = useState(false)
+
+  // Check if destination is saved in wishlist
+  useEffect(() => {
+    if (!session || !d.id) {
+      setIsSaved(false)
+      return
+    }
+    fetch('/api/saved')
+      .then((r) => r.json())
+      .then((data: any[]) => {
+        setIsSaved(data.some((s) => s.destinationId === d.id))
+      })
+      .catch(() => {})
+  }, [session, d.id])
+
+  // Fetch approved reviews
+  useEffect(() => {
+    if (!d.id) return
+    fetch(`/api/reviews?destinationId=${d.id}&approved=true`)
+      .then((r) => r.json())
+      .then(setReviews)
+      .catch(() => setReviews([]))
+  }, [d.id])
+
+  const toggleSave = async () => {
+    if (!session) {
+      toast.info('Please sign in to save destinations', { description: 'Click Sign in to create a free account.' })
+      navigate('login')
+      return
+    }
+    if (!d.id) return
+    setSaveLoading(true)
+    try {
+      const res = await fetch('/api/saved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destinationId: d.id }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const data = await res.json()
+      setIsSaved(data.saved)
+      toast.success(data.saved ? 'Added to wishlist!' : 'Removed from wishlist')
+    } catch {
+      toast.error('Failed to update wishlist')
+    } finally {
+      setSaveLoading(false)
+    }
+  }
+
+  const submitReview = async () => {
+    if (!session) {
+      toast.info('Please sign in to write a review')
+      navigate('login')
+      return
+    }
+    if (!reviewTitle.trim() || !reviewBody.trim()) {
+      toast.error('Please add a title and review text')
+      return
+    }
+    setReviewSubmitting(true)
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destinationId: d.id,
+          rating: reviewRating,
+          title: reviewTitle,
+          body: reviewBody,
+        }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      toast.success('Review submitted! It will appear after admin approval.')
+      setReviewTitle('')
+      setReviewBody('')
+      setReviewRating(5)
+      setShowReviewForm(false)
+    } catch {
+      toast.error('Failed to submit review')
+    } finally {
+      setReviewSubmitting(false)
+    }
+  }
+
   const weather = useMemo(
     () => generateMockWeather(d.latitude, d.longitude, d.elevation),
     [d]
   )
 
   const related = useMemo(() => {
-    return destinations
+    return staticDestinations
       .filter((x) => x.region === d.region && x.slug !== d.slug)
       .slice(0, 3)
   }, [d])
@@ -73,10 +174,15 @@ export function DestinationDetailPage() {
       <section className="relative">
         <div className="relative h-[60vh] min-h-[420px] overflow-hidden">
           <img
-            src={d.gallery[activeImage]}
+            src={d.gallery[activeImage] || d.heroImage}
             alt={d.name}
             className="h-full w-full object-cover transition-opacity duration-500"
             fetchPriority="high"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.onerror = null
+              target.src = `https://placehold.co/1600x900/1e293b/f59e0b?text=${encodeURIComponent(d.name)}`
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
 
@@ -461,9 +567,132 @@ export function DestinationDetailPage() {
                 <Button className="mt-4 w-full gap-2" onClick={() => navigate('trip-planner')}>
                   <Compass className="h-4 w-4" /> Plan my trip
                 </Button>
+                <Button
+                  variant={isSaved ? 'default' : 'outline'}
+                  className="mt-2 w-full gap-2"
+                  onClick={toggleSave}
+                  disabled={saveLoading}
+                >
+                  {saveLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Heart className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+                  )}
+                  {isSaved ? 'Saved to wishlist' : 'Save to wishlist'}
+                </Button>
               </Card>
             </div>
           </div>
+        </div>
+
+        {/* Reviews section */}
+        <div className="mt-16">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-2xl font-bold">Traveller reviews</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowReviewForm(!showReviewForm)}
+              className="gap-1.5"
+            >
+              <Star className="h-3.5 w-3.5" /> Write a review
+            </Button>
+          </div>
+
+          {showReviewForm && (
+            <Card className="mt-5 p-5 ring-1 ring-border/40">
+              <h3 className="font-display text-base font-bold">Share your experience</h3>
+              <div className="mt-4 space-y-3">
+                <div>
+                  <Label className="text-xs">Rating</Label>
+                  <div className="mt-1.5 flex gap-1">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setReviewRating(n)}
+                        className="p-0.5"
+                        aria-label={`${n} stars`}
+                      >
+                        <Star
+                          className={`h-6 w-6 transition-colors ${
+                            n <= reviewRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground hover:text-amber-400'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="review-title" className="text-xs">Title</Label>
+                  <Input
+                    id="review-title"
+                    value={reviewTitle}
+                    onChange={(e) => setReviewTitle(e.target.value)}
+                    placeholder="Summarise your experience"
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="review-body" className="text-xs">Your review</Label>
+                  <Textarea
+                    id="review-body"
+                    rows={4}
+                    value={reviewBody}
+                    onChange={(e) => setReviewBody(e.target.value)}
+                    placeholder="Tell future travellers what you loved about this place..."
+                    className="mt-1.5"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={submitReview} disabled={reviewSubmitting} className="gap-1.5">
+                    {reviewSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    Submit review
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowReviewForm(false)}>Cancel</Button>
+                </div>
+                <p className="text-xs text-muted-foreground">Reviews are moderated and appear after admin approval.</p>
+              </div>
+            </Card>
+          )}
+
+          {reviews.length === 0 ? (
+            <Card className="mt-5 p-8 text-center ring-1 ring-border/40">
+              <Star className="mx-auto h-8 w-8 text-muted-foreground" />
+              <h3 className="mt-3 font-medium">No reviews yet</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Be the first to share your experience of {d.name}.</p>
+            </Card>
+          ) : (
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {reviews.map((r) => (
+                <Card key={r.id} className="p-5 ring-1 ring-border/40">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 font-display text-sm font-bold text-primary">
+                        {r.user?.name?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">{r.user?.name || 'Anonymous'}</div>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${i < r.rating ? 'fill-amber-400 text-amber-400' : 'text-muted'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                  <h4 className="mt-3 font-medium text-sm">{r.title}</h4>
+                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{r.body}</p>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Related */}

@@ -325,6 +325,18 @@ export function Navbar() {
                         <span className="flex items-center gap-2"><Mountain className="h-4 w-4" /> Edit Destinations</span>
                         <ChevronDown className="h-4 w-4 -rotate-90" />
                       </button>
+                      <button
+                        onClick={() => go('admin-packages')}
+                        className={cn(
+                          'flex items-center justify-between rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors gap-2',
+                          page === 'admin-packages'
+                            ? 'bg-amber-500/15 text-amber-400'
+                            : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        )}
+                      >
+                        <span className="flex items-center gap-2"><Plane className="h-4 w-4" /> Edit Packages</span>
+                        <ChevronDown className="h-4 w-4 -rotate-90" />
+                      </button>
                     </>
                   )}
                 </nav>

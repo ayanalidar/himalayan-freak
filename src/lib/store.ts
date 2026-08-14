@@ -18,6 +18,9 @@ export type PageId =
   | 'dashboard'
   | 'login'
   | 'signup'
+  | 'privacy'
+  | 'terms'
+  | 'cancellation'
 
 interface AppState {
   page: PageId

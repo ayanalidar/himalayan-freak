@@ -418,7 +418,7 @@ export function GroupBookingPage() {
                   { id: 'photographer', label: 'Professional photographer', icon: Sparkles },
                   { id: 'guide', label: 'Local guide at each destination', icon: MapPin },
                   { id: 'medical', label: 'Medical kit + oxygen + nurse', icon: Heart },
-                  { id: 'pickup', label: 'Airport pickup & drop (all pax)', icon: Plane },
+                  { id: 'pickupRequired', label: 'Airport pickup & drop (all pax)', icon: Plane },
                 ].map((opt) => {
                   const checked = (form as any)[opt.id]
                   return (

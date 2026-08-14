@@ -160,7 +160,7 @@ export function ImageUpload({
         className="hidden"
       />
       <p className="text-[10px] text-muted-foreground">
-        JPEG/PNG/WebP/GIF/AVIF up to 5 MB. On Vercel, configure Vercel Blob for persistent uploads.
+        Upload JPEG/PNG/WebP (max 5 MB) or paste any image URL below. On Vercel production, file uploads require Vercel Blob - URL paste always works.
       </p>
     </div>
   )

@@ -1,0 +1,1666 @@
+     1→// Shared types & data - Himalayan Freak
+     2→import { db } from '@/lib/db'
+     3→
+     4→export type Region = 'Kashmir' | 'Jammu' | 'Ladakh' | 'Himachal' | 'Uttarakhand'
+     5→
+     6→export interface DestinationData {
+     7→  id?: string
+     8→  slug: string
+     9→  name: string
+    10→  region: Region
+    11→  state: string
+    12→  elevation: number
+    13→  latitude: number
+    14→  longitude: number
+    15→  tagline: string
+    16→  description: string
+    17→  bestTime: string
+    18→  duration: string
+    19→  difficulty: string
+    20→  rating: number
+    21→  heroImage: string
+    22→  gallery: string[]
+    23→  attractions: string[]
+    24→  activities: string[]
+    25→  howToReach: string
+    26→  featured: boolean
+    27→}
+    28→
+    29→// Unsplash images - hand-picked for each Himalayan destination
+    30→export const destinations: DestinationData[] = [
+    31→  {
+    32→    slug: 'srinagar',
+    33→    name: 'Srinagar',
+    34→    region: 'Kashmir',
+    35→    state: 'Jammu & Kashmir',
+    36→    elevation: 1585,
+    37→    latitude: 34.0837,
+    38→    longitude: 74.7973,
+    39→    tagline: 'The Venice of the East',
+    40→    description:
+    41→      'Srinagar, the summer capital of Jammu & Kashmir, is a timeless mosaic of floating gardens, Mughal palaces, and chinar-lined boulevards. Gliding aboard a shikara across Dal Lake at dawn, watching the sun ignite the Pir Panjal range, is among the most soul-stirring experiences in Asia. The old city hums with saffron traders, papier-mâché artisans, and carpet weavers whose lineage runs back centuries. Whether you spend a night on a houseboat, sip kahwa in a Mughal garden, or lose yourself in the floating vegetable market, Srinagar lingers long after you leave.',
+    42→    bestTime: 'April to October (peak bloom: April–May for tulips, September for chinar)',
+    43→    duration: '3–4 days',
+    44→    difficulty: 'Easy',
+    45→    rating: 4.8,
+    46→    heroImage:
+    47→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+    48→    gallery: [
+    49→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+    50→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+    51→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+    52→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+    53→    ],
+    54→    attractions: [
+    55→      'Dal Lake - houseboats, shikara rides & floating gardens',
+    56→      'Mughal Gardens: Nishat, Shalimar & Chashm-e-Shahi',
+    57→      'Hazratbal Shrine & Jamia Masjid',
+    58→      'Old City bazaars: spice, saffron & papier-mâché',
+    59→      'Tulip Garden (Asia’s largest, blooms in April)',
+    60→      'Shankaracharya Temple atop Takht-e-Suleiman',
+    61→    ],
+    62→    activities: [
+    63→      'Sunrise shikara ride on Dal Lake',
+    64→      'Stay on a traditional houseboat',
+    65→      'Kahwa tasting with a Kashmiri family',
+    66→      'Saffron field visit at Pampore',
+    67→      'Pashmina & carpet weaving workshop',
+    68→      'Wazwan traditional feast',
+    69→    ],
+    70→    howToReach:
+    71→      'Srinagar International Airport (SXR) has direct flights from Delhi, Mumbai, Jammu and Leh. The 300km Jammu–Srinagar National Highway (NH-44) is scenic but slow. Train: nearest railhead is Udhampur (200km) / Banihal (130km, connected by USBRL).',
+    72→    featured: true,
+    73→  },
+    74→  {
+    75→    slug: 'gulmarg',
+    76→    name: 'Gulmarg',
+    77→    region: 'Kashmir',
+    78→    state: 'Jammu & Kashmir',
+    79→    elevation: 2650,
+    80→    latitude: 34.0484,
+    81→    longitude: 74.3805,
+    82→    tagline: 'The Meadow of Flowers',
+    83→    description:
+    84→      'Gulmarg is a cup-shaped alpine bowl perched at 2,650m in the Pir Panjal range, draped in wildflowers in summer and powder so deep in winter that skiers fly in from across the globe. The Gulmarg Gondola - one of the highest cable cars in the world - ferries visitors to 3,979m at Apharwat Peak, where the Himalayas fall away in a 360° white rampage. In spring the meadow explodes into a million daisies; in autumn the golf course (world’s highest) turns amber under a sky of crows. Gulmarg is adventure and stillness in equal measure.',
+    85→    bestTime: 'December to March for skiing; May to September for meadows & gondola',
+    86→    duration: '2–3 days',
+    87→    difficulty: 'Moderate',
+    88→    rating: 4.7,
+    89→    heroImage:
+    90→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80',
+    91→    gallery: [
+    92→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+    93→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+    94→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+    95→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+    96→    ],
+    97→    attractions: [
+    98→      'Gulmarg Gondola - Phase I (Kongdoori) & Phase II (Apharwat 3,979m)',
+    99→      'Alpather Lake (frozen till June)',
+   100→      'Maharani Temple & St. Mary’s Church',
+   101→      'World’s highest 18-hole golf course',
+   102→      'Strawberry Valley & Children’s Park',
+   103→      'Khilanmarg meadow (5km trek)',
+   104→    ],
+   105→    activities: [
+   106→      'Skiing & snowboarding (Dec–Mar, heli-skiing available)',
+   107→      'Snowshoe walks & gondola rides',
+   108→      'Mountain biking & ATV rides',
+   109→      'Trek to Alpather Lake',
+   110→      'Golf at 2,650m (May–Sep)',
+   111→      'Photography at sunset ridge',
+   112→    ],
+   113→    howToReach:
+   114→      '56km from Srinagar (1.5 hours by road). Tangmarg is the last motorable point in winter, from where ponies/snow-mobiles take you up. Airport: Srinagar (SXR).',
+   115→    featured: true,
+   116→  },
+   117→  {
+   118→    slug: 'pahalgam',
+   119→    name: 'Pahalgam',
+   120→    region: 'Kashmir',
+   121→    state: 'Jammu & Kashmir',
+   122→    elevation: 2200,
+   123→    latitude: 34.015,
+   124→    longitude: 75.33,
+   125→    tagline: 'The Valley of Shepherds',
+   126→    description:
+   127→      'Pahalgam sits where the Aru and Lidder rivers meet under a cathedral of deodar and pine. Once a humble shepherd village, it is now the launchpad for the Amarnath Yatra and a base for some of Kashmir’s most beautiful day-treks. The meadow of Betaab Valley (named after a Bollywood film shot here) and the alpine lakes of Tarsar and Marsar are day-dreams made real. Pahalgam is the rare place that satisfies both the contemplative traveller and the serious trekker.',
+   128→    bestTime: 'March to November (peak: May–June & September)',
+   129→    duration: '2–3 days',
+   130→    difficulty: 'Moderate',
+   131→    rating: 4.7,
+   132→    heroImage:
+   133→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1600&q=80',
+   134→    gallery: [
+   135→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+   136→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   137→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   138→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   139→    ],
+   140→    attractions: [
+   141→      'Betaab Valley & Aru Valley',
+   142→      'Chandanwari (Amarnath base camp)',
+   143→      'Lidder River trout fishing beats',
+   144→      'Tarsar-Marsar alpine lake trek',
+   145→      'Baisaran "Mini Switzerland" meadow',
+   146→      'Overa-Aru Wildlife Sanctuary',
+   147→    ],
+   148→    activities: [
+   149→      'Horse-riding to Baisaran',
+   150→      'River rafting on the Lidder',
+   151→      'Trout fishing (permit required)',
+   152→      'Day trek to Tulian Lake',
+   153→      'Golf at Pahalgam Club',
+   154→      'Shepherd village walks',
+   155→    ],
+   156→    howToReach:
+   157→      '95km from Srinagar (2.5 hours via Anantnag). Shared & private cabs available. Helicopter service for Amarnath Yatra operates from Baltal & Pahalgam.',
+   158→    featured: true,
+   159→  },
+   160→  {
+   161→    slug: 'sonmarg',
+   162→    name: 'Sonmarg',
+   163→    region: 'Kashmir',
+   164→    state: 'Jammu & Kashmir',
+   165→    elevation: 2800,
+   166→    latitude: 34.3005,
+   167→    longitude: 75.2908,
+   168→    tagline: 'The Meadow of Gold',
+   169→    description:
+   170→      'Sonmarg is the gateway to Zoji La and the last Kashmiri outpost before Ladakh. In summer the meadow glows butter-yellow with wildflowers, framed by the snowy sentinels of the Thajiwas glacier - a short pony ride away. The Sindh river fans out across the valley in braided silver ribbons, and the road east climbs through Baltal toward the holy cave of Amarnath. Sonmarg is also the starting point of the famous three-day trek to Vishansar, Krishansar and Gangabal twin lakes, a route so beautiful it is considered one of the finest alpine walks in Asia.',
+   171→    bestTime: 'May to October',
+   172→    duration: '2 days',
+   173→    difficulty: 'Moderate',
+   174→    rating: 4.6,
+   175→    heroImage:
+   176→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1600&q=80',
+   177→    gallery: [
+   178→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   179→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   180→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   181→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   182→    ],
+   183→    attractions: [
+   184→      'Thajiwas Glacier (pony ride / walk)',
+   185→      'Vishansar & Krishansar twin lakes trek',
+   186→      'Zoji La pass (gateway to Ladakh)',
+   187→      'Baltal - Amarnath Yatra base',
+   188→      'Nilagrad River confluence',
+   189→      'Sindh River trout beats',
+   190→    ],
+   191→    activities: [
+   192→      'Glacier walks & sled rides',
+   193→      'Trek to Gangabal Lake',
+   194→      'River rafting on the Sindh',
+   195→      'Fishing permits on the Sindh',
+   196→      'Photography at Zoji La sunrise',
+   197→      'Camping under the Milky Way',
+   198→    ],
+   199→    howToReach:
+   200→      '80km from Srinagar on the Srinagar–Leh highway (3 hours). Sonmarg is closed for through traffic from November to May due to snow at Zoji La.',
+   201→    featured: true,
+   202→  },
+   203→  {
+   204→    slug: 'leh',
+   205→    name: 'Leh',
+   206→    region: 'Ladakh',
+   207→    state: 'Ladakh',
+   208→    elevation: 3500,
+   209→    latitude: 34.1526,
+   210→    longitude: 77.577,
+   211→    tagline: 'The Kingdom of Mountain Passes',
+   212→    description:
+   213→      'Leh, the historical capital of the Ladakhi kingdom, is where the Indian plateau truly begins to feel Tibetan. Whitewashed stupas dot every ridge, prayer flags snap in the thin air, and 17th-century monasteries like Thiksey and Hemis cling like swallows’ nests to vertical cliffs. Acclimatise gently, sip butter tea in a Tibetan cafe, walk up to Leh Palace at sunset, and the desert mountains turn copper, then violet, then a deep silence that is the true face of the Himalaya.',
+   214→    bestTime: 'May to September (roads close Oct–Apr due to snow)',
+   215→    duration: '4–5 days',
+   216→    difficulty: 'Moderate',
+   217→    rating: 4.8,
+   218→    heroImage:
+   219→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   220→    gallery: [
+   221→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   222→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   223→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   224→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   225→    ],
+   226→    attractions: [
+   227→      'Leh Palace & Namgyal Tsemo Gompa',
+   228→      'Shanti Stupa (panoramic sunset)',
+   229→      'Thiksey & Hemis Monasteries',
+   230→      'Hall of Fame (Army museum)',
+   231→      'Stok Palace (Royal family residence)',
+   232→      'Sangam - Zanskar & Indus confluence',
+   233→    ],
+   234→    activities: [
+   235→      'Two-day acclimatisation walk',
+   236→      'Monastery circuit (Spituk, Thiksey, Hemis)',
+   237→      'River rafting on the Zanskar',
+   238→      'Mountain biking Khardung La',
+   239→      'Tibetan cooking class',
+   240→      'Stargazing at 3,500m',
+   241→    ],
+   242→    howToReach:
+   243→      'Kushok Bakula Rimpochee Airport (IXL) - daily flights from Delhi, Srinagar & Jammu. By road: 434km Srinagar–Leh via Zoji La (Jun–Oct), or 474km Manali–Leh via Rohtang (Jun–Oct).',
+   244→    featured: true,
+   245→  },
+   246→  {
+   247→    slug: 'nubra-valley',
+   248→    name: 'Nubra Valley',
+   249→    region: 'Ladakh',
+   250→    state: 'Ladakh',
+   251→    elevation: 3048,
+   252→    latitude: 34.65,
+   253→    longitude: 77.55,
+   254→    tagline: 'Where Desert Meets Glacier',
+   255→    description:
+   256→      'Crossing Khardung La - one of the highest motorable passes in the world at 5,359m - the road drops into the surreal Nubra Valley, where Bactrian camels wander cold desert dunes at Hunder, hot springs steam at Panamik, and the Shyok river bends like jade through Diskit. The 32m Maitreya Buddha at Diskit monastery keeps silent watch over the valley, and the double-humped camels (left behind from the ancient Silk Route) remain one of the most surreal sights in the Indian Himalaya.',
+   257→    bestTime: 'June to September',
+   258→    duration: '2–3 days',
+   259→    difficulty: 'Challenging',
+   260→    rating: 4.8,
+   261→    heroImage:
+   262→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1600&q=80',
+   263→    gallery: [
+   264→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   265→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   266→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   267→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   268→    ],
+   269→    attractions: [
+   270→      'Khardung La - 5,359m motorable pass',
+   271→      'Diskit Monastery & 32m Maitreya Buddha',
+   272→      'Hunder sand dunes & Bactrian camel rides',
+   273→      'Panamik hot springs',
+   274→      'Sumur Samstanling Gompa',
+   275→      'Turtuk - last village on Silk Route',
+   276→    ],
+   277→    activities: [
+   278→      'Camel safari on cold-desert dunes',
+   279→      'ATV rides in Hunder',
+   280→      'Monastery walks & butter tea',
+   281→      'Camping under star-drenched skies',
+   282→      'Village homestay at Turtuk (Balti culture)',
+   283→      'Sunrise at Khardung La',
+   284→    ],
+   285→    howToReach:
+   286→      '120km from Leh via Khardung La (4–5 hours). Inner Line Permit required for Indian nationals; Protected Area Permit for foreigners. Organised taxis & bikes available in Leh.',
+   287→    featured: true,
+   288→  },
+   289→  {
+   290→    slug: 'pangong-lake',
+   291→    name: 'Pangong Tso',
+   292→    region: 'Ladakh',
+   293→    state: 'Ladakh',
+   294→    elevation: 4225,
+   295→    latitude: 33.75,
+   296→    longitude: 78.65,
+   297→    tagline: 'The Lake That Changes Colour',
+   298→    description:
+   299→      'Pangong Tso stretches 134km across the Ladakhi plateau into Tibet, a sheet of impossible blue that turns emerald, then silver, then violet as the day moves. At 4,225m, the air is thin and silent save for the wind and the cry of Brahminy ducks. Spending a night beside the lake - in a tented camp at Spangmik or a homestay at Man, watching the Milky Way wheel overhead - is among the most transcendent experiences the Himalaya can offer.',
+   300→    bestTime: 'June to September',
+   301→    duration: '1–2 days (often combined with Leh)',
+   302→    difficulty: 'Moderate',
+   303→    rating: 4.9,
+   304→    heroImage:
+   305→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=80',
+   306→    gallery: [
+   307→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   308→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   309→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   310→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   311→    ],
+   312→    attractions: [
+   313→      'Pangong Tso - 134km trans-boundary lake',
+   314→      'Spangmik village & lakeside camps',
+   315→      'Chang La pass (5,360m, on route)',
+   316→      'Man & Merak villages (offbeat)',
+   317→      'Brahminy duck & migratory bird watching',
+   318→      'Lakeside sunset & sunrise',
+   319→    ],
+   320→    activities: [
+   321→      'Lakeside camping',
+   322→      'Stargazing & astrophotography',
+   323→      'Birdwatching (migratory birds)',
+   324→      'Mountain bike down from Chang La',
+   325→      'Village homestays at Man/Merak',
+   326→      'Photography at "3 Idiots" filming point',
+   327→    ],
+   328→    howToReach:
+   329→      '225km from Leh via Chang La (6–7 hours). Inner Line Permit required. Day-return possible but overnight recommended for sunrise/sunset.',
+   330→    featured: true,
+   331→  },
+   332→  {
+   333→    slug: 'kargil',
+   334→    name: 'Kargil',
+   335→    region: 'Ladakh',
+   336→    state: 'Ladakh',
+   337→    elevation: 2676,
+   338→    latitude: 34.5539,
+   339→    longitude: 76.1349,
+   340→    tagline: 'Gateway to Zanskar',
+   341→    description:
+   342→      'Kargil sits on the banks of the Suru river, the second-largest town of Ladakh and a strategic halt on the Srinagar–Leh highway. Once a busy Silk Route bazaar, today it is the gateway to the Suru & Zanskar valleys and a living memorial to the 1999 Kargil War. The town itself trades in apricots, pashmina and Balti culture; nearby Drass is the second-coldest inhabited place on Earth. Kargil rewards travellers willing to slow down and listen to its layered history.',
+   343→    bestTime: 'May to October',
+   344→    duration: '1–2 days',
+   345→    difficulty: 'Easy',
+   346→    rating: 4.4,
+   347→    heroImage:
+   348→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   349→    gallery: [
+   350→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   351→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   352→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   353→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   354→    ],
+   355→    attractions: [
+   356→      'Kargil War Memorial, Drass',
+   357→      'Tiger Hill & Tololing views',
+   358→      'Munshi Aziz Bhat Central Asian Museum',
+   359→      'Suru Valley & Parkachik glacier views',
+   360→      'Pensi La pass (gateway to Zanskar)',
+   361→      'Apricot orchards (Aug harvest)',
+   362→    ],
+   363→    activities: [
+   364→      'Visit to Drass War Memorial',
+   365→      'Apricot blossom tour (April)',
+   366→      'Suru Valley drive to Rangdum',
+   367→      'Museum tour of Silk Route artefacts',
+   368→      'Photography at Minam Meadow',
+   369→      'Trekking toward Zanskar',
+   370→    ],
+   371→    howToReach:
+   372→      '204km from Srinagar (5 hours) on the Srinagar–Leh highway. 230km from Leh. Kargil does not have an airport; nearest is Leh (IXL) or Srinagar (SXR).',
+   373→    featured: false,
+   374→  },
+   375→  {
+   376→    slug: 'zanskar',
+   377→    name: 'Zanskar Valley',
+   378→    region: 'Ladakh',
+   379→    state: 'Ladakh',
+   380→    elevation: 3650,
+   381→    latitude: 33.55,
+   382→    longitude: 76.5,
+   383→    tagline: 'The Last Frontier of Tibetan Buddhism',
+   384→    description:
+   385→      'Zanskar is a tri-armed valley system cut off from the world for seven months a year by snow. Its villages cling to riverbanks beneath 6,000m peaks; its monasteries - Karsha, Phugtal, Sani - hold treasures of Tibetan Buddhism. In winter, the fabled Chadar Trek walks the frozen Zanskar river through a canyon of turquoise ice. For the traveller who has seen everything, Zanskar still offers the rare feeling of arriving somewhere genuinely remote.',
+   386→    bestTime: 'June to September (summer); January–February for Chadar trek',
+   387→    duration: '5–7 days',
+   388→    difficulty: 'Challenging',
+   389→    rating: 4.8,
+   390→    heroImage:
+   391→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   392→    gallery: [
+   393→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   394→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   395→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   396→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   397→    ],
+   398→    attractions: [
+   399→      'Padum - Zanskar’s administrative capital',
+   400→      'Phugtal Monastery (cliff-clinging cave gompa)',
+   401→      'Karsha & Sani monasteries',
+   402→      'Chadar Trek on frozen Zanskar river (Jan–Feb)',
+   403→      'Pensi La & Drang-Drung glacier',
+   404→      'Zangla & Stongdey villages',
+   405→    ],
+   406→    activities: [
+   407→      'Chadar winter trek on frozen river',
+   408→      'Multi-day Darcha–Padum trek',
+   409→      'River rafting on the Zanskar',
+   410→      'Monastery circuit',
+   411→      'Homestays in traditional Zanskari homes',
+   412→      'Stargazing in zero light pollution',
+   413→    ],
+   414→    howToReach:
+   415→      '440km from Leh via Kargil and Suru Valley (2-day drive, July–Sept). Or on foot via the Darcha–Padum trek. Inner Line Permit required.',
+   416→    featured: false,
+   417→  },
+   418→  {
+   419→    slug: 'doodhpathri',
+   420→    name: 'Doodhpathri',
+   421→    region: 'Kashmir',
+   422→    state: 'Jammu & Kashmir',
+   423→    elevation: 2730,
+   424→    latitude: 33.8333,
+   425→    longitude: 74.7333,
+   426→    tagline: 'The Valley of Milk',
+   427→    description:
+   428→      'Doodhpathri is a crescent-shaped alpine meadow 40km from Srinagar, so named because the river that braids through it runs milky-white from glacial silt. The grass rolls uninterrupted to the foot of the Pir Panjal, ponies drift across the meadow, and the silence is broken only by the tinkle of sheep bells. Still off the main tourist map, Doodhpathri is the day-trip the locals take when they want to disappear into a meadow for an afternoon.',
+   429→    bestTime: 'May to September',
+   430→    duration: '1 day',
+   431→    difficulty: 'Easy',
+   432→    rating: 4.5,
+   433→    heroImage:
+   434→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1600&q=80',
+   435→    gallery: [
+   436→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+   437→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   438→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   439→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   440→    ],
+   441→    attractions: [
+   442→      'Undulating meadows of Sholga',
+   443→      'River bend at Tangnar',
+   444→      'Pony rides across the bowl',
+   445→      'Trek start point to Tosa Maidan',
+   446→      'Picnic groves along the Shaliganga',
+   447→    ],
+   448→    activities: [
+   449→      'Day picnic & photography',
+   450→      'Pony riding',
+   451→      'Short hikes to surrounding ridges',
+   452→      'River-side camping (with permit)',
+   453→      'Local shepherd lunches',
+   454→    ],
+   455→    howToReach:
+   456→      '42km from Srinagar via Budgam (1.5 hours). Road is motorable till the meadow; no public transport - pre-book a cab.',
+   457→    featured: false,
+   458→  },
+   459→  {
+   460→    slug: 'yusmarg',
+   461→    name: 'Yusmarg',
+   462→    region: 'Kashmir',
+   463→    state: 'Jammu & Kashmir',
+   464→    elevation: 2395,
+   465→    latitude: 33.8333,
+   466→    longitude: 74.65,
+   467→    tagline: 'The Meadow of Jesus',
+   468→    description:
+   469→      'Local legend holds that Jesus once walked these meadows; the name Yus (Jesus) Marg (meadow) is its echo. Whether or not the story holds, Yusmarg’s rolling grasslands ringed by dense pine forest are among the most serene in Kashmir. Day walks lead to Nilnag Lake and Sang-e-Safed, a cliff of white stone. With no mobile signal and no crowds, Yusmarg is the place to disconnect and remember what silence sounds like.',
+   470→    bestTime: 'April to October',
+   471→    duration: '1–2 days',
+   472→    difficulty: 'Easy',
+   473→    rating: 4.5,
+   474→    heroImage:
+   475→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   476→    gallery: [
+   477→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   478→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+   479→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   480→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   481→    ],
+   482→    attractions: [
+   483→      'Nilnag Lake (4km walk)',
+   484→      'Sang-e-Safed white cliff',
+   485→      'Charar-e-Sharif shrine (en route)',
+   486→      'Meadows of Pakherpora',
+   487→      'Pine forest trails',
+   488→    ],
+   489→    activities: [
+   490→      'Horse-riding across the meadow',
+   491→      'Walk to Nilnag Lake',
+   492→      'Forest trekking & birdwatching',
+   493→      'Shepherd interactions & cheese tasting',
+   494→      'Stargazing',
+   495→    ],
+   496→    howToReach:
+   497→      '47km from Srinagar (1.5 hours). Road motorable till Yusmarg; hire a cab from Srinagar or Charar-e-Sharif.',
+   498→    featured: false,
+   499→  },
+   500→  {
+   501→    slug: 'dachigam',
+   502→    name: 'Dachigam National Park',
+   503→    region: 'Kashmir',
+   504→    state: 'Jammu & Kashmir',
+   505→    elevation: 1700,
+   506→    latitude: 34.1167,
+   507→    longitude: 75.0333,
+   508→    tagline: 'Last Refuge of the Hangul',
+   509→    description:
+   510→      'Dachigam, just 22km from Srinagar, is the last stronghold of the Kashmir stag (Hangul), a critically endangered red deer subspecies. The park climbs from 1,700m to 4,400m across a steep gradient, sheltering leopard, Himalayan black bear, musk deer and over 150 bird species. November is rutting season, when stags bugle across the valley. Permits are required, but a guided walk inside Dachigam is one of the most rewarding wildlife experiences in the western Himalaya.',
+   511→    bestTime: 'April to October (best wildlife: September–November)',
+   512→    duration: '1 day',
+   513→    difficulty: 'Moderate',
+   514→    rating: 4.5,
+   515→    heroImage:
+   516→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=80',
+   517→    gallery: [
+   518→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   519→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   520→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   521→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   522→    ],
+   523→    attractions: [
+   524→      'Hangul (Kashmir stag) sightings',
+   525→      'Marsar Lake inside upper Dachigam',
+   526→      'Trout fish hatchery',
+   527→      'Leopard & black bear habitat',
+   528→      'Over 150 bird species',
+   529→    ],
+   530→    activities: [
+   531→      'Guided wildlife walks',
+   532→      'Birdwatching (Sep–Mar)',
+   533→      'Trek to Marsar Lake',
+   534→      'Photography hides',
+   535→      'Trout farm visit',
+   536→    ],
+   537→    howToReach:
+   538→      '22km from Srinagar (45 min). Entry permits via Wildlife Warden, Srinagar. Only guided walks allowed inside the park.',
+   539→    featured: false,
+   540→  },
+   541→  {
+   542→    slug: 'patnitop',
+   543→    name: 'Patnitop',
+   544→    region: 'Jammu',
+   545→    state: 'Jammu & Kashmir',
+   546→    elevation: 2024,
+   547→    latitude: 33.0833,
+   548→    longitude: 75.2833,
+   549→    tagline: 'Pine-Clad Plateau of Jammu',
+   550→    description:
+   551→      'Patnitop sits midway on the Jammu–Srinagar highway, a plateau of cedar and pine that breaks the long climb to Kashmir. In winter it is dusted with snow and buzzing with skiers; in summer it is a green lung, ideal for paragliding, pony rides and a hot lunch at Nathatop. Sanasar, 17km away, offers a quieter alpine bowl and a lake for rowing. Patnitop is the perfect one-night halt to stretch the legs on a long Kashmir drive.',
+   552→    bestTime: 'March to October (Dec–Feb for snow)',
+   553→    duration: '1–2 days',
+   554→    difficulty: 'Easy',
+   555→    rating: 4.3,
+   556→    heroImage:
+   557→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   558→    gallery: [
+   559→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   560→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   561→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   562→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   563→    ],
+   564→    attractions: [
+   565→      'Nathatop meadow & paragliding',
+   566→      'Sanasar lake & meadow',
+   567→      'Madhatop (snow in winter)',
+   568→      'Sudh Mahadev temple (en route)',
+   569→      'Naag Mandir (Patnitop)',
+   570→      'Kud ki Patissa (local sweet)',
+   571→    ],
+   572→    activities: [
+   573→      'Paragliding at Nathatop',
+   574→      'Snow skiing (Dec–Feb)',
+   575→      'Pony rides & nature walks',
+   576→      'Camping at Sanasar',
+   577→      'Tree-house stays',
+   578→      'Trek to Mantalai',
+   579→    ],
+   580→    howToReach:
+   581→      '112km from Jammu (3 hours) on NH-44, en route to Srinagar. Nearest railhead: Udhampur (45km). Nearest airport: Jammu (IXJ).',
+   582→    featured: false,
+   583→  },
+   584→  {
+   585→    slug: 'mughal-road',
+   586→    name: 'Mughal Road',
+   587→    region: 'Jammu',
+   588→    state: 'Jammu & Kashmir',
+   589→    elevation: 3500,
+   590→    latitude: 33.3667,
+   591→    longitude: 74.2833,
+   592→    tagline: 'The Ancient Highway of Emperors',
+   593→    description:
+   594→      'The Mughal Road is the 84km historical route from Bafliaz (Poonch) to Shopian (Kashmir) over the Pir Panjal at Peer Ki Gali (3,490m). Built on the path Akbar once took to conquer Kashmir in 1586, it remains the least travelled route into the valley - a single-lane ribbon through dense pine forest, alpine meadow and remote Gujjar hamlets. The road closes from November to April, but in summer it offers a side of Kashmir that NH-44 cannot.',
+   595→    bestTime: 'May to October',
+   596→    duration: '1–2 days (transit)',
+   597→    difficulty: 'Moderate',
+   598→    rating: 4.5,
+   599→    heroImage:
+   600→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1600&q=80',
+   601→    gallery: [
+   602→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   603→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   604→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   605→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   606→    ],
+   607→    attractions: [
+   608→      'Peer Ki Gali pass (3,490m)',
+   609→      'Noor-e-Chamb waterfall (Aliabad)',
+   610→      'Bufliaz - historic campsite',
+   611→      'Shopian apple orchards',
+   612→      'Sukh Sarai ruins',
+   613→    ],
+   614→    activities: [
+   615→      'Scenic driving & photography',
+   616→      'Trekking in Pir Panjal range',
+   617→      'Apple orchard visits (Sep)',
+   618→      'Gujjar village cultural stops',
+   619→      'Sunrise at Peer Ki Gali',
+   620→    ],
+   621→    howToReach:
+   622→      'Accessible from Jammu via Rajouri–Poonch–Bafliaz (210km, 6 hours) or from Srinagar via Shopian (60km, 2 hours). Open May–Oct only.',
+   623→    featured: false,
+   624→  },
+   625→  {
+   626→    slug: 'vaishno-devi',
+   627→    name: 'Vaishno Devi',
+   628→    region: 'Jammu',
+   629→    state: 'Jammu & Kashmir',
+   630→    elevation: 5300,
+   631→    latitude: 33.0312,
+   632→    longitude: 74.9496,
+   633→    tagline: 'The Holy Cave Shrine of Mata Rani',
+   634→    description:
+   635→      'Perched at 5,300ft in the Trikuta hills, Vaishno Devi is one of the most revered Hindu shrines, drawing over 10 million pilgrims a year. The 13km uphill trek from Katra is itself a moving spiritual exercise - lit at night, lined with chants and chai stalls - and culminates in the holy cave where three pindis (rock formations) represent Maha Kali, Maha Lakshmi and Maha Saraswati. Helicopter, pony and palki options make the yatra accessible to all.',
+   636→    bestTime: 'March to October (avoid Jan–Feb snow)',
+   637→    duration: '1–2 days',
+   638→    difficulty: 'Moderate',
+   639→    rating: 4.8,
+   640→    heroImage:
+   641→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+   642→    gallery: [
+   643→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   644→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   645→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   646→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   647→    ],
+   648→    attractions: [
+   649→      'Holy cave of Mata Vaishno Devi',
+   650→      'Ardh Kuwari cave',
+   651→      'Bhairon Temple (2km beyond cave)',
+   652→      'Ban Ganga & Charan Paduka',
+   653→      'Himkoti viewpoint',
+   654→    ],
+   655→    activities: [
+   656→      'Pilgrimage trek (13km)',
+   657→      'Helicopter ride (Katra → Sanjichhat)',
+   658→      'Pony / palki / e-rickshaw',
+   659→      'Evening aarti',
+   660→      'Photography at Himkoti',
+   661→    ],
+   662→    howToReach:
+   663→      'Katra base camp (50km from Jammu). Jammu Tawi is the nearest railway (rail extension to Katra now operational). Jammu Airport (IXJ) 55km from Katra. Yatra registration mandatory.',
+   664→    featured: true,
+   665→  },
+   666→  {
+   667→    slug: 'spiti',
+   668→    name: 'Spiti Valley',
+   669→    region: 'Himachal',
+   670→    state: 'Himachal Pradesh',
+   671→    elevation: 3800,
+   672→    latitude: 32.2464,
+   673→    longitude: 78.0349,
+   674→    tagline: 'The Middle Land Between India & Tibet',
+   675→    description:
+   676→      'Spiti - "the middle land" - is a cold desert valley in Himachal Pradesh with Tibet to its east. Villages here sit at 4,000m, monasteries are 1,000 years old, and fossils lie scattered on the mountainsides. Tabo, Dhankar, Ki and the highest post office in the world at Hikkim are the highlights. Spiti is the gentler cousin of Ladakh: smaller in scale, easier to reach in summer, no less soul-stirring.',
+   677→    bestTime: 'May to October',
+   678→    duration: '6–8 days',
+   679→    difficulty: 'Moderate',
+   680→    rating: 4.8,
+   681→    heroImage:
+   682→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1600&q=80',
+   683→    gallery: [
+   684→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   685→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   686→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   687→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   688→    ],
+   689→    attractions: [
+   690→      'Ki Monastery & Kibber village',
+   691→      'Tabo Monastery (1,000+ years old)',
+   692→      'Chandratal Lake',
+   693→      'Dhankar Monastery & lake',
+   694→      'Pin Valley National Park',
+   695→      'Hikkim - highest post office',
+   696→    ],
+   697→    activities: [
+   698→      'Monastery circuit',
+   699→      'Trek to Chandratal',
+   700→      'Fossil hunting at Langza',
+   701→      'Snow leopard tracking (winter)',
+   702→      'Village homestays',
+   703→      'Pin Valley wildlife tour',
+   704→    ],
+   705→    howToReach:
+   706→      'Two routes: via Shimla–Rampur–Tabo (open year-round), or via Manali–Rohtang–Kunzum (June–Oct). Nearest airport: Bhuntar (Kullu) 240km.',
+   707→    featured: false,
+   708→  },
+   709→  {
+   710→    slug: 'manali',
+   711→    name: 'Manali',
+   712→    region: 'Himachal',
+   713→    state: 'Himachal Pradesh',
+   714→    elevation: 2040,
+   715→    latitude: 32.2396,
+   716→    longitude: 77.1887,
+   717→    tagline: 'The Alpine Resort of the Beas Valley',
+   718→    description:
+   719→      'Manali sits where the Beas river tumbles out of the mountains on its way to the plains, framed by snow peaks and pine forest. Old Manali retains a hippie alpine village charm with wooden cafes and apple orchards; Solang Valley is the adventure hub for paragliding and skiing; and Rohtang La, just beyond, is the gateway to Lahaul, Spiti and Ladakh. Whether for honeymoon, adventure or transit, Manali is the magnet of the western Himalaya.',
+   720→    bestTime: 'March to June & October to February',
+   721→    duration: '3–4 days',
+   722→    difficulty: 'Easy',
+   723→    rating: 4.5,
+   724→    heroImage:
+   725→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80',
+   726→    gallery: [
+   727→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   728→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   729→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+   730→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   731→    ],
+   732→    attractions: [
+   733→      'Solang Valley & Rohtang La',
+   734→      'Hadimba Devi temple',
+   735→      'Manikaran Sahib (hot springs)',
+   736→      'Old Manali cafes & apple orchards',
+   737→      'Naggar Castle & Roerich Gallery',
+   738→      'Atal Tunnel (longest highway tunnel)',
+   739→    ],
+   740→    activities: [
+   741→      'Paragliding & zorbing at Solang',
+   742→      'Skiing at Solang / Rohtang',
+   743→      'River rafting on the Beas',
+   744→      'Trek to Hamta Pass',
+   745→      'Mountain biking to Rohtang',
+   746→      'Café hopping in Old Manali',
+   747→    ],
+   748→    howToReach:
+   749→      '540km from Delhi (12 hours). Nearest airport: Bhuntar (Kullu) 50km. Nearest broad-gauge rail: Chandigarh (310km) or Joginder Nagar narrow-gauge.',
+   750→    featured: false,
+   751→  },
+   752→  {
+   753→    slug: 'rishikesh',
+   754→    name: 'Rishikesh',
+   755→    region: 'Uttarakhand',
+   756→    state: 'Uttarakhand',
+   757→    elevation: 372,
+   758→    latitude: 30.0869,
+   759→    longitude: 78.2676,
+   760→    tagline: 'Yoga Capital of the World',
+   761→    description:
+   762→      'Rishikesh sits where the Ganges pours out of the Himalaya onto the plains, a town of ashrams, yoga shalas and the evening Ganga aarti at Triveni Ghat. The two suspension bridges - Lakshman Jhula and Ram Jhula - connect forested banks where the Beatles once studied with the Maharishi. Rishikesh is also India’s whitewater capital, with rapids from Grade I to IV, and the launch point for treks into the Garhwal Himalaya.',
+   763→    bestTime: 'September to April (avoid monsoon Jul–Aug)',
+   764→    duration: '2–3 days',
+   765→    difficulty: 'Easy',
+   766→    rating: 4.6,
+   767→    heroImage:
+   768→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=80',
+   769→    gallery: [
+   770→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   771→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+   772→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   773→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   774→    ],
+   775→    attractions: [
+   776→      'Triveni Ghat - evening Ganga aarti',
+   777→      'Lakshman Jhula & Ram Jhula bridges',
+   778→      'Beatles Ashram (Maharishi Mahesh Yogi)',
+   779→      'Neelkanth Mahadev temple',
+   780→      'Rajaji National Park',
+   781→      'Vashishta cave',
+   782→    ],
+   783→    activities: [
+   784→      'Whitewater rafting (Grade I–IV)',
+   785→      'Yoga & meditation retreats',
+   786→      'Bungee jumping at Mohan Chatti',
+   787→      'Trek to Kunjapuri temple (sunrise)',
+   788→      'Ayurvedic massage & Panchakarma',
+   789→      'Café culture in Tapovan',
+   790→    ],
+   791→    howToReach:
+   792→      '240km from Delhi (6 hours). Nearest airport: Dehradun (DED) 20km. Nearest rail: Rishikesh railway station / Haridwar 25km.',
+   793→    featured: false,
+   794→  },
+   795→  // === NEW KASHMIR DESTINATIONS ===
+   796→  {
+   797→    slug: 'drung',
+   798→    name: 'Drung Waterfall',
+   799→    region: 'Kashmir',
+   800→    state: 'Jammu & Kashmir',
+   801→    elevation: 1700,
+   802→    latitude: 34.0667,
+   803→    longitude: 74.4333,
+   804→    tagline: 'Kashmir\'s Only Frozen Waterfall',
+   805→    description:
+   806→      'Drung is a small village near Tangmarg, just 30km from Gulmarg, home to a stunning waterfall that freezes solid in winter and gushes crystal-clear all summer. A short walk from the road, the Drung waterfall has become one of Kashmir\'s most Instagrammed spots - especially in January when the entire cliff face turns into a wall of ice. The village itself is postcard-pretty, with wooden houses, terraced fields and a serene river running through it. Day trips combine perfectly with Gulmarg.',
+   807→    bestTime: 'October to March for frozen falls; April to June for gushing water',
+   808→    duration: '1 day',
+   809→    difficulty: 'Easy',
+   810→    rating: 4.6,
+   811→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+   812→    gallery: [
+   813→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   814→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+   815→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   816→    ],
+   817→    attractions: [
+   818→      'Frozen waterfall (Jan-Feb)',
+   819→      'Tangmarg market',
+   820→      'Ferozepur Nallah river',
+   821→      'Local Kashmiri village walk',
+   822→      'Apple orchards (Sep-Oct harvest)',
+   823→    ],
+   824→    activities: [
+   825→      'Photography of frozen falls',
+   826→      'Short nature walks',
+   827→      'Kahwa with local families',
+   828→      'Combined day trip with Gulmarg',
+   829→      'Apple picking in autumn',
+   830→    ],
+   831→    howToReach:
+   832→      '30km from Gulmarg, 50km from Srinagar (1.5 hours). Reach Tangmarg on the Srinagar-Gulmarg road, then 3km to Drung village. Cabs available from Srinagar and Gulmarg.',
+   833→    featured: false,
+   834→  },
+   835→  {
+   836→    slug: 'bangus-valley',
+   837→    name: 'Bangus Valley',
+   838→    region: 'Kashmir',
+   839→    state: 'Jammu & Kashmir',
+   840→    elevation: 3000,
+   841→    latitude: 34.5,
+   842→    longitude: 74.0,
+   843→    tagline: 'The Hidden Green Bowl of Kupwara',
+   844→    description:
+   845→      'Bangus is one of Kashmir\'s least-explored alpine meadows - a 5km-long green bowl ringed by pine forest in the Kupwara district, near the Line of Control. Two valleys - Bodh Bangus (big) and Lakut Bangus (small) - are home to wildflowers, Himalayan black bears, and nomadic Gujjar families in summer. The drive from Srinagar is long (4 hours) but the reward is absolute solitude in a meadow more pristine than Pahalgam or Yusmarg. Permits are required and best arranged through us.',
+   846→    bestTime: 'May to September (peak bloom: June-July)',
+   847→    duration: '2-3 days',
+   848→    difficulty: 'Challenging',
+   849→    rating: 4.7,
+   850→    heroImage: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1600&q=80',
+   851→    gallery: [
+   852→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+   853→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   854→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   855→    ],
+   856→    attractions: [
+   857→      'Bodh Bangus (large meadow)',
+   858→      'Lakut Bangus (small meadow)',
+   859→      'Gujjar nomad camps',
+   860→      'Himalayan black bear habitat',
+   861→      'Wildflower blooms (June-July)',
+   862→    ],
+   863→    activities: [
+   864→      'Multi-day camping trek',
+   865→      'Wildlife photography',
+   866→      'Gujjar cultural interaction',
+   867→      'Stargazing (zero light pollution)',
+   868→      'Forest walks',
+   869→    ],
+   870→    howToReach:
+   871→      '90km from Srinagar via Kupwara (4 hours). Inner Line Permit required - arranged by us. Last motorable point: Chowkibal, from where 6km trek to the meadow.',
+   872→    featured: false,
+   873→  },
+   874→  {
+   875→    slug: 'kokernag',
+   876→    name: 'Kokernag',
+   877→    region: 'Kashmir',
+   878→    state: 'Jammu & Kashmir',
+   879→    elevation: 2012,
+   880→    latitude: 33.5667,
+   881→    longitude: 75.2167,
+   882→    tagline: 'The Spring of Springs',
+   883→    description:
+   884→      'Kokernag is a garden town built around a fresh-water spring that splits into a network of channels shaped like the claws of a rooster (koker = rooster, nag = spring). The Botanical Garden here, with its manicured lawns, trout streams and rose beds, is one of the prettiest in Kashmir. The spring water is so clear that the bottom - 15m below - looks just an arm\'s length away. It\'s an ideal day stop between Srinagar and Sinthan Top.',
+   885→    bestTime: 'April to October',
+   886→    duration: '1 day',
+   887→    difficulty: 'Easy',
+   888→    rating: 4.4,
+   889→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+   890→    gallery: [
+   891→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   892→      'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80',
+   893→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   894→    ],
+   895→    attractions: [
+   896→      'Kokernag Spring (the "claw" channels)',
+   897→      'Botanical Garden',
+   898→      'Trout fish farm',
+   899→      'Rose garden',
+   900→      'Papashahi canal',
+   901→    ],
+   902→    activities: [
+   903→      'Garden walks & picnics',
+   904→      'Trout fishing (permit required)',
+   905→      'Photography',
+   906→      'Day trip from Srinagar or Pahalgam',
+   907→    ],
+   908→    howToReach:
+   909→      '75km from Srinagar (2 hours) via Anantnag. Cabs available. Often combined with Sinthan Top and Daksum as a day circuit.',
+   910→    featured: false,
+   911→  },
+   912→  {
+   913→    slug: 'verinag',
+   914→    name: 'Verinag',
+   915→    region: 'Kashmir',
+   916→    state: 'Jammu & Kashmir',
+   917→    elevation: 1850,
+   918→    latitude: 33.5333,
+   919→    longitude: 75.2500,
+   920→    tagline: 'The Source of the Jhelum',
+   921→    description:
+   922→      'Verinag is the source of the Jhelum (Vitasta) river, the lifeline of Kashmir. An octagonal Mughal spring pavilion, built by Jahangir in 1620, sits at the head of a deep blue spring from which the river emerges. Surrounded by chinar and pine, it is one of the most peaceful Mughal monuments in the valley - and the starting point of the historic Mughal Road to Poonch. Shah Jahan\'s garden here is smaller than Srinagar\'s but rarely crowded.',
+   923→    bestTime: 'April to October',
+   924→    duration: '1 day',
+   925→    difficulty: 'Easy',
+   926→    rating: 4.4,
+   927→    heroImage: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1600&q=80',
+   928→    gallery: [
+   929→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   930→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   931→    ],
+   932→    attractions: [
+   933→      'Octagonal spring pavilion (Jahangir, 1620)',
+   934→      'Source of the Jhelum river',
+   935→      'Mughal Garden',
+   936→      'Mughal Road starting point',
+   937→      'Shah Jahan\'s shade pavilions',
+   938→    ],
+   939→    activities: [
+   940→      'Walk around the spring',
+   941→      'Photography',
+   942→      'Begin the Mughal Road journey',
+   943→      'Picnic in Mughal garden',
+   944→    ],
+   945→    howToReach:
+   946→      '80km from Srinagar (2 hours) on the road to Anantnag. Often visited en route to Kokernag, Sinthan Top, or the Mughal Road.',
+   947→    featured: false,
+   948→  },
+   949→  {
+   950→    slug: 'achabal',
+   951→    name: 'Achabal',
+   952→    region: 'Kashmir',
+   953→    state: 'Jammu & Kashmir',
+   954→    elevation: 1700,
+   955→    latitude: 33.6833,
+   956→    longitude: 75.3000,
+   957→    tagline: 'Mughal Garden of the Princess',
+   958→    description:
+   959→      'Achabal is a Mughal garden built around a sacred spring, attributed to Nur Jahan (wife of Jahangir) and known locally as "the garden of the princess". A series of cascading chutes, fountains and cypress-lined terraces fall from the spring at the top of the garden down to a fish-filled tank below. It is the most atmospheric of the lesser-known Mughal gardens - quiet, shaded and beautifully preserved.',
+   960→    bestTime: 'April to October',
+   961→    duration: '1 day',
+   962→    difficulty: 'Easy',
+   963→    rating: 4.3,
+   964→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+   965→    gallery: [
+   966→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+   967→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+   968→    ],
+   969→    attractions: [
+   970→      'Mughal Garden (Nur Jahan era)',
+   971→      'Spring-fed cascades',
+   972→      'Fish pond (panoramic view)',
+   973→      'Cypress grove',
+   974→      'Saffron fields nearby',
+   975→    ],
+   976→    activities: [
+   977→      'Garden walks',
+   978→      'Photography',
+   979→      'Visit nearby Verinag & Kokernag',
+   980→      'Saffron field stops (autumn)',
+   981→    ],
+   982→    howToReach:
+   983→      '8km from Anantnag, 75km from Srinagar (2 hours). Best combined as a day circuit with Kokernag, Verinag and Sinthan Top.',
+   984→    featured: false,
+   985→  },
+   986→  {
+   987→    slug: 'daksum',
+   988→    name: 'Daksum',
+   989→    region: 'Kashmir',
+   990→    state: 'Jammu & Kashmir',
+   991→    elevation: 2450,
+   992→    latitude: 33.5833,
+   993→    longitude: 75.4167,
+   994→    tagline: 'Pine Forest Hideaway',
+   995→    description:
+   996→      'Daksum is a quiet forest settlement on the road to Sinthan Top, surrounded by dense pine forest and the rushing Bringi river famous for trout. Long favoured by British anglers in the 19th century, it remains a contemplative spot for those who want to be deep in the forest without climbing to alpine altitudes. Pony rides, forest walks and trout fishing are the main draws.',
+   997→    bestTime: 'May to October',
+   998→    duration: '1-2 days',
+   999→    difficulty: 'Easy',
+  1000→    rating: 4.5,
+  1001→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+  1002→    gallery: [
+  1003→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+  1004→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+  1005→    ],
+  1006→    attractions: [
+  1007→      'Bringi river (trout beats)',
+  1008→      'Dense pine forests',
+  1009→      'Pasture meadows',
+  1010→      'Old Forest Rest House',
+  1011→      'Pony trails',
+  1012→    ],
+  1013→    activities: [
+  1014→      'Trout fishing (permit required)',
+  1015→      'Forest trekking',
+  1016→      'Pony riding',
+  1017→      'Birdwatching',
+  1018→      'Camping',
+  1019→    ],
+  1020→    howToReach:
+  1021→      '85km from Srinagar (2.5 hours) via Anantnag. On the road to Sinthan Top. Combine with Kokernag and Verinag as a day circuit.',
+  1022→    featured: false,
+  1023→  },
+  1024→  {
+  1025→    slug: 'sinthan-top',
+  1026→    name: 'Sinthan Top',
+  1027→    region: 'Kashmir',
+  1028→    state: 'Jammu & Kashmir',
+  1029→    elevation: 3810,
+  1030→    latitude: 33.5667,
+  1031→    longitude: 75.5000,
+  1032→    tagline: 'The Snow Pass Above Anantnag',
+  1033→    description:
+  1034→      'Sinthan Top is a 3,810m high mountain pass on the Anantnag-Kishtwar road, often compared to Zoji La for its dramatic scenery. Snow remains on the pass until July, and the views stretch all the way to the Pir Panjal. Below the pass lie the alpine meadows of Margan Top and the turquoise Sinthan Lake. The road from Daksum climbs through dense forest to the treeless summit - one of the most spectacular drives in Kashmir.',
+  1035→    bestTime: 'June to October (closed Nov-May due to snow)',
+  1036→    duration: '1 day',
+  1037→    difficulty: 'Moderate',
+  1038→    rating: 4.7,
+  1039→    heroImage: 'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+  1040→    gallery: [
+  1041→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+  1042→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+  1043→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+  1044→    ],
+  1045→    attractions: [
+  1046→      'Sinthan Top pass (3,810m)',
+  1047→      'Sinthan Lake (alpine, turquoise)',
+  1048→      'Margan Top meadow',
+  1049→      'Snow walls (June)',
+  1050→      'Kishtwar road views',
+  1051→    ],
+  1052→    activities: [
+  1053→      'Snow photography',
+  1054→      'Short walks at the pass',
+  1055→      'Day trip from Srinagar or Daksum',
+  1056→      'Drive through alpine meadow',
+  1057→    ],
+  1058→    howToReach:
+  1059→      '100km from Srinagar (3 hours) via Anantnag and Daksum. Road closes November-May due to snow. Permit sometimes required - check with us.',
+  1060→    featured: false,
+  1061→  },
+  1062→  {
+  1063→    slug: 'tosa-maidan',
+  1064→    name: 'Tosa Maidan',
+  1065→    region: 'Kashmir',
+  1066→    state: 'Jammu & Kashmir',
+  1067→    elevation: 3100,
+  1068→    latitude: 33.85,
+  1069→    longitude: 74.65,
+  1070→    tagline: 'The Largest Meadow of Kashmir',
+  1071→    description:
+  1072→      'Tosa Maidan is a vast alpine meadow - the largest in Kashmir - located in the Pir Panjal range near Yusmarg. Until 2013 it was an artillery firing range; now it has been opened for tourism and is one of the most untouched meadows in the valley. Day walks lead to lakes and shepherd camps. For travellers who have already seen Pahalgam and Sonmarg, Tosa Maidan is the next-level meadow experience.',
+  1073→    bestTime: 'May to September',
+  1074→    duration: '1-2 days',
+  1075→    difficulty: 'Moderate',
+  1076→    rating: 4.7,
+  1077→    heroImage: 'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+  1078→    gallery: [
+  1079→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+  1080→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+  1081→    ],
+  1082→    attractions: [
+  1083→      'Vast alpine meadow (3km x 1.5km)',
+  1084→      'Sukh Sarai lake (4km walk)',
+  1085→      'Pir Panjal peaks',
+  1086→      'Shepherd camps (Bakarwals)',
+  1087→      'Nilnag Lake nearby',
+  1088→    ],
+  1089→    activities: [
+  1090→      'Meadow trekking',
+  1091→      'Pony rides',
+  1092→      'Camping',
+  1093→      'Shepherd culture interaction',
+  1094→      'Photography',
+  1095→    ],
+  1096→    howToReach:
+  1097→      '50km from Srinagar (2 hours) via Budgam and Khag. Best combined with Yusmarg as a 2-day trip. Inner Line Permit sometimes required - check with us.',
+  1098→    featured: false,
+  1099→  },
+  1100→  {
+  1101→    slug: 'lolab-valley',
+  1102→    name: 'Lolab Valley',
+  1103→    region: 'Kashmir',
+  1104→    state: 'Jammu & Kashmir',
+  1105→    elevation: 1900,
+  1106→    latitude: 34.55,
+  1107→    longitude: 74.35,
+  1108→    tagline: 'The Valley of Love & Legends',
+  1109→    description:
+  1110→      'Lolab (locally "Lulab", meaning the valley of love) is a fertile bowl in Kupwara district, dotted with rice paddies, apple orchards and freshwater springs. It is mentioned in the Rajatarangini, Kashmir\'s 12th-century chronicle, and is said to be the home of the legendary queen Lolla. The valley has three sub-valleys - Kalaroos, Sogam and Warnow - each with its own spring and charm. Far off the standard tourist map, Lolab rewards travellers with the slowest, most authentic Kashmiri rural experience available.',
+  1111→    bestTime: 'April to October',
+  1112→    duration: '2-3 days',
+  1113→    difficulty: 'Moderate',
+  1114→    rating: 4.6,
+  1115→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+  1116→    gallery: [
+  1117→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+  1118→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80',
+  1119→    ],
+  1120→    attractions: [
+  1121→      'Lolab spring (Satu Sir)',
+  1122→      'Kalaroos caves (mythological)',
+  1123→      'Sogam meadow',
+  1124→      'Warnow river',
+  1125→      'Bakarwal nomad camps in summer',
+  1126→    ],
+  1127→    activities: [
+  1128→      'Village walks',
+  1129→      'Apple orchard visits (Sep)',
+  1130→      'Spring visits',
+  1131→      'River-side picnics',
+  1132→      'Heritage & legends tour',
+  1133→    ],
+  1134→    howToReach:
+  1135→      '120km from Srinagar (4 hours) via Kupwara. Cabs available but limited. Best arranged through us with an overnight in Kupwara.',
+  1136→    featured: false,
+  1137→  },
+  1138→  {
+  1139→    slug: 'gurez',
+  1140→    name: 'Gurez Valley',
+  1141→    region: 'Kashmir',
+  1142→    state: 'Jammu & Kashmir',
+  1143→    elevation: 2440,
+  1144→    latitude: 34.5833,
+  1145→    longitude: 75.1167,
+  1146→    tagline: 'The Last Village Before the Line of Control',
+  1147→    description:
+  1148→      'Gurez is a remote trans-Himalayan valley north of Bandipora, on the road toward the Line of Control and the ancient Silk Route to Gilgit. Habited by the Dard-Shina people who speak a unique language and have their own folklore, Gurez is one of the most culturally distinct regions of Kashmir. The road in - over the Razdan Pass at 3,300m - is itself a destination. Below lies the turquoise Kishanganga river, alpine meadows at Tilel, and the famously welcoming Dard-Shina villages.',
+  1149→    bestTime: 'June to September',
+  1150→    duration: '4-5 days',
+  1151→    difficulty: 'Challenging',
+  1152→    rating: 4.8,
+  1153→    heroImage: 'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+  1154→    gallery: [
+  1155→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1200&q=80',
+  1156→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1200&q=80',
+  1157→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+  1158→    ],
+  1159→    attractions: [
+  1160→      'Razdan Pass (3,300m)',
+  1161→      'Tilel Valley (alpine meadows)',
+  1162→      'Kishanganga river',
+  1163→      'Dard-Shina villages (Dawar, Tilel, Chorwan)',
+  1164→      'Habba Khatoon peak (named after the poetess)',
+  1165→    ],
+  1166→    activities: [
+  1167→      'Dard-Shina cultural immersion',
+  1168→      'Multi-day jeep safari',
+  1169→      'River rafting (Kishanganga)',
+  1170→      'Trek to Tilel meadow',
+  1171→      'Stargazing',
+  1172→    ],
+  1173→    howToReach:
+  1174→      '150km from Srinagar (5-6 hours) via Bandipora and Razdan Pass. Road open June-September only. Inner Line Permit required - arranged by us.',
+  1175→    featured: false,
+  1176→  },
+  1177→  {
+  1178→    slug: 'araku-gulmarg-backcountry',
+  1179→    name: 'Khilanmarg',
+  1180→    region: 'Kashmir',
+  1181→    state: 'Jammu & Kashmir',
+  1182→    elevation: 3050,
+  1183→    latitude: 34.05,
+  1184→    longitude: 74.42,
+  1185→    tagline: 'The Meadow Above Gulmarg',
+  1186→    description:
+  1187→      'Khilanmarg is a small alpine meadow 5km above Gulmarg at 3,050m, offering unobstructed views of the twin peaks of Nun Kun and the Affarwat massif. In spring (April-May) the meadow blooms with daisies, in summer it is a green bowl dotted with ponies, and in winter it is a powdery ski run accessible by gondola. Khilanmarg is best as a half-day extension to Gulmarg itself - perfect for photography, picnics, and a moment of silence away from Gulmarg\'s crowds.',
+  1188→    bestTime: 'April to October (peak bloom April-May)',
+  1189→    duration: '1 day',
+  1190→    difficulty: 'Easy',
+  1191→    rating: 4.5,
+  1192→    heroImage: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80',
+  1193→    gallery: [
+  1194→      'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+  1195→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+  1196→    ],
+  1197→    attractions: [
+  1198→      'Alpine meadow at 3,050m',
+  1199→      'Panoramic Himalayan views',
+  1200→      'Nun Kun peak visibility',
+  1201→      'Apple orchards en route',
+  1202→      'Gondola mid-station Kongdoori',
+  1203→    ],
+  1204→    activities: [
+  1205→      'Pony ride from Gulmarg (5km)',
+  1206→      'Short trek',
+  1207→      'Photography',
+  1208→      'Picnic',
+  1209→      'Ski-touring in winter',
+  1210→    ],
+  1211→    howToReach:
+  1212→      '5km from Gulmarg. Pony ride or walk. Sometimes accessible via gondola mid-station. Day trip from Gulmarg hotels.',
+  1213→    featured: false,
+  1214→  },
+  1215→  {
+  1216→    slug: 'chatpal',
+  1217→    name: 'Chatpal',
+  1218→    region: 'Kashmir',
+  1219→    state: 'Jammu & Kashmir',
+  1220→    elevation: 2134,
+  1221→    latitude: 33.7,
+  1222→    longitude: 75.3667,
+  1223→    tagline: 'The Undiscovered Pahalgam',
+  1224→    description:
+  1225→      'Chatpal is a tiny meadow-and-pine village in the Anantnag district, 25km beyond Pahalgam on the road to Sinthan Top. Often called "the Pahalgam of the 1960s", it sees barely a dozen travellers a week. The meadow is ringed by pine and deodar forest, with the Bringi river running through and trout in its streams. There is a single Forest Rest House, a couple of homestays, and that\'s it. For travellers who want absolute silence, this is it.',
+  1226→    bestTime: 'May to October',
+  1227→    duration: '1-2 days',
+  1228→    difficulty: 'Easy',
+  1229→    rating: 4.6,
+  1230→    heroImage: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1600&q=80',
+  1231→    gallery: [
+  1232→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80',
+  1233→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+  1234→    ],
+  1235→    attractions: [
+  1236→      'Untouched pine meadow',
+  1237→      'Bringi river trout beats',
+  1238→      'Forest Rest House (colonial era)',
+  1239→      'Sinthan Top road views',
+  1240→      'Mountain silence',
+  1241→    ],
+  1242→    activities: [
+  1243→      'Forest walks',
+  1244→      'Trout fishing',
+  1245→      'Picnics',
+  1246→      'Forest rest house overnight',
+  1247→      'Stargazing',
+  1248→    ],
+  1249→    howToReach:
+  1250→      '100km from Srinagar (3 hours) via Anantnag and Pahalgam. Limited homestays - book through us in advance.',
+  1251→    featured: false,
+  1252→  },
+  1253→  {
+  1254→    slug: 'watlab',
+  1255→    name: 'Watlab',
+  1256→    region: 'Kashmir',
+  1257→    state: 'Jammu & Kashmir',
+  1258→    elevation: 1600,
+  1259→    latitude: 34.2,
+  1260→    longitude: 74.5333,
+  1261→    tagline: 'Apple Orchards & Saffron Fields',
+  1262→    description:
+  1263→      'Watlab is a quiet village in Baramulla district, 50km from Srinagar, known for its vast apple orchards, saffron fields and the shrine of Syed Abdullah Andrabi. The Orchards & Cottage Trail run by Kashmir\'s Tourism Department passes through here. In September the apple harvest begins and the air smells of ripening fruit; in October the saffron blooms purple. Homestays are available in traditional Kashmiri wooden houses.',
+  1264→    bestTime: 'September to November (apple harvest & saffron bloom)',
+  1265→    duration: '1-2 days',
+  1266→    difficulty: 'Easy',
+  1267→    rating: 4.4,
+  1268→    heroImage: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+  1269→    gallery: [
+  1270→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80',
+  1271→    ],
+  1272→    attractions: [
+  1273→      'Apple orchards (September harvest)',
+  1274→      'Saffron fields (October bloom)',
+  1275→      'Syed Abdullah Andrabi shrine',
+  1276→      'Walnut groves',
+  1277→      'Traditional Kashmiri wooden houses',
+  1278→    ],
+  1279→    activities: [
+  1280→      'Apple picking (Sep)',
+  1281→      'Saffron harvest experience (Oct)',
+  1282→      'Homestay experience',
+  1283→      'Kashmiri cooking class',
+  1284→      'Village walks',
+  1285→    ],
+  1286→    howToReach:
+  1287→      '50km from Srinagar (1.5 hours) via Baramulla. Best via private cab. Limited homestays - book through us.',
+  1288→    featured: false,
+  1289→  },
+  1290→]
+  1291→
+  1292→export interface PackageData {
+  1293→  slug: string
+  1294→  title: string
+  1295→  region: Region | 'Multi-Region'
+  1296→  duration: number
+  1297→  nights: number
+  1298→  price: number
+  1299→  description: string
+  1300→  highlights: string[]
+  1301→  inclusions: string[]
+  1302→  exclusions: string[]
+  1303→  itinerary: { day: number; title: string; description: string }[]
+  1304→  heroImage: string
+  1305→  rating: number
+  1306→  featured: boolean
+  1307→}
+  1308→
+  1309→export const packages: PackageData[] = [
+  1310→  {
+  1311→    slug: 'kashmir-dreams-5d',
+  1312→    title: 'Kashmir Dreams - 5 Days / 4 Nights',
+  1313→    region: 'Kashmir',
+  1314→    duration: 5,
+  1315→    nights: 4,
+  1316→    price: 18900,
+  1317→    description:
+  1318→      'The classic Kashmir circuit - Srinagar’s houseboats, Gulmarg’s gondola, Pahalgam’s pine valleys and Sonmarg’s meadows. Hand-picked hotels, daily breakfast & dinner, and a dedicated SUV with driver-guide throughout.',
+  1319→    highlights: [
+  1320→      'Night on a Dal Lake houseboat',
+  1321→      'Gulmarg Gondola to 3,979m',
+  1322→      'Betaab Valley & Aru meadow',
+  1323→      'Sunrise shikara ride',
+  1324→      'Wazwan welcome dinner',
+  1325→    ],
+  1326→    inclusions: [
+  1327→      '4 nights stay (1 houseboat + 3 hotels)',
+  1328→      'Daily breakfast & dinner',
+  1329→      'Private SUV with driver',
+  1330→      'All sightseeing as per itinerary',
+  1331→      'Shikara ride on Dal Lake',
+  1332→      'Gondola Phase-I ticket',
+  1333→    ],
+  1334→    exclusions: [
+  1335→      'Airfare / train fare',
+  1336→      'Lunches & beverages',
+  1337→      'Personal expenses & tips',
+  1338→      'Travel insurance',
+  1339→      'Anything not mentioned in inclusions',
+  1340→    ],
+  1341→    itinerary: [
+  1342→      { day: 1, title: 'Arrive Srinagar - Dal & Mughal Gardens', description: 'Airport pickup, check-in to houseboat, sunset shikara ride, welcome Wazwan dinner.' },
+  1343→      { day: 2, title: 'Srinagar → Gulmarg (52km)', description: 'Drive to Gulmarg, gondola to Apharwat, lunch at Kongdoori, evening return.' },
+  1344→      { day: 3, title: 'Gulmarg → Pahalgam (140km)', description: 'Scenic drive via Anantnag, Betaab Valley, Lidder riverside dinner.' },
+  1345→      { day: 4, title: 'Pahalgam → Sonmarg → Srinagar', description: 'Day trip to Sonmarg & Thajiwas glacier, evening return to Srinagar hotel.' },
+  1346→      { day: 5, title: 'Srinagar - Departure', description: 'Morning Mughal gardens, last-minute shopping, airport drop.' },
+  1347→    ],
+  1348→    heroImage:
+  1349→      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1600&q=80',
+  1350→    rating: 4.7,
+  1351→    featured: true,
+  1352→  },
+  1353→  {
+  1354→    slug: 'ladakh-odyssey-7d',
+  1355→    title: 'Ladakh Odyssey - 7 Days / 6 Nights',
+  1356→    region: 'Ladakh',
+  1357→    duration: 7,
+  1358→    nights: 6,
+  1359→    price: 34500,
+  1360→    description:
+  1361→      'The full Leh–Ladakh loop with acclimatisation, monasteries, Nubra’s sand dunes and the indescribable blue of Pangong. Includes inner-line permits, all meals, and a 4×4 with driver.',
+  1362→    highlights: [
+  1363→      'Khardung La - 5,359m motorable pass',
+  1364→      'Bactrian camel ride at Hunder dunes',
+  1365→      'Overnight at Pangong Tso',
+  1366→      'Thiksey & Hemis monasteries',
+  1367→      'Sangam - Zanskar–Indus confluence',
+  1368→    ],
+  1369→    inclusions: [
+  1370→      '6 nights stay in Leh, Nubra & Pangong',
+  1371→      'All meals (B/L/D)',
+  1372→      '4×4 SUV with experienced driver',
+  1373→      'Inner Line Permits',
+  1374→      'Oxygen cylinder & first aid',
+  1375→      'Airport transfers',
+  1376→    ],
+  1377→    exclusions: [
+  1378→      'Airfare',
+  1379→      'Personal expenses, tips, beverages',
+  1380→      'River rafting / ATV / camel rides',
+  1381→      'Travel insurance',
+  1382→      'Anything not mentioned in inclusions',
+  1383→    ],
+  1384→    itinerary: [
+  1385→      { day: 1, title: 'Arrive Leh - Acclimatisation', description: 'Airport pickup, light walk to market, evening at Shanti Stupa.' },
+  1386→      { day: 2, title: 'Leh local - Monasteries & Palace', description: 'Thiksey, Hemis, Shey, Stok Palace & Leh Palace.' },
+  1387→      { day: 3, title: 'Leh → Nubra via Khardung La', description: 'Cross 5,359m pass, reach Diskit, evening camel ride at Hunder.' },
+  1388→      { day: 4, title: 'Nubra → Pangong via Shyok', description: 'Scenic Shyok route, arrive Pangong, lakeside camp overnight.' },
+  1389→      { day: 5, title: 'Pangong → Leh via Chang La', description: 'Sunrise at lake, cross 5,360m Chang La, return to Leh.' },
+  1390→      { day: 6, title: 'Leh → Sham Valley', description: 'Sangam confluence, Magnetic Hill, Pathar Sahib, Alchi monastery.' },
+  1391→      { day: 7, title: 'Leh - Departure', description: 'Morning shopping, airport drop.' },
+  1392→    ],
+  1393→    heroImage:
+  1394→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+  1395→    rating: 4.9,
+  1396→    featured: true,
+  1397→  },
+  1398→  {
+  1399→    slug: 'great-lakes-trek-8d',
+  1400→    title: 'Kashmir Great Lakes Trek - 8 Days',
+  1401→    region: 'Kashmir',
+  1402→    duration: 8,
+  1403→    nights: 7,
+  1404→    price: 24500,
+  1405→    description:
+  1406→      'Widely considered the most beautiful trek in the Indian Himalaya - seven alpine lakes across five mountain passes, meadows that roll on for kilometres, and wildflower blooms that have to be seen to be believed. Full camping crew, meals, and permits included.',
+  1407→    highlights: [
+  1408→      'Seven alpine lakes in 6 days of walking',
+  1409→      'Gangabal & Nundkol twin lakes',
+  1410→      'Five mountain passes above 4,000m',
+  1411→      'Wildflower meadows of Satsar',
+  1412→      'Sunrise on Mount Harmukh',
+  1413→    ],
+  1414→    inclusions: [
+  1415→      '7 nights camping (twin-share)',
+  1416→      'All meals (B/L/D) on trek',
+  1417→      'Professional trek leader & crew',
+  1418→      'All camping & kitchen equipment',
+  1419→      'Forest department permits',
+  1420→      'Mules for luggage carriage',
+  1421→    ],
+  1422→    exclusions: [
+  1423→      'Srinagar hotel stay (before/after trek)',
+  1424→      'Personal trekking gear',
+  1425→      'Beverages & snacks',
+  1426→      'Travel insurance',
+  1427→      'Anything not mentioned in inclusions',
+  1428→    ],
+  1429→    itinerary: [
+  1430→      { day: 1, title: 'Srinagar → Sonmarg → Nichnai', description: 'Drive to Sonmarg, trek to Nichnai camp (3,500m, 4 hrs).' },
+  1431→      { day: 2, title: 'Nichnai → Vishansar Lake', description: 'Cross Nichnai Pass (4,100m), descend to Vishansar camp.' },
+  1432→      { day: 3, title: 'Vishansar → Krishansar → Gadsar', description: 'Cross Krishansar Pass (4,150m), descend to Gadsar.' },
+  1433→      { day: 4, title: 'Gadsar → Satsar Lakes', description: 'Cross Gadsar Pass (4,200m), camp at Satsar (7 lakes).' },
+  1434→      { day: 5, title: 'Satsar → Gangabal Twin Lakes', description: 'Cross Zaj Pass, descend to Gangabal & Nundkol.' },
+  1435→      { day: 6, title: 'Gangabal - Rest day', description: 'Rest, fish, photograph Mount Harmukh sunrise/sunset.' },
+  1436→      { day: 7, title: 'Gangabal → Naranag → Srinagar', description: 'Steep descent to Naranag, drive to Srinagar.' },
+  1437→      { day: 8, title: 'Srinagar - Departure', description: 'Houseboat checkout, airport drop.' },
+  1438→    ],
+  1439→    heroImage:
+  1440→      'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1600&q=80',
+  1441→    rating: 4.9,
+  1442→    featured: true,
+  1443→  },
+  1444→  {
+  1445→    slug: 'vaishno-devi-patnitop-4d',
+  1446→    title: 'Vaishno Devi & Patnitop - 4 Days',
+  1447→    region: 'Jammu',
+  1448→    duration: 4,
+  1449→    nights: 3,
+  1450→    price: 12900,
+  1451→    description:
+  1452→      'A short spiritual-and-scenic break covering the Vaishno Devi yatra from Katra and a day in the pine meadows of Patnitop. Ideal for families and senior travellers.',
+  1453→    highlights: [
+  1454→      'Vaishno Devi holy cave darshan',
+  1455→      'Pine meadows of Patnitop',
+  1456→      'Nathatop paragliding viewpoint',
+  1457→      'Sudh Mahadev temple',
+  1458→    ],
+  1459→    inclusions: [
+  1460→      '3 nights hotel stay (Katra & Patnitop)',
+  1461→      'Daily breakfast & dinner',
+  1462→      'Private cab for transfers & sightseeing',
+  1463→      'Yatra registration assistance',
+  1464→    ],
+  1465→    exclusions: [
+  1466→      'Helicopter / pony charges for yatra',
+  1467→      'Lunches & beverages',
+  1468→      'Personal expenses & tips',
+  1469→      'Anything not mentioned in inclusions',
+  1470→    ],
+  1471→    itinerary: [
+  1472→      { day: 1, title: 'Arrive Katra - Begin Yatra', description: 'Railway/airport pickup, evening start of 13km yatra.' },
+  1473→      { day: 2, title: 'Darshan & Return to Katra', description: 'Morning darshan, return to hotel, rest.' },
+  1474→      { day: 3, title: 'Katra → Patnitop (80km)', description: 'Drive via Sudh Mahadev, evening at Nathatop.' },
+  1475→      { day: 4, title: 'Patnitop → Jammu Drop', description: 'Morning in pine forest, drive to Jammu for departure.' },
+  1476→    ],
+  1477→    heroImage:
+  1478→      'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=1600&q=80',
+  1479→    rating: 4.6,
+  1480→    featured: false,
+  1481→  },
+  1482→  {
+  1483→    slug: 'spiti-circuit-9d',
+  1484→    title: 'Spiti Circuit - 9 Days / 8 Nights',
+  1485→    region: 'Himachal',
+  1486→    duration: 9,
+  1487→    nights: 8,
+  1488→    price: 38500,
+  1489→    description:
+  1490→      'The complete Spiti Valley loop from Manali - Chandratal Lake, Ki & Tabo monasteries, the highest villages in the world, and a night in a homestay at 4,300m. Off-the-grid, soul-shifting Himalayan travel.',
+  1491→    highlights: [
+  1492→      'Chandratal Lake under moonlight',
+  1493→      'Ki & Tabo monasteries (1,000 years old)',
+  1494→      'Hikkim - highest post office in the world',
+  1495→      'Pin Valley & Kibber village',
+  1496→      'Homestay at Komik (4,300m)',
+  1497→    ],
+  1498→    inclusions: [
+  1499→      '8 nights stay (hotel + homestay + camp)',
+  1500→      'All meals (B/L/D)',
+  1501→      'Private 4×4 SUV with driver',
+  1502→      'Permits & monastery fees',
+  1503→      'Camping equipment at Chandratal',
+  1504→    ],
+  1505→    exclusions: [
+  1506→      'Airfare / Volvo to Manali',
+  1507→      'Personal expenses, tips, beverages',
+  1508→      'Travel insurance',
+  1509→      'Anything not mentioned in inclusions',
+  1510→    ],
+  1511→    itinerary: [
+  1512→      { day: 1, title: 'Manali → Chandratal', description: 'Cross Rohtang Pass, drive to Chandratal, lake-side camp.' },
+  1513→      { day: 2, title: 'Chandratal → Kaza', description: 'Cross Kunzum La, reach Kaza (Spiti HQ).' },
+  1514→      { day: 3, title: 'Kaza → Kee → Kibber → Kaza', description: 'Ki Monastery, Kibber village, Gette & Tashigang.' },
+  1515→      { day: 4, title: 'Kaza → Langza → Hikkim → Komik', description: 'Fossils at Langza, post at Hikkim, homestay at Komik.' },
+  1516→      { day: 5, title: 'Komik → Tabo', description: 'Drive to Tabo, 1,000-year-old monastery, cave meditation.' },
+  1517→      { day: 6, title: 'Tabo → Dhankar → Pin Valley', description: 'Dhankar monastery & lake, drive into Pin Valley.' },
+  1518→      { day: 7, title: 'Pin Valley → Nako', description: 'Drive to Nako, lake & village walk.' },
+  1519→      { day: 8, title: 'Nako → Kalpa', description: 'Exit Spiti via Kinnaur, reach Kalpa (Sutlej valley).' },
+  1520→      { day: 9, title: 'Kalpa → Shimla - Drop', description: 'Drive through Kinnaur, drop at Shimla.' },
+  1521→    ],
+  1522→    heroImage:
+  1523→      'https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?auto=format&fit=crop&w=1600&q=80',
+  1524→    rating: 4.8,
+  1525→    featured: false,
+  1526→  },
+  1527→  {
+  1528→    slug: 'amarnath-yatra-3d',
+  1529→    title: 'Amarnath Yatra (Baltal Route) - 3 Days',
+  1530→    region: 'Kashmir',
+  1531→    duration: 3,
+  1532→    nights: 2,
+  1533→    price: 15500,
+  1534→    description:
+  1535→      'A short, intensive yatra to the holy Amarnath cave via the shorter Baltal route, with optional helicopter from Neelgrath. Includes registration assistance, accommodation at Baltal base camp, and a dedicated driver from Srinagar.',
+  1536→    highlights: [
+  1537→      'Darshan at Amarnath holy cave',
+  1538→      'Helicopter option from Neelgrath',
+  1539→      'Baltal base camp stay',
+  1540→      'Srinagar airport pickup & drop',
+  1541→    ],
+  1542→    inclusions: [
+  1543→      '2 nights stay (1 Srinagar + 1 Baltal camp)',
+  1544→      'Srinagar airport transfers',
+  1545→      'Private cab to/from Baltal',
+  1546→      'Yatra registration assistance',
+  1547→      'All meals at base camp',
+  1548→    ],
+  1549→    exclusions: [
+  1550→      'Helicopter ticket (optional, INR 3,500–5,000)',
+  1551→      'Pony / palki charges',
+  1552→      'Personal expenses & tips',
+  1553→      'Travel insurance',
+  1554→      'Anything not mentioned in inclusions',
+  1555→    ],
+  1556→    itinerary: [
+  1557→      { day: 1, title: 'Srinagar → Baltal', description: 'Pickup from Srinagar, drive via Sonmarg to Baltal base camp.' },
+  1558→      { day: 2, title: 'Baltal → Holy Cave → Baltal', description: 'Trek/pony/helicopter to cave (14km), darshan, return to Baltal.' },
+  1559→      { day: 3, title: 'Baltal → Srinagar', description: 'Return to Srinagar, airport/railway drop.' },
+  1560→    ],
+  1561→    heroImage:
+  1562→      'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1600&q=80',
+  1563→    rating: 4.7,
+  1564→    featured: false,
+  1565→  },
+  1566→]
+  1567→
+  1568→// Hotel tiers, meal options, add-ons for Trip Planner
+  1569→export const hotelTiers = [
+  1570→  { id: 'budget', name: 'Budget', desc: '2★ guest house, basic but clean', perNight: 1500 },
+  1571→  { id: 'standard', name: 'Standard', desc: '3★ hotel, breakfast included', perNight: 2800 },
+  1572→  { id: 'premium', name: 'Premium', desc: '4★ hotel, premium location', perNight: 5500 },
+  1573→  { id: 'luxury', name: 'Luxury', desc: '5★ heritage / houseboat', perNight: 11000 },
+  1574→]
+  1575→
+  1576→export const mealOptions = [
+  1577→  { id: 'breakfast', name: 'Breakfast', perPersonPerDay: 350 },
+  1578→  { id: 'lunch', name: 'Lunch', perPersonPerDay: 500 },
+  1579→  { id: 'dinner', name: 'Dinner', perPersonPerDay: 650 },
+  1580→  { id: 'wazwan', name: 'Wazwan Feast (one evening)', perPerson: 1500 },
+  1581→]
+  1582→
+  1583→export const addOns = [
+  1584→  { id: 'photographer', name: 'Professional Photographer', perDay: 4500, icon: 'Camera' },
+  1585→  { id: 'guide', name: 'Local Guide', perDay: 2500, icon: 'MapPin' },
+  1586→  { id: 'cab-suv', name: 'Private SUV + Driver', perDay: 3800, icon: 'Car' },
+  1587→  { id: 'cab-tempo', name: 'Tempo Traveller (10 seats)', perDay: 6500, icon: 'Bus' },
+  1588→  { id: 'medical', name: 'Medical Kit + Oxygen', perTrip: 1500, icon: 'HeartPulse' },
+  1589→  { id: 'equipment', name: 'Trek Equipment Set', perPerson: 1800, icon: 'Mountain' },
+  1590→]
+  1591→
+  1592→export const leadStages = [
+  1593→  'New',
+  1594→  'Contacted',
+  1595→  'Qualified',
+  1596→  'Proposal',
+  1597→  'Negotiation',
+  1598→  'Won',
+  1599→  'Lost',
+  1600→] as const
+  1601→
+  1602→export const bookingStages = [
+  1603→  'Pending',
+  1604→  'Confirmed',
+  1605→  'InProgress',
+  1606→  'Completed',
+  1607→  'Cancelled',
+  1608→] as const
+  1609→
+  1610→export const paymentStages = ['Unpaid', 'Partial', 'Paid'] as const
+  1611→
+  1612→// Lead sources for CRM
+  1613→export const leadSources = ['Website', 'WhatsApp', 'Referral', 'Social', 'Walk-in', 'Phone']
+  1614→
+  1615→// Helper: get destination by slug
+  1616→export function getDestinationBySlug(slug: string): DestinationData | undefined {
+  1617→  return destinations.find((d) => d.slug === slug)
+  1618→}
+  1619→
+  1620→// Helper: get package by slug
+  1621→export function getPackageBySlug(slug: string): PackageData | undefined {
+  1622→  return packages.find((p) => p.slug === slug)
+  1623→}
+  1624→
+  1625→// Mock weather generator - deterministic per destination & day
+  1626→export function generateMockWeather(lat: number, lon: number, elevation: number) {
+  1627→  // Use elevation & coords as a deterministic seed
+  1628→  const seed = Math.floor(Math.abs(lat * 100 + lon * 10 + elevation / 10))
+  1629→  const today = new Date()
+  1630→  const days = []
+  1631→  const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Light Snow', 'Clear']
+  1632→  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  1633→  for (let i = 0; i < 5; i++) {
+  1634→    const d = new Date(today)
+  1635→    d.setDate(d.getDate() + i)
+  1636→    const dateSeed = seed + i * 7
+  1637→    const baseTemp = elevation > 3500 ? -2 : elevation > 2500 ? 8 : 15
+  1638→    const variance = (dateSeed % 9) - 4
+  1639→    const maxTemp = baseTemp + variance + 4
+  1640→    const minTemp = baseTemp + variance - 5
+  1641→    const cond = conditions[(dateSeed + i) % conditions.length]
+  1642→    const humidity = 30 + (dateSeed % 50)
+  1643→    const wind = 5 + (dateSeed % 20)
+  1644→    days.push({
+  1645→      date: d.toISOString().slice(0, 10),
+  1646→      dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
+  1647→      maxTemp,
+  1648→      minTemp,
+  1649→      condition: cond,
+  1650→      humidity,
+  1651→      wind,
+  1652→    })
+  1653→  }
+  1654→  // Current weather = first day
+  1655→  const current = {
+  1656→    temp: days[0].maxTemp - 2,
+  1657→    condition: days[0].condition,
+  1658→    humidity: days[0].humidity,
+  1659→    wind: days[0].wind,
+  1660→    feelsLike: days[0].maxTemp - 4,
+  1661→    visibility: 8 + (seed % 4),
+  1662→    uvIndex: (seed % 8) + 2,
+  1663→  }
+  1664→  return { current, forecast: days, elevation, coords: { lat, lon } }
+  1665→}
+  1666→

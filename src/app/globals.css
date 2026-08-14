@@ -123,6 +123,31 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Safe area insets for iOS notch / Dynamic Island */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Smooth scroll for app-like UX */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  /* Disable text size adjust on iOS rotation */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  /* Prevent pull-to-refresh on PWA */
+  @media (display-mode: standalone) {
+    body {
+      overscroll-behavior-y: none;
+    }
+  }
+  /* Tap highlight transparent for app-like feel */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Touch target minimum size 44px on iOS */
+  button, a, [role="button"] {
+    touch-action: manipulation;
   }
 }
 

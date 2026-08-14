@@ -57,9 +57,15 @@ const values = [
 
 const team = [
   {
+    name: 'Syed Shamshul Razvi',
+    role: 'Founder & CEO',
+    bio: 'Founder & CEO of Himalayan Freak. Visionary behind every custom itinerary. Born and raised in Magam, Kashmir - knows every pass, every homestay, every driver by name.',
+    avatar: 'S',
+  },
+  {
     name: 'Imtiyaz Ahmad',
-    role: 'Founder & Lead Trip Designer',
-    bio: 'Born in Magam, on the road to Gulmarg. 14 years guiding in Pir Panjal & Ladakh. Speaks Kashmiri, Urdu, Hindi, Ladakhi & basic Tibetan.',
+    role: 'Lead Trip Designer',
+    bio: '14 years guiding in Pir Panjal & Ladakh. Speaks Kashmiri, Urdu, Hindi, Ladakhi & basic Tibetan. Designs every offbeat itinerary.',
     avatar: 'I',
   },
   {
@@ -387,7 +393,7 @@ export function CompanyPage() {
                     "We do not sell trips. We invite people to walk the Himalaya with us -
                     the way our families have for generations."
                   </p>
-                  <p className="mt-3 text-sm text-white/80">- Imtiyaz Ahmad, Founder</p>
+                  <p className="mt-3 text-sm text-white/80">- Syed Shamshul Razvi, Founder &amp; CEO</p>
                 </div>
               </Card>
             </motion.div>
@@ -407,11 +413,12 @@ export function CompanyPage() {
               We are 35 minutes from Srinagar airport, on the road to Gulmarg. Tea is always on.
             </p>
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: MapPin, title: 'Office', lines: ['Al Falah Complex,', 'Srinagar–Gulmarg Road, Magam,', 'Jammu & Kashmir 193401, India'] },
+              { icon: MapPin, title: 'Office', lines: ['Al Falah Complex,', 'Srinagar-Gulmarg Road, Magam,', 'Jammu & Kashmir 193401, India'] },
               { icon: Phone, title: 'Call / WhatsApp', lines: ['+91 600 626 6072', '+91 979 705 1060'], hrefs: ['tel:+916006266072', 'tel:+919797051060'] },
-              { icon: Globe, title: 'Hours', lines: ['Mon–Sat: 9am – 8pm IST', 'Sun: 10am – 4pm IST', 'WhatsApp: 24×7'] },
+              { icon: Mail, title: 'Email & Social', lines: ['info@himalayanfreak.in', 'Instagram: @himalayanfreaktravels', 'Facebook: /thehimalayan1'], hrefs: ['mailto:info@himalayanfreak.in', 'https://instagram.com/himalayanfreaktravels', 'https://www.facebook.com/thehimalayan1'] },
+              { icon: Globe, title: 'Hours', lines: ['Mon-Sat: 9am - 8pm IST', 'Sun: 10am - 4pm IST', 'WhatsApp: 24x7'] },
             ].map((c) => (
               <Card key={c.title} className="border-0 bg-white/5 p-6 text-white backdrop-blur">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300">
@@ -421,7 +428,7 @@ export function CompanyPage() {
                 <div className="mt-2 space-y-1 text-sm text-white/80">
                   {c.lines.map((l, i) =>
                     c.hrefs ? (
-                      <a key={i} href={c.hrefs[i]} className="block hover:text-amber-300 transition-colors">
+                      <a key={i} href={c.hrefs[i]} target={c.hrefs[i].startsWith('http') ? '_blank' : undefined} rel={c.hrefs[i].startsWith('http') ? 'noopener noreferrer' : undefined} className="block hover:text-amber-300 transition-colors">
                         {l}
                       </a>
                     ) : (

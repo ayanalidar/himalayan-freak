@@ -35,7 +35,10 @@ ${addOns.map((a) => `- ${a.name}: Rs. ${(a.perDay || a.perTrip || a.perPerson ||
 COMPANY INFO:
 - Office: Al Falah Complex, Srinagar-Gulmarg Road, Magam, Jammu & Kashmir 193401, India
 - Phone: +91 600 626 6072, +91 979 705 1060
-- Email: hello@himalayanfreak.com
+- Email: info@himalayanfreak.in
+- Instagram: @himalayanfreaktravels
+- Facebook: https://www.facebook.com/thehimalayan1
+- Founder & CEO: Syed Shamshul Razvi
 - Founded 2018, 4,500+ travellers, 4.9 avg rating
 - Locally-based team in Magam, Kashmir
 - Custom itineraries, no cookie-cutter tours

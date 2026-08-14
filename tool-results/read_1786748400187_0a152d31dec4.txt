@@ -1,0 +1,585 @@
+     1→'use client'
+     2→
+     3→import { useState } from 'react'
+     4→import { motion } from 'framer-motion'
+     5→import {
+     6→  Users,
+     7→  Calendar,
+     8→  Mail,
+     9→  Phone,
+    10→  MapPin,
+    11→  User,
+    12→  IndianRupee,
+    13→  Sparkles,
+    14→  Briefcase,
+    15→  Heart,
+    16→  Utensils,
+    17→  Send,
+    18→  CheckCircle2,
+    19→  Info,
+    20→  Building2,
+    21→  Plane,
+    22→  Loader2,
+    23→} from 'lucide-react'
+    24→import { Button } from '@/components/ui/button'
+    25→import { Card } from '@/components/ui/card'
+    26→import { Badge } from '@/components/ui/badge'
+    27→import { Input } from '@/components/ui/input'
+    28→import { Label } from '@/components/ui/label'
+    29→import { Textarea } from '@/components/ui/textarea'
+    30→import { Separator } from '@/components/ui/separator'
+    31→import {
+    32→  Select,
+    33→  SelectContent,
+    34→  SelectItem,
+    35→  SelectTrigger,
+    36→  SelectValue,
+    37→} from '@/components/ui/select'
+    38→import { useApp } from '@/lib/store'
+    39→import { destinations } from '@/lib/data'
+    40→import { toast } from 'sonner'
+    41→import { cn } from '@/lib/utils'
+    42→
+    43→interface RoomMate {
+    44→  name: string
+    45→  email: string
+    46→  phone: string
+    47→  diet: string
+    48→  emergencyContact: string
+    49→}
+    50→
+    51→export function GroupBookingPage() {
+    52→  const { navigate } = useApp()
+    53→  const [loading, setLoading] = useState(false)
+    54→  const [step, setStep] = useState(1)
+    55→  const [success, setSuccess] = useState(false)
+    56→  const [refCode, setRefCode] = useState('')
+    57→
+    58→  const [form, setForm] = useState({
+    59→    // Organizer
+    60→    organizerName: '',
+    61→    organizerEmail: '',
+    62→    organizerPhone: '',
+    63→    organization: '',
+    64→    organizationType: 'Family',
+    65→    // Trip
+    66→    destinations: [] as string[],
+    67→    startDate: '',
+    68→    duration: 7,
+    69→    pax: 12,
+    70→    // Budget
+    71→    budgetPerPerson: 25000,
+    72→    budgetTotal: 300000,
+    73→    // Logistics
+    74→    roomSharing: 'Double',
+    75→    pickupRequired: true,
+    76→    mealPreference: 'Veg & Non-veg',
+    77→    specialMeals: '',
+    78→    // Add-ons
+    79→    addOns: [] as string[],
+    80→    photographer: false,
+    81→    guide: true,
+    82→    medical: true,
+    83→    // Notes
+    84→    notes: '',
+    85→    // Roommate roster
+    86→    roomMates: [] as RoomMate[],
+    87→  })
+    88→
+    89→  const toggleDestination = (slug: string) => {
+    90→    setForm((f) => ({
+    91→      ...f,
+    92→      destinations: f.destinations.includes(slug)
+    93→        ? f.destinations.filter((d) => d !== slug)
+    94→        : [...f.destinations, slug],
+    95→    }))
+    96→  }
+    97→
+    98→  const addRoomMate = () => {
+    99→    setForm((f) => ({
+   100→      ...f,
+   101→      roomMates: [...f.roomMates, { name: '', email: '', phone: '', diet: '', emergencyContact: '' }],
+   102→    }))
+   103→  }
+   104→
+   105→  const updateRoomMate = (idx: number, field: keyof RoomMate, value: string) => {
+   106→    setForm((f) => ({
+   107→      ...f,
+   108→      roomMates: f.roomMates.map((rm, i) => i === idx ? { ...rm, [field]: value } : rm),
+   109→    }))
+   110→  }
+   111→
+   112→  const onSubmit = async () => {
+   113→    if (!form.organizerName || !form.organizerEmail || !form.organizerPhone) {
+   114→      toast.error('Organizer details required')
+   115→      return
+   116→    }
+   117→    if (form.destinations.length === 0) {
+   118→      toast.error('Please select at least one destination')
+   119→      return
+   120→    }
+   121→    if (form.pax < 10) {
+   122→      toast.error('Group bookings require minimum 10 travellers')
+   123→      return
+   124→    }
+   125→    setLoading(true)
+   126→    try {
+   127→      const res = await fetch('/api/group-booking', {
+   128→        method: 'POST',
+   129→        headers: { 'Content-Type': 'application/json' },
+   130→        body: JSON.stringify(form),
+   131→      })
+   132→      if (!res.ok) throw new Error('Failed')
+   133→      const data = await res.json()
+   134→      setRefCode(data.refCode)
+   135→      setSuccess(true)
+   136→      toast.success('Group booking submitted!', {
+   137→        description: `Ref: ${data.refCode}. Our team will contact you within 24 hours.`,
+   138→      })
+   139→    } catch {
+   140→      toast.error('Submission failed. Please try again.')
+   141→    } finally {
+   142→      setLoading(false)
+   143→    }
+   144→  }
+   145→
+   146→  if (success) {
+   147→    return (
+   148→      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+   149→        <motion.div
+   150→          initial={{ opacity: 0, scale: 0.95 }}
+   151→          animate={{ opacity: 1, scale: 1 }}
+   152→          className="max-w-md w-full"
+   153→        >
+   154→          <Card className="p-8 text-center ring-1 ring-border/40">
+   155→            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+   156→              <CheckCircle2 className="h-8 w-8" />
+   157→            </div>
+   158→            <h2 className="mt-4 font-display text-2xl font-bold">Group booking received!</h2>
+   159→            <p className="mt-2 text-sm text-muted-foreground">
+   160→              Your group enquiry has been logged. Our team will reach out within 24 hours with a custom quote.
+   161→            </p>
+   162→            <div className="mt-5 rounded-xl bg-muted/40 p-4">
+   163→              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Your reference code</div>
+   164→              <div className="mt-1 font-mono text-lg font-bold text-primary">{refCode}</div>
+   165→            </div>
+   166→            <div className="mt-5 flex gap-2">
+   167→              <Button variant="outline" className="flex-1" onClick={() => navigate('home')}>
+   168→                Back to home
+   169→              </Button>
+   170→              <Button className="flex-1" onClick={() => navigate('dashboard')}>
+   171→                My dashboard
+   172→              </Button>
+   173→            </div>
+   174→          </Card>
+   175→        </motion.div>
+   176→      </div>
+   177→    )
+   178→  }
+   179→
+   180→  return (
+   181→    <div className="min-h-screen bg-background">
+   182→      {/* HERO */}
+   183→      <section className="relative overflow-hidden border-b border-border">
+   184→        <div className="absolute inset-0">
+   185→          <img
+   186→            src="https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80"
+   187→            alt="Group travel"
+   188→            className="h-full w-full object-cover"
+   189→          />
+   190→          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/75 to-amber-900/40" />
+   191→        </div>
+   192→        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+   193→          <motion.div
+   194→            initial={{ opacity: 0, y: 24 }}
+   195→            animate={{ opacity: 1, y: 0 }}
+   196→            transition={{ duration: 0.7 }}
+   197→            className="max-w-3xl"
+   198→          >
+   199→            <Badge className="mb-4 bg-amber-500/20 text-amber-300 backdrop-blur">
+   200→              <Users className="mr-1.5 h-3 w-3" /> For 10+ travellers
+   201→            </Badge>
+   202→            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white text-shadow-lg sm:text-5xl lg:text-6xl text-balance">
+   203→              Group Booking Portal
+   204→            </h1>
+   205→            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
+   206→              Planning a trip for 10 or more travellers? Get dedicated support, custom pricing,
+   207→              room-sharing roster, and a single point of contact from quote to departure.
+   208→            </p>
+   209→            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 max-w-2xl">
+   210→              {[
+   211→                { icon: IndianRupee, label: 'Group discount', value: 'Up to 18%' },
+   212→                { icon: Users, label: 'Dedicated manager', value: '1-on-1' },
+   213→                { icon: Briefcase, label: 'Corporate OK', value: 'GST invoice' },
+   214→                { icon: Heart, label: 'Senior-friendly', value: 'Wheelchair' },
+   215→              ].map((s) => (
+   216→                <div key={s.label} className="rounded-xl border border-white/15 bg-white/10 p-3 backdrop-blur">
+   217→                  <s.icon className="h-4 w-4 text-amber-300" />
+   218→                  <div className="mt-1.5 text-[10px] uppercase tracking-wide text-white/60">{s.label}</div>
+   219→                  <div className="text-sm font-bold text-white">{s.value}</div>
+   220→                </div>
+   221→              ))}
+   222→            </div>
+   223→          </motion.div>
+   224→        </div>
+   225→      </section>
+   226→
+   227→      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+   228→        {/* Stepper */}
+   229→        <div className="mb-8 overflow-x-auto scrollbar-hidden">
+   230→          <div className="flex min-w-max items-center gap-2">
+   231→            {[
+   232→              { n: 1, label: 'Organizer' },
+   233→              { n: 2, label: 'Trip Details' },
+   234→              { n: 3, label: 'Logistics' },
+   235→              { n: 4, label: 'Roster' },
+   236→              { n: 5, label: 'Review' },
+   237→            ].map((s, i) => (
+   238→              <div key={s.n} className="flex items-center gap-2">
+   239→                <button
+   240→                  onClick={() => step >= s.n && setStep(s.n)}
+   241→                  className={cn(
+   242→                    'flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-all',
+   243→                    step === s.n ? 'bg-primary text-primary-foreground shadow' :
+   244→                    step > s.n ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+   245→                  )}
+   246→                >
+   247→                  <span className={cn(
+   248→                    'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold',
+   249→                    step === s.n ? 'bg-white/20' : step > s.n ? 'bg-primary text-primary-foreground' : 'bg-background'
+   250→                  )}>
+   251→                    {step > s.n ? <CheckCircle2 className="h-3 w-3" /> : s.n}
+   252→                  </span>
+   253→                  {s.label}
+   254→                </button>
+   255→                {i < 4 && <div className="h-0.5 w-6 bg-border" />}
+   256→              </div>
+   257→            ))}
+   258→          </div>
+   259→        </div>
+   260→
+   261→        <motion.div
+   262→          key={step}
+   263→          initial={{ opacity: 0, x: 16 }}
+   264→          animate={{ opacity: 1, x: 0 }}
+   265→          transition={{ duration: 0.3 }}
+   266→        >
+   267→          {/* STEP 1: ORGANIZER */}
+   268→          {step === 1 && (
+   269→            <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   270→              <h2 className="font-display text-2xl font-bold">Organizer details</h2>
+   271→              <p className="mt-1 text-sm text-muted-foreground">
+   272→                The main point of contact for this group. We will communicate trip updates, payments & itinerary changes via this person.
+   273→              </p>
+   274→              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+   275→                <div>
+   276→                  <Label>Full name *</Label>
+   277→                  <Input value={form.organizerName} onChange={(e) => setForm({ ...form, organizerName: e.target.value })} className="mt-1.5" />
+   278→                </div>
+   279→                <div>
+   280→                  <Label>Email *</Label>
+   281→                  <Input type="email" value={form.organizerEmail} onChange={(e) => setForm({ ...form, organizerEmail: e.target.value })} className="mt-1.5" />
+   282→                </div>
+   283→                <div>
+   284→                  <Label>Phone / WhatsApp *</Label>
+   285→                  <Input value={form.organizerPhone} onChange={(e) => setForm({ ...form, organizerPhone: e.target.value })} className="mt-1.5" />
+   286→                </div>
+   287→                <div>
+   288→                  <Label>Organization (optional)</Label>
+   289→                  <Input value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} placeholder="Company / Family name" className="mt-1.5" />
+   290→                </div>
+   291→                <div className="sm:col-span-2">
+   292→                  <Label>Group type</Label>
+   293→                  <Select value={form.organizationType} onValueChange={(v) => setForm({ ...form, organizationType: v })}>
+   294→                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+   295→                    <SelectContent>
+   296→                      {['Family', 'Friends', 'Corporate', 'School / College', 'Religious Group', 'Travel Club', 'Wedding Party', 'Other'].map((t) => (
+   297→                        <SelectItem key={t} value={t}>{t}</SelectItem>
+   298→                      ))}
+   299→                    </SelectContent>
+   300→                  </Select>
+   301→                </div>
+   302→              </div>
+   303→            </Card>
+   304→          )}
+   305→
+   306→          {/* STEP 2: TRIP DETAILS */}
+   307→          {step === 2 && (
+   308→            <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   309→              <h2 className="font-display text-2xl font-bold">Trip details</h2>
+   310→              <p className="mt-1 text-sm text-muted-foreground">Tell us where you want to go and when.</p>
+   311→
+   312→              <div className="mt-6">
+   313→                <Label>Destinations</Label>
+   314→                <p className="mt-1 text-xs text-muted-foreground">Select one or many - we&apos;ll connect them by road/flight.</p>
+   315→                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+   316→                  {destinations.slice(0, 12).map((d) => {
+   317→                    const selected = form.destinations.includes(d.slug)
+   318→                    return (
+   319→                      <button
+   320→                        key={d.slug}
+   321→                        onClick={() => toggleDestination(d.slug)}
+   322→                        className={cn(
+   323→                          'flex items-center gap-2 rounded-lg border p-2.5 text-left transition-all',
+   324→                          selected ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:border-primary/40'
+   325→                        )}
+   326→                      >
+   327→                        <img src={d.heroImage} alt={d.name} className="h-10 w-10 rounded object-cover" />
+   328→                        <div className="flex-1 min-w-0">
+   329→                          <div className="text-sm font-medium truncate">{d.name}</div>
+   330→                          <div className="text-[10px] text-muted-foreground">{d.region} · {d.duration}</div>
+   331→                        </div>
+   332→                        {selected && <CheckCircle2 className="h-4 w-4 text-primary" />}
+   333→                      </button>
+   334→                    )
+   335→                  })}
+   336→                </div>
+   337→              </div>
+   338→
+   339→              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+   340→                <div>
+   341→                  <Label>Start date</Label>
+   342→                  <Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className="mt-1.5" />
+   343→                </div>
+   344→                <div>
+   345→                  <Label>Duration (days)</Label>
+   346→                  <Input type="number" min={2} max={30} value={form.duration} onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })} className="mt-1.5" />
+   347→                </div>
+   348→                <div>
+   349→                  <Label>Number of travellers</Label>
+   350→                  <Input type="number" min={10} max={200} value={form.pax} onChange={(e) => setForm({ ...form, pax: Number(e.target.value) })} className="mt-1.5" />
+   351→                  <p className="mt-1 text-[10px] text-muted-foreground">Minimum 10 for group rates</p>
+   352→                </div>
+   353→              </div>
+   354→
+   355→              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+   356→                <div>
+   357→                  <Label>Budget per person (₹)</Label>
+   358→                  <Input type="number" value={form.budgetPerPerson} onChange={(e) => {
+   359→                    const bpp = Number(e.target.value)
+   360→                    setForm({ ...form, budgetPerPerson: bpp, budgetTotal: bpp * form.pax })
+   361→                  }} className="mt-1.5" />
+   362→                </div>
+   363→                <div>
+   364→                  <Label>Total budget (₹)</Label>
+   365→                  <Input value={`₹${form.budgetTotal.toLocaleString('en-IN')}`} disabled className="mt-1.5 bg-muted/40" />
+   366→                </div>
+   367→              </div>
+   368→            </Card>
+   369→          )}
+   370→
+   371→          {/* STEP 3: LOGISTICS */}
+   372→          {step === 3 && (
+   373→            <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   374→              <h2 className="font-display text-2xl font-bold">Logistics & preferences</h2>
+   375→              <p className="mt-1 text-sm text-muted-foreground">Room sharing, meals and add-ons for the group.</p>
+   376→
+   377→              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+   378→                <div>
+   379→                  <Label>Room sharing preference</Label>
+   380→                  <Select value={form.roomSharing} onValueChange={(v) => setForm({ ...form, roomSharing: v })}>
+   381→                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+   382→                    <SelectContent>
+   383→                      {['Single', 'Double', 'Triple', 'Family Suite', 'Mixed'].map((r) => (
+   384→                        <SelectItem key={r} value={r}>{r}</SelectItem>
+   385→                      ))}
+   386→                    </SelectContent>
+   387→                  </Select>
+   388→                </div>
+   389→                <div>
+   390→                  <Label>Meal preference</Label>
+   391→                  <Select value={form.mealPreference} onValueChange={(v) => setForm({ ...form, mealPreference: v })}>
+   392→                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+   393→                    <SelectContent>
+   394→                      {['Veg only', 'Veg & Non-veg', 'Jain meals', 'Halal only', 'Custom'].map((m) => (
+   395→                        <SelectItem key={m} value={m}>{m}</SelectItem>
+   396→                      ))}
+   397→                    </SelectContent>
+   398→                  </Select>
+   399→                </div>
+   400→              </div>
+   401→
+   402→              <div className="mt-4">
+   403→                <Label>Special meal requirements / allergies</Label>
+   404→                <Textarea
+   405→                  rows={2}
+   406→                  value={form.specialMeals}
+   407→                  onChange={(e) => setForm({ ...form, specialMeals: e.target.value })}
+   408→                  placeholder="e.g. 3 gluten-free, 2 Jain, 1 peanut allergy"
+   409→                  className="mt-1.5"
+   410→                />
+   411→              </div>
+   412→
+   413→              <Separator className="my-6" />
+   414→
+   415→              <Label>Add-ons for the group</Label>
+   416→              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+   417→                {[
+   418→                  { id: 'photographer', label: 'Professional photographer', icon: Sparkles },
+   419→                  { id: 'guide', label: 'Local guide at each destination', icon: MapPin },
+   420→                  { id: 'medical', label: 'Medical kit + oxygen + nurse', icon: Heart },
+   421→                  { id: 'pickup', label: 'Airport pickup & drop (all pax)', icon: Plane },
+   422→                ].map((opt) => {
+   423→                  const checked = (form as any)[opt.id]
+   424→                  return (
+   425→                    <button
+   426→                      key={opt.id}
+   427→                      onClick={() => setForm({ ...form, [opt.id]: !checked } as any)}
+   428→                      className={cn(
+   429→                        'flex items-center gap-2 rounded-lg border p-3 text-left text-sm transition-all',
+   430→                        checked ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:border-primary/40'
+   431→                      )}
+   432→                    >
+   433→                      <opt.icon className="h-4 w-4 text-primary" />
+   434→                      <span className="flex-1">{opt.label}</span>
+   435→                      {checked && <CheckCircle2 className="h-4 w-4 text-primary" />}
+   436→                    </button>
+   437→                  )
+   438→                })}
+   439→              </div>
+   440→
+   441→              <div className="mt-6">
+   442→                <Label>Additional notes</Label>
+   443→                <Textarea
+   444→                  rows={3}
+   445→                  value={form.notes}
+   446→                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+   447→                  placeholder="Any special requests - birthdays, accessibility, religious considerations, etc."
+   448→                  className="mt-1.5"
+   449→                />
+   450→              </div>
+   451→            </Card>
+   452→          )}
+   453→
+   454→          {/* STEP 4: ROSTER */}
+   455→          {step === 4 && (
+   456→            <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   457→              <div className="flex items-center justify-between">
+   458→                <div>
+   459→                  <h2 className="font-display text-2xl font-bold">Traveller roster</h2>
+   460→                  <p className="mt-1 text-sm text-muted-foreground">
+   461→                    Add traveller details for room allocation, permits & emergency contacts.
+   462→                  </p>
+   463→                </div>
+   464→                <Button variant="outline" size="sm" onClick={addRoomMate} className="gap-1.5">
+   465→                  <Users className="h-3.5 w-3.5" /> Add traveller
+   466→                </Button>
+   467→              </div>
+   468→
+   469→              {form.roomMates.length === 0 ? (
+   470→                <div className="mt-6 rounded-xl border border-dashed border-border/60 p-8 text-center">
+   471→                  <Users className="mx-auto h-10 w-10 text-muted-foreground" />
+   472→                  <h3 className="mt-3 font-display text-base font-semibold">No travellers added yet</h3>
+   473→                  <p className="mt-1 text-xs text-muted-foreground">
+   474→                    Optional but recommended - you can also share the roster later via WhatsApp.
+   475→                  </p>
+   476→                  <Button className="mt-4 gap-1.5" onClick={addRoomMate}>
+   477→                    <Users className="h-3.5 w-3.5" /> Add first traveller
+   478→                  </Button>
+   479→                </div>
+   480→              ) : (
+   481→                <div className="mt-6 space-y-3">
+   482→                  {form.roomMates.map((rm, idx) => (
+   483→                    <div key={idx} className="rounded-xl border border-border/60 bg-muted/30 p-4">
+   484→                      <div className="mb-3 flex items-center justify-between">
+   485→                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   486→                          Traveller {idx + 1}
+   487→                        </span>
+   488→                        <Button
+   489→                          size="icon"
+   490→                          variant="ghost"
+   491→                          className="h-6 w-6 text-rose-500"
+   492→                          onClick={() => setForm({ ...form, roomMates: form.roomMates.filter((_, i) => i !== idx) })}
+   493→                        >
+   494→                          ×
+   495→                        </Button>
+   496→                      </div>
+   497→                      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+   498→                        <Input placeholder="Name" value={rm.name} onChange={(e) => updateRoomMate(idx, 'name', e.target.value)} />
+   499→                        <Input placeholder="Email" value={rm.email} onChange={(e) => updateRoomMate(idx, 'email', e.target.value)} />
+   500→                        <Input placeholder="Phone" value={rm.phone} onChange={(e) => updateRoomMate(idx, 'phone', e.target.value)} />
+   501→                        <Input placeholder="Diet / allergy" value={rm.diet} onChange={(e) => updateRoomMate(idx, 'diet', e.target.value)} />
+   502→                        <Input placeholder="Emergency contact" value={rm.emergencyContact} onChange={(e) => updateRoomMate(idx, 'emergencyContact', e.target.value)} />
+   503→                      </div>
+   504→                    </div>
+   505→                  ))}
+   506→                </div>
+   507→              )}
+   508→              <div className="mt-4 flex items-center gap-2 rounded-lg bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+   509→                <Info className="h-4 w-4 shrink-0" />
+   510→                <span>{form.roomMates.length} of {form.pax} travellers added. Remaining can be shared later.</span>
+   511→              </div>
+   512→            </Card>
+   513→          )}
+   514→
+   515→          {/* STEP 5: REVIEW */}
+   516→          {step === 5 && (
+   517→            <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   518→              <h2 className="font-display text-2xl font-bold">Review & submit</h2>
+   519→              <p className="mt-1 text-sm text-muted-foreground">Quick summary of your group booking request.</p>
+   520→
+   521→              <div className="mt-6 space-y-3">
+   522→                <ReviewRow icon={User} label="Organizer" value={`${form.organizerName} · ${form.organizerEmail} · ${form.organizerPhone}`} />
+   523→                <ReviewRow icon={Building2} label="Organization" value={form.organization || 'Personal'} />
+   524→                <ReviewRow icon={Users} label="Group type & size" value={`${form.organizationType} · ${form.pax} travellers`} />
+   525→                <ReviewRow icon={MapPin} label="Destinations" value={form.destinations.length > 0 ? form.destinations.join(', ') : 'None selected'} />
+   526→                <ReviewRow icon={Calendar} label="Trip dates" value={`${form.startDate || 'TBD'} · ${form.duration}D`} />
+   527→                <ReviewRow icon={IndianRupee} label="Budget" value={`₹${form.budgetPerPerson.toLocaleString('en-IN')}/pax · Total ₹${form.budgetTotal.toLocaleString('en-IN')}`} />
+   528→                <ReviewRow icon={Utensils} label="Meals" value={form.mealPreference} />
+   529→                <ReviewRow icon={Briefcase} label="Room sharing" value={form.roomSharing} />
+   530→                <ReviewRow icon={Users} label="Roster" value={`${form.roomMates.length} travellers added`} />
+   531→              </div>
+   532→
+   533→              <div className="mt-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/5 p-4">
+   534→                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Estimated group cost</div>
+   535→                <div className="mt-1 flex items-baseline gap-2">
+   536→                  <span className="font-display text-3xl font-bold text-primary">
+   537→                    ₹{(form.budgetPerPerson * form.pax * 0.85).toLocaleString('en-IN')}
+   538→                  </span>
+   539→                  <span className="text-xs text-muted-foreground">after ~15% group discount</span>
+   540→                </div>
+   541→                <p className="mt-2 text-xs text-muted-foreground">
+   542→                  Final quote shared within 24 hours after our team reviews your request.
+   543→                </p>
+   544→              </div>
+   545→            </Card>
+   546→          )}
+   547→        </motion.div>
+   548→
+   549→        {/* Nav buttons */}
+   550→        <div className="mt-6 flex items-center justify-between">
+   551→          <Button
+   552→            variant="ghost"
+   553→            onClick={() => setStep(Math.max(1, step - 1))}
+   554→            disabled={step === 1}
+   555→          >
+   556→            ← Back
+   557→          </Button>
+   558→          {step < 5 ? (
+   559→            <Button onClick={() => setStep(step + 1)}>Continue →</Button>
+   560→          ) : (
+   561→            <Button onClick={onSubmit} disabled={loading} className="gap-2">
+   562→              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+   563→              Submit group booking
+   564→            </Button>
+   565→          )}
+   566→        </div>
+   567→      </div>
+   568→    </div>
+   569→  )
+   570→}
+   571→
+   572→function ReviewRow({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
+   573→  return (
+   574→    <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
+   575→      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+   576→        <Icon className="h-4 w-4" />
+   577→      </div>
+   578→      <div className="flex-1 min-w-0">
+   579→        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</div>
+   580→        <div className="mt-0.5 text-sm font-medium break-words">{value}</div>
+   581→      </div>
+   582→    </div>
+   583→  )
+   584→}
+   585→

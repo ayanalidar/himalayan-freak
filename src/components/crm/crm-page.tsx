@@ -187,6 +187,11 @@ export function CrmPage() {
   const [commDialog, setCommDialog] = useState(false)
 
   const refresh = useCallback(async () => {
+    // Guard: don't fetch if not admin (prevents 403 errors filling state with error objects)
+    if (session?.user?.role !== 'admin') {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     try {
       const [lRes, cRes, bRes, dRes, tRes, vRes, commRes] = await Promise.all([
@@ -198,28 +203,34 @@ export function CrmPage() {
         fetch('/api/admin/vendors'),
         fetch('/api/admin/communications'),
       ])
+      // Parse safely - check res.ok first, fall back to []
+      const safeJson = async (r: Response, fallback: any) => {
+        if (!r.ok) return fallback
+        try { return await r.json() } catch { return fallback }
+      }
       const [l, c, b, d, t, v, comm] = await Promise.all([
-        lRes.json(),
-        cRes.json(),
-        bRes.json(),
-        dRes.json(),
-        tRes.json(),
-        vRes.json(),
-        commRes.json(),
+        safeJson(lRes, []),
+        safeJson(cRes, []),
+        safeJson(bRes, []),
+        safeJson(dRes, null),
+        safeJson(tRes, []),
+        safeJson(vRes, []),
+        safeJson(commRes, []),
       ])
-      setLeads(l)
-      setCustomers(c)
-      setBookings(b)
+      // Only set if arrays (defensive - prevents .filter crashes if API returned an error object)
+      setLeads(Array.isArray(l) ? l : [])
+      setCustomers(Array.isArray(c) ? c : [])
+      setBookings(Array.isArray(b) ? b : [])
       setDash(d)
-      setTasks(t)
-      setVendors(v)
-      setComms(comm)
+      setTasks(Array.isArray(t) ? t : [])
+      setVendors(Array.isArray(v) ? v : [])
+      setComms(Array.isArray(comm) ? comm : [])
     } catch (err) {
       console.error(err)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [session])
 
   // Auth guard
   useEffect(() => {

@@ -43,6 +43,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
+import { useAuth } from '@/components/auth-provider'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { ImageUpload } from '@/components/image-upload'
@@ -87,6 +88,7 @@ const emptyPkg: PackageData = {
 
 export function AdminPackagesPage() {
   const { navigate } = useApp()
+  const { session, status } = useAuth()
   const [packages, setPackages] = useState<PackageData[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -96,14 +98,22 @@ export function AdminPackagesPage() {
   const [saving, setSaving] = useState(false)
 
   const refresh = useCallback(async () => {
+    if (session?.user?.role !== 'admin') {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     try {
       const [adminRes, pubRes] = await Promise.all([
         fetch('/api/admin/packages'),
         fetch('/api/packages'),
       ])
-      const adminList = adminRes.ok ? await adminRes.json() : []
-      const pubList = await pubRes.json()
+      const safeJson = async (r: Response, fallback: any) => {
+        if (!r.ok) return fallback
+        try { return await r.json() } catch { return fallback }
+      }
+      const adminList = await safeJson(adminRes, [])
+      const pubList = await safeJson(pubRes, [])
       const adminSlugs = new Set(adminList.map((p: PackageData) => p.slug))
       const merged = [...adminList, ...pubList.filter((p: PackageData) => !adminSlugs.has(p.slug))]
       setPackages(merged)
@@ -112,7 +122,17 @@ export function AdminPackagesPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [session])
+
+  // Auth guard - redirect non-admins
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      navigate('login')
+    } else if (status === 'authenticated' && (session?.user as any)?.role !== 'admin') {
+      toast.error('Admin access only')
+      navigate('dashboard')
+    }
+  }, [status, session, navigate])
 
   useEffect(() => {
     refresh()

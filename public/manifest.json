@@ -1,0 +1,65 @@
+{
+  "name": "Himalayan Freak - Custom Himalayan Travel",
+  "short_name": "Himalayan Freak",
+  "description": "Plan custom journeys across Jammu, Kashmir, Ladakh and the entire Himalayan range. AI travel agent, real-time flights & trains, group bookings, and CRM.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#f59e0b",
+  "categories": ["travel", "lifestyle", "productivity"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Plan a Trip",
+      "short_name": "Plan Trip",
+      "description": "Open the custom trip planner",
+      "url": "/?page=trip-planner",
+      "icons": [{ "src": "/logo.webp", "sizes": "96x96", "type": "image/webp" }]
+    },
+    {
+      "name": "Destinations",
+      "short_name": "Destinations",
+      "description": "Browse 31 Himalayan destinations",
+      "url": "/?page=destinations",
+      "icons": [{ "src": "/logo.webp", "sizes": "96x96", "type": "image/webp" }]
+    },
+    {
+      "name": "Flights & Trains",
+      "short_name": "Tickets",
+      "description": "Search flights and trains to the Himalaya",
+      "url": "/?page=tickets",
+      "icons": [{ "src": "/logo.webp", "sizes": "96x96", "type": "image/webp" }]
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

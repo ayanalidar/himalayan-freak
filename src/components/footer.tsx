@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Phone, Mail, Mountain, Instagram, Facebook, Twitter, Youtube, Send } from 'lucide-react'
+import { MapPin, Phone, Mail, Mountain, Instagram, Facebook, Send, FileText, Shield, RotateCcw } from 'lucide-react'
 import { useApp } from '@/lib/store'
 import { destinations, packages } from '@/lib/data'
 import { Input } from '@/components/ui/input'
@@ -45,17 +45,43 @@ export function Footer() {
               A Kashmir-born travel house crafting bespoke journeys across Jammu, Kashmir, Ladakh
               and the entire Himalayan range. Locally rooted. Globally trusted.
             </p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">Founder &amp; CEO:</span> Syed Shamshul Razvi
+            </p>
+            {/* Social links - real URLs */}
             <div className="mt-5 flex gap-2">
-              {[Instagram, Facebook, Twitter, Youtube].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  aria-label="Social link"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              <a
+                href="https://instagram.com/himalayanfreaktravels"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram @himalayanfreaktravels"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/thehimalayan1"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href="mailto:info@himalayanfreak.in"
+                aria-label="Email info@himalayanfreak.in"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+              <a
+                href="tel:+916006266072"
+                aria-label="Call +91 600 626 6072"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Phone className="h-4 w-4" />
+              </a>
             </div>
           </div>
 
@@ -66,7 +92,8 @@ export function Footer() {
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('company')}>About Us</button></li>
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('packages')}>Packages</button></li>
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('trip-planner')}>Trip Planner</button></li>
-              <li><button className="hover:text-primary transition-colors" onClick={() => navigate('crm')}>CRM Dashboard</button></li>
+              <li><button className="hover:text-primary transition-colors" onClick={() => navigate('group-booking')}>Group Booking</button></li>
+              <li><button className="hover:text-primary transition-colors" onClick={() => navigate('tickets')}>Flights &amp; Trains</button></li>
             </ul>
           </div>
 
@@ -93,7 +120,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>Al Falah Complex, Srinagar–Gulmarg Road, Magam, Jammu &amp; Kashmir 193401, India</span>
+                <span>Al Falah Complex, Srinagar-Gulmarg Road, Magam, Jammu &amp; Kashmir 193401, India</span>
               </li>
               <li>
                 <a href="tel:+916006266072" className="flex items-center gap-2.5 hover:text-primary transition-colors">
@@ -106,8 +133,28 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:hello@himalayanfreak.com" className="flex items-center gap-2.5 hover:text-primary transition-colors">
-                  <Mail className="h-4 w-4 text-primary" /> hello@himalayanfreak.com
+                <a href="mailto:info@himalayanfreak.in" className="flex items-center gap-2.5 hover:text-primary transition-colors">
+                  <Mail className="h-4 w-4 text-primary" /> info@himalayanfreak.in
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://instagram.com/himalayanfreaktravels"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 hover:text-primary transition-colors"
+                >
+                  <Instagram className="h-4 w-4 text-primary" /> @himalayanfreaktravels
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.facebook.com/thehimalayan1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 hover:text-primary transition-colors"
+                >
+                  <Facebook className="h-4 w-4 text-primary" /> /thehimalayan1
                 </a>
               </li>
             </ul>
@@ -133,11 +180,17 @@ export function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} Himalayan Freak. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-primary">Privacy Policy</a>
-            <a href="#" className="hover:text-primary">Terms</a>
-            <a href="#" className="hover:text-primary">Cancellation</a>
+          <p>&copy; {new Date().getFullYear()} Himalayan Freak. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <button onClick={() => navigate('privacy')} className="hover:text-primary transition-colors flex items-center gap-1">
+              <Shield className="h-3 w-3" /> Privacy Policy
+            </button>
+            <button onClick={() => navigate('terms')} className="hover:text-primary transition-colors flex items-center gap-1">
+              <FileText className="h-3 w-3" /> Terms
+            </button>
+            <button onClick={() => navigate('cancellation')} className="hover:text-primary transition-colors flex items-center gap-1">
+              <RotateCcw className="h-3 w-3" /> Cancellation
+            </button>
           </div>
           <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
             <div className="flex items-center gap-1.5">

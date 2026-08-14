@@ -149,9 +149,23 @@ export function TripPlannerPage() {
       toast.success('Trip saved!', {
         description: `Ref: ${data.refCode}. Our team will WhatsApp you within 30 minutes.`,
       })
-      navigate('crm')
+      // Reset state first (so it doesn't leak if navigate triggers a redirect)
       trip.reset()
       setStep(0)
+      // Redirect based on session role: admin -> CRM, user/guest -> dashboard
+      try {
+        const sres = await fetch('/api/auth/session').then((r) => r.json())
+        const role = sres?.user?.role
+        if (role === 'admin') {
+          navigate('crm')
+        } else if (sres?.user) {
+          navigate('dashboard')
+        } else {
+          navigate('home')
+        }
+      } catch {
+        navigate('home')
+      }
     } catch {
       toast.error('Could not save trip', { description: 'Please try again or call us directly.' })
     }

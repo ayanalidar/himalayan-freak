@@ -1,0 +1,520 @@
+     1→'use client'
+     2→
+     3→import { motion } from 'framer-motion'
+     4→import { Shield, FileText, RotateCcw, ArrowLeft, Mail, Phone, MapPin } from 'lucide-react'
+     5→import { Button } from '@/components/ui/button'
+     6→import { Card } from '@/components/ui/card'
+     7→import { Badge } from '@/components/ui/badge'
+     8→import { useApp } from '@/lib/store'
+     9→
+    10→type LegalType = 'privacy' | 'terms' | 'cancellation'
+    11→
+    12→interface LegalConfig {
+    13→  title: string
+    14→  badge: string
+    15→  icon: typeof Shield
+    16→  intro: string
+    17→  sections: { heading: string; body: string; bullets?: string[] }[]
+    18→}
+    19→
+    20→const configs: Record<LegalType, LegalConfig> = {
+    21→  privacy: {
+    22→    title: 'Privacy Policy',
+    23→    badge: 'Privacy Policy',
+    24→    icon: Shield,
+    25→    intro:
+    26→      'Himalayan Freak ("we", "us", "our") respects your privacy. This policy explains what personal information we collect, why we collect it, how we use it, and the choices you have. It applies to all visitors and users of himalayanfreak.in and our mobile/PWA application.',
+    27→    sections: [
+    28→      {
+    29→        heading: '1. Information We Collect',
+    30→        body: 'We collect information you provide directly to us and information collected automatically when you use our services.',
+    31→        bullets: [
+    32→          'Account information: name, email address, phone number, city, state - collected when you sign up',
+    33→          'Trip planning data: destinations selected, travel dates, number of travellers, hotel and meal preferences, add-on choices',
+    34→          'Booking information: traveller names, emergency contacts, dietary restrictions, ID proofs (for permits)',
+    35→          'Payment information: processed via secure third-party gateways (Razorpay/UPI) - we never store card details',
+    36→          'Communications: chats with our AI travel agent, emails, WhatsApp messages, call logs',
+    37→          'Usage data: IP address, browser type, pages visited, device information - collected automatically via cookies',
+    38→          'Reviews and feedback: ratings and text you submit about destinations and packages',
+    39→        ],
+    40→      },
+    41→      {
+    42→        heading: '2. How We Use Your Information',
+    43→        body: 'We use your personal information for the following legitimate business purposes:',
+    44→        bullets: [
+    45→          'To plan, customise and operate your travel itinerary',
+    46→          'To process bookings, payments and issue vouchers',
+    47→          'To communicate with you about your trip, weather alerts and route updates',
+    48→          'To arrange permits (Inner Line, Protected Area, Amarnath Yatra) with government authorities',
+    49→          'To provide emergency medical and evacuation support during your trip',
+    50→          'To improve our services, destinations database and AI chatbot responses',
+    51→          'To send our monthly travel journal (you can unsubscribe at any time)',
+    52→          'To comply with legal obligations under Jammu & Kashmir tourism regulations',
+    53→        ],
+    54→      },
+    55→      {
+    56→        heading: '3. Legal Basis for Processing (GDPR/DPDP)',
+    57→        body: 'Under the EU General Data Protection Regulation (GDPR) and the Indian Digital Personal Data Protection Act (DPDP) 2023, we process your data based on:',
+    58→        bullets: [
+    59→          'Consent: when you sign up, submit a trip plan, or subscribe to our journal',
+    60→          'Contract: when you book a trip and we need to fulfil our service obligations',
+    61→          'Legal obligation: when we are required to share traveller IDs with authorities for permits',
+    62→          'Legitimate interest: when we log communications for service quality and dispute resolution',
+    63→        ],
+    64→      },
+    65→      {
+    66→        heading: '4. Information Sharing',
+    67→        body: 'We do NOT sell your personal information. We share it only with:',
+    68→        bullets: [
+    69→          'Service providers: hotels, drivers, guides, photographers - only the details needed to operate your specific trip',
+    70→          'Government authorities: ID proofs for permit applications (Inner Line, Protected Area, Amarnath Yatra registration)',
+    71→          'Payment processors: Razorpay, UPI gateways (no card data is stored on our servers)',
+    72→          'Emergency services: medical professionals, evacuation teams (only in genuine emergencies)',
+    73→          'Legal authorities: if required by law, court order, or government regulation',
+    74→        ],
+    75→      },
+    76→      {
+    77→        heading: '5. Data Retention',
+    78→        body: 'We retain your personal information for as long as necessary to fulfil the purposes outlined above. Specifically:',
+    79→        bullets: [
+    80→          'Active booking data: retained for the duration of the trip plus 7 years for tax/audit purposes',
+    81→          'Account data: retained until you delete your account, after which it is anonymised within 30 days',
+    82→          'AI chat logs: retained for 90 days, then automatically deleted',
+    83→          'Marketing data: retained until you unsubscribe, then deleted within 30 days',
+    84→          'ID proofs (Aadhaar, PAN, passport): deleted within 7 days of trip completion',
+    85→        ],
+    86→      },
+    87→      {
+    88→        heading: '6. Your Rights',
+    89→        body: 'You have the following rights regarding your personal data:',
+    90→        bullets: [
+    91→          'Right to access: request a copy of all personal data we hold about you',
+    92→          'Right to rectification: correct inaccurate or incomplete data',
+    93→          'Right to erasure ("right to be forgotten"): request deletion of your data',
+    94→          'Right to restrict processing: limit how we use your data',
+    95→          'Right to data portability: receive your data in a machine-readable format',
+    96→          'Right to object: opt out of marketing communications at any time',
+    97→          'Right to withdraw consent: at any time, without affecting the lawfulness of prior processing',
+    98→        ],
+    99→      },
+   100→      {
+   101→        heading: '7. Cookies & Tracking',
+   102→        body: 'We use essential cookies for authentication (NextAuth session) and analytics cookies to understand how visitors use our site. We do not use third-party advertising cookies. You can disable cookies in your browser settings, but authentication features will not work.',
+   103→      },
+   104→      {
+   105→        heading: '8. Data Security',
+   106→        body: 'We implement industry-standard security measures including:',
+   107→        bullets: [
+   108→          'TLS 1.3 encryption for all data in transit',
+   109→          'Bcrypt password hashing (10 rounds) - passwords are never stored in plain text',
+   110→          'Role-based access control (RBAC) - only admin users can access CRM data',
+   111→          'Serverless PostgreSQL (Neon) with encryption at rest',
+   112→          'Regular security audits (VAPT) of all API endpoints',
+   113→          'Strict input validation and parameterised queries (Prisma ORM) to prevent SQL injection',
+   114→        ],
+   115→      },
+   116→      {
+   117→        heading: '9. International Transfers',
+   118→        body: 'Your data is stored on servers located in India (Neon PostgreSQL ap-southeast-1, AWS Mumbai) and the United States (Vercel edge network). By using our services, you consent to these transfers in accordance with this policy.',
+   119→      },
+   120→      {
+   121→        heading: '10. Children\'s Privacy',
+   122→        body: 'Our services are not directed to children under 18. We do not knowingly collect personal information from children. If you believe we have collected such information, please contact us and we will delete it promptly.',
+   123→      },
+   124→      {
+   125→        heading: '11. Changes to This Policy',
+   126→        body: 'We may update this policy from time to time. Material changes will be notified via email to registered users at least 30 days before they take effect. The "last updated" date at the bottom reflects the most recent revision.',
+   127→      },
+   128→      {
+   129→        heading: '12. Contact Us',
+   130→        body: 'For privacy questions, data access requests, or to exercise any of your rights, contact our Data Protection Officer:',
+   131→        bullets: [
+   132→          'Email: info@himalayanfreak.in',
+   133→          'Phone: +91 600 626 6072',
+   134→          'Address: Al Falah Complex, Srinagar-Gulmarg Road, Magam, Jammu & Kashmir 193401, India',
+   135→          'Founder & CEO: Syed Shamshul Razvi',
+   136→        ],
+   137→      },
+   138→    ],
+   139→  },
+   140→  terms: {
+   141→    title: 'Terms & Conditions',
+   142→    badge: 'Terms of Service',
+   143→    icon: FileText,
+   144→    intro:
+   145→      'Welcome to Himalayan Freak. These Terms and Conditions ("Terms") govern your use of our website, mobile/PWA application, and travel services. By booking a trip, creating an account, or using any of our services, you agree to these Terms. Please read them carefully.',
+   146→    sections: [
+   147→      {
+   148→        heading: '1. Definitions',
+   149→        body: 'In these Terms:',
+   150→        bullets: [
+   151→          '"Company", "we", "us", "our" refers to Himalayan Freak, a travel agency registered in Magam, Jammu & Kashmir, India',
+   152→          '"Traveller", "you", "your" refers to any person booking or inquiring about a trip with us',
+   153→          '"Trip" refers to any itinerary, package, or custom journey planned and operated by us',
+   154→          '"Services" includes trip planning, bookings, transportation, accommodation, guides, and related travel services',
+   155→        ],
+   156→      },
+   157→      {
+   158→        heading: '2. Bookings & Confirmation',
+   159→        body: 'A booking is considered confirmed only when:',
+   160→        bullets: [
+   161→          'You have submitted a complete booking request via Trip Planner, Group Booking, or AI Chatbot',
+   162→          'We have sent you a written confirmation (email or WhatsApp) with a reference code',
+   163→          'You have paid the advance deposit (typically 25% of total trip cost)',
+   164→          'The balance payment must be cleared at least 14 days before departure',
+   165→        ],
+   166→      },
+   167→      {
+   168→        heading: '3. Pricing & Payments',
+   169→        body: 'All prices are quoted in Indian Rupees (INR) and are inclusive of applicable taxes unless stated otherwise. Pricing terms:',
+   170→        bullets: [
+   171→          'Prices quoted in itineraries are estimates; final quotes are confirmed after a 30-minute onboarding call',
+   172→          'Pricing depends on hotel availability, season, transport type, pax count, and permit costs',
+   173→          'Peak season surcharges (April-June, September-November, December-January) may apply',
+   174→          'We accept payments via UPI, bank transfer, credit/debit card (Razorpay), and cash',
+   175→          'GST invoice is provided for all corporate bookings on request',
+   176→        ],
+   177→      },
+   178→      {
+   179→        heading: '4. Traveller Responsibilities',
+   180→        body: 'You agree to:',
+   181→        bullets: [
+   182→          'Provide accurate personal information including valid ID proofs for permits',
+   183→          'Disclose medical conditions, dietary restrictions, and accessibility needs at the time of booking',
+   184→          'Carry valid government-issued photo ID and 4 passport-size photographs for permits',
+   185→          'Follow the instructions of our drivers, guides, and trip managers at all times',
+   186→          'Respect local customs, dress codes at religious sites, and environmental guidelines',
+   187→          'Not engage in any illegal activity during the trip',
+   188→          'Carry travel insurance for high-altitude trips (mandatory for treks above 4,000m)',
+   189→        ],
+   190→      },
+   191→      {
+   192→        heading: '5. Health & Safety',
+   193→        body: 'High-altitude travel carries inherent risks. You acknowledge that:',
+   194→        bullets: [
+   195→          'Acclimatisation is mandatory for trips to Ladakh, Spiti, and high passes (above 3,000m)',
+   196→          'AMS (Acute Mountain Sickness) can affect anyone regardless of fitness - inform our team immediately if symptoms appear',
+   197→          'We provide oxygen cylinders and medical kits on all remote-route trips',
+   198→          'Pregnant women, travellers with heart conditions, and those with severe asthma should consult a doctor before booking high-altitude trips',
+   199→          'We reserve the right to refuse or terminate a trip if a traveller\'s health or behaviour endangers themselves or others',
+   200→        ],
+   201→      },
+   202→      {
+   203→        heading: '6. Permits & Documentation',
+   204→        body: 'For certain destinations, permits are required:',
+   205→        bullets: [
+   206→          'Inner Line Permit (ILP) for Indian nationals visiting Nubra, Pangong, Tso Moriri (Ladakh)',
+   207→          'Protected Area Permit (PAP) for foreign nationals visiting Ladakh restricted areas',
+   208→          'Amarnath Yatra registration (mandatory, July-August)',
+   209→          'Vaishno Devi yatra registration (mandatory, year-round)',
+   210→          'We arrange all permits on your behalf - original ID proofs must be shared at least 7 days before departure',
+   211→        ],
+   212→      },
+   213→      {
+   214→        heading: '7. Travel Documents',
+   215→        body: 'It is your responsibility to carry valid travel documents:',
+   216→        bullets: [
+   217→          'Indian nationals: valid government-issued photo ID (Aadhaar, PAN, passport, driving licence)',
+   218→          'Foreign nationals: valid passport with Indian visa (or e-Visa), valid for at least 6 months beyond travel dates',
+   219→          'OCI cardholders: OCI card and passport',
+   220→          'We are not liable for denial of entry due to invalid or expired documents',
+   221→        ],
+   222→      },
+   223→      {
+   224→        heading: '8. Force Majeure',
+   225→        body: 'We are not liable for any failure or delay in performance caused by circumstances beyond our reasonable control, including but not limited to:',
+   226→        bullets: [
+   227→          'Natural disasters (earthquakes, floods, landslides, heavy snowfall)',
+   228→          'Road closures (Zoji La, Rohtang La, Khardung La closures due to weather)',
+   229→          'Government actions (curfews, lockdowns, permit suspensions, border closures)',
+   230→          'Civil unrest, terrorism, or war',
+   231→          'Pandemics and public health emergencies',
+   232→          'In such cases, we will offer rescheduling or a full refund minus unrecoverable third-party costs',
+   233→        ],
+   234→      },
+   235→      {
+   236→        heading: '9. Limitation of Liability',
+   237→        body: 'To the maximum extent permitted by law:',
+   238→        bullets: [
+   239→          'Our total liability for any claim arising from a booking is limited to the amount you paid us for that specific trip',
+   240→          'We are not liable for indirect, incidental, or consequential damages',
+   241→          'We are not liable for the acts or omissions of third-party service providers (hotels, airlines, railways, restaurants)',
+   242→          'We strongly recommend comprehensive travel insurance covering medical evacuation, trip cancellation, and baggage loss',
+   243→        ],
+   244→      },
+   245→      {
+   246→        heading: '10. Intellectual Property',
+   247→        body: 'All content on this website - including destination descriptions, photographs, itinerary text, the AI chatbot ("Freak AI"), and the Himalayan Freak logo - is the property of Himalayan Freak and protected under Indian Copyright Act 1957. You may not reproduce, distribute, or create derivative works without our written permission.',
+   248→      },
+   249→      {
+   250→        heading: '11. User-Generated Content',
+   251→        body: 'When you submit reviews, photos, or other content to our platform:',
+   252→        bullets: [
+   253→          'You grant us a non-exclusive, royalty-free, worldwide licence to use, reproduce, and display that content for marketing purposes',
+   254→          'You confirm you own the rights to the content and it does not violate any third-party rights',
+   255→          'We reserve the right to remove any content we deem inappropriate, offensive, or misleading',
+   256→        ],
+   257→      },
+   258→      {
+   259→        heading: '12. Governing Law & Dispute Resolution',
+   260→        body: 'These Terms are governed by the laws of India. Any disputes will be resolved as follows:',
+   261→        bullets: [
+   262→          'First, attempt amicable resolution through direct communication with our team',
+   263→          'If unresolved within 30 days, the matter will be referred to mediation in Srinagar, Jammu & Kashmir',
+   264→          'Failing mediation, disputes will be subject to the exclusive jurisdiction of the courts of Srinagar, Jammu & Kashmir, India',
+   265→        ],
+   266→      },
+   267→      {
+   268→        heading: '13. Changes to Terms',
+   269→        body: 'We may update these Terms from time to time. Material changes will be notified via email to registered users at least 30 days before they take effect. Continued use of our services after changes take effect constitutes acceptance of the new Terms.',
+   270→      },
+   271→      {
+   272→        heading: '14. Contact',
+   273→        body: 'For questions about these Terms, please contact us:',
+   274→        bullets: [
+   275→          'Email: info@himalayanfreak.in',
+   276→          'Phone: +91 600 626 6072',
+   277→          'Address: Al Falah Complex, Srinagar-Gulmarg Road, Magam, Jammu & Kashmir 193401, India',
+   278→          'Founder & CEO: Syed Shamshul Razvi',
+   279→        ],
+   280→      },
+   281→    ],
+   282→  },
+   283→  cancellation: {
+   284→    title: 'Cancellation & Refund Policy',
+   285→    badge: 'Cancellation Policy',
+   286→    icon: RotateCcw,
+   287→    intro:
+   288→      'We understand that plans change. This policy explains our cancellation and refund terms. We aim to be fair to both travellers and our local partners (drivers, homestays, guides) who commit resources based on your booking.',
+   289→    sections: [
+   290→      {
+   291→        heading: '1. Cancellation by Traveller',
+   292→        body: 'If you need to cancel your trip, please notify us in writing (email to info@himalayanfreak.in or WhatsApp to +91 600 626 6072). Cancellation charges are calculated based on the number of days before departure:',
+   293→        bullets: [
+   294→          'More than 60 days before departure: 90% refund (10% administrative fee)',
+   295→          '45-60 days before departure: 75% refund',
+   296→          '30-44 days before departure: 50% refund',
+   297→          '15-29 days before departure: 25% refund',
+   298→          'Less than 15 days before departure: No refund',
+   299→          'Same-day or no-show: No refund',
+   300→        ],
+   301→      },
+   302→      {
+   303→        heading: '2. Refund Calculation',
+   304→        body: 'Refunds are calculated based on the total amount paid (advance + balance), not the package price. Refund processing:',
+   305→        bullets: [
+   306→          'Refunds are processed within 7-10 business days of cancellation confirmation',
+   307→          'Refunds are credited back to the original payment method (UPI, card, bank account)',
+   308→          'Bank charges and payment gateway fees (typically 2-3%) are non-refundable',
+   309→          'Permit fees already paid to government authorities are non-refundable',
+   310→          'Airline and railway tickets are subject to the respective operator\'s cancellation policy',
+   311→        ],
+   312→      },
+   313→      {
+   314→        heading: '3. Cancellation by Us',
+   315→        body: 'We may cancel or modify a trip due to circumstances including:',
+   316→        bullets: [
+   317→          'Force majeure (natural disasters, weather, road closures, pandemics)',
+   318→          'Insufficient bookings (minimum group size not met) - we will notify you at least 21 days before departure',
+   319→          'Government closures (Zoji La, Rohtang La, Khardung La closures)',
+   320→          'Security situations in the destination region',
+   321→        ],
+   322→      },
+   323→      {
+   324→        heading: '4. Refund If We Cancel',
+   325→        body: 'If we cancel a trip:',
+   326→        bullets: [
+   327→          'You will receive a 100% refund of all amounts paid to us, within 7 business days',
+   328→          'OR you may choose to reschedule to a future date with the same itinerary at no extra cost',
+   329→          'OR you may choose an alternative itinerary of equal or lesser value (we will refund the difference if lesser)',
+   330→          'We are not liable for non-refundable flights, train tickets, or third-party bookings made independently',
+   331→        ],
+   332→      },
+   333→      {
+   334→        heading: '5. Trip Modifications',
+   335→        body: 'If you want to modify your booking (dates, destinations, hotel tier):',
+   336→        bullets: [
+   337→          'Modifications more than 30 days before departure: free of charge (subject to availability)',
+   338→          'Modifications 15-30 days before departure: 10% modification fee',
+   339→          'Modifications less than 15 days before departure: treated as cancellation + new booking',
+   340→          'We will do our best to accommodate reasonable changes',
+   341→        ],
+   342→      },
+   343→      {
+   344→        heading: '6. Trip Curtailment',
+   345→        body: 'If you need to cut your trip short after it has begun:',
+   346→        bullets: [
+   347→          'No refund for unused services (hotels, transport, activities)',
+   348→          'We will assist with rearranging return transport at your cost',
+   349→          'Travel insurance may cover curtailment - check your policy',
+   350→          'Medical emergencies: we will assist with evacuation; insurance claims are between you and your insurer',
+   351→        ],
+   352→      },
+   353→      {
+   354→        heading: '7. No-Show Policy',
+   355→        body: 'If you fail to arrive at the designated pickup point or starting location without prior notification:',
+   356→        bullets: [
+   357→          'The entire booking will be treated as cancelled with no refund',
+   358→          'We will attempt to contact you via phone, email, and WhatsApp before declaring a no-show',
+   359→          'If you miss a flight/train due to your own delay, we will assist with rebooking at your cost',
+   360→        ],
+   361→      },
+   362→      {
+   363→        heading: '8. Weather & Route Closures',
+   364→        body: 'Himalayan travel is weather-dependent. If routes close during your trip:',
+   365→        bullets: [
+   366→          'We will offer alternative destinations or activities of equivalent value',
+   367→          'If no alternative is possible, we will refund the unused portion of the trip pro-rata',
+   368→          'We are not liable for missed flights/trains due to weather-related delays',
+   369→          'Trip insurance with "trip interruption" cover is strongly recommended',
+   370→        ],
+   371→      },
+   372→      {
+   373→        heading: '9. Group Booking Cancellations',
+   374→        body: 'For group bookings (10+ travellers), special cancellation terms apply:',
+   375→        bullets: [
+   376→          'Group cancellations more than 90 days before departure: 85% refund',
+   377→          '60-90 days before departure: 60% refund',
+   378→          '30-59 days before departure: 30% refund',
+   379→          'Less than 30 days: No refund',
+   380→          'Individual cancellations within a group: standard individual policy applies',
+   381→        ],
+   382→      },
+   383→      {
+   384→        heading: '10. Refund Disputes',
+   385→        body: 'If you disagree with a refund amount:',
+   386→        bullets: [
+   387→          'Contact us within 14 days of receiving the refund with supporting documentation',
+   388→          'We will review and respond within 7 business days',
+   389→          'If unresolved, the matter will be referred to mediation in Srinagar',
+   390→          'Ultimately subject to the jurisdiction of Srinagar courts, Jammu & Kashmir, India',
+   391→        ],
+   392→      },
+   393→      {
+   394→        heading: '11. Contact for Cancellations',
+   395→        body: 'To cancel a booking or request a refund, contact us immediately:',
+   396→        bullets: [
+   397→          'Email: info@himalayanfreak.in',
+   398→          'Phone/WhatsApp: +91 600 626 6072 (24x7)',
+   399→          'Address: Al Falah Complex, Srinagar-Gulmarg Road, Magam, Jammu & Kashmir 193401, India',
+   400→          'Founder & CEO: Syed Shamshul Razvi',
+   401→        ],
+   402→      },
+   403→    ],
+   404→  },
+   405→}
+   406→
+   407→export function LegalPage({ type }: { type: LegalType }) {
+   408→  const { navigate } = useApp()
+   409→  const config = configs[type]
+   410→  const Icon = config.icon
+   411→
+   412→  return (
+   413→    <div className="min-h-screen bg-background">
+   414→      {/* Hero */}
+   415→      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-slate-900 via-slate-800 to-amber-900/30">
+   416→        <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
+   417→          <motion.div
+   418→            initial={{ opacity: 0, y: 24 }}
+   419→            animate={{ opacity: 1, y: 0 }}
+   420→            transition={{ duration: 0.6 }}
+   421→          >
+   422→            <button
+   423→              onClick={() => navigate('home')}
+   424→              className="mb-5 flex items-center gap-1.5 text-xs text-white/60 hover:text-white"
+   425→            >
+   426→              <ArrowLeft className="h-3 w-3" /> Back to home
+   427→            </button>
+   428→            <Badge className="mb-4 bg-amber-500/20 text-amber-300 backdrop-blur">
+   429→              <Icon className="mr-1.5 h-3 w-3" /> {config.badge}
+   430→            </Badge>
+   431→            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+   432→              {config.title}
+   433→            </h1>
+   434→            <p className="mt-3 text-sm text-white/60">
+   435→              Last updated: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+   436→            </p>
+   437→          </motion.div>
+   438→        </div>
+   439→      </section>
+   440→
+   441→      {/* Content */}
+   442→      <section className="py-12">
+   443→        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+   444→          <motion.div
+   445→            initial={{ opacity: 0, y: 16 }}
+   446→            animate={{ opacity: 1, y: 0 }}
+   447→            transition={{ duration: 0.5 }}
+   448→          >
+   449→            <Card className="p-6 ring-1 ring-border/40 sm:p-10">
+   450→              <p className="text-base leading-relaxed text-muted-foreground">{config.intro}</p>
+   451→
+   452→              <div className="mt-8 space-y-8">
+   453→                {config.sections.map((section, i) => (
+   454→                  <motion.div
+   455→                    key={i}
+   456→                    initial={{ opacity: 0, y: 12 }}
+   457→                    whileInView={{ opacity: 1, y: 0 }}
+   458→                    viewport={{ once: true }}
+   459→                    transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3) }}
+   460→                  >
+   461→                    <h2 className="font-display text-xl font-bold tracking-tight">{section.heading}</h2>
+   462→                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+   463→                    {section.bullets && (
+   464→                      <ul className="mt-3 space-y-2">
+   465→                        {section.bullets.map((b, j) => (
+   466→                          <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
+   467→                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+   468→                            <span>{b}</span>
+   469→                          </li>
+   470→                        ))}
+   471→                      </ul>
+   472→                    )}
+   473→                  </motion.div>
+   474→                ))}
+   475→              </div>
+   476→
+   477→              <div className="mt-10 rounded-xl border border-border/60 bg-muted/30 p-5">
+   478→                <h3 className="font-display text-sm font-bold">Questions?</h3>
+   479→                <p className="mt-1 text-xs text-muted-foreground">
+   480→                  We&apos;re here to help. Reach out and our team will respond within 30 minutes during business hours.
+   481→                </p>
+   482→                <div className="mt-3 flex flex-wrap gap-3 text-xs">
+   483→                  <a href="mailto:info@himalayanfreak.in" className="flex items-center gap-1.5 text-primary hover:underline">
+   484→                    <Mail className="h-3.5 w-3.5" /> info@himalayanfreak.in
+   485→                  </a>
+   486→                  <a href="tel:+916006266072" className="flex items-center gap-1.5 text-primary hover:underline">
+   487→                    <Phone className="h-3.5 w-3.5" /> +91 600 626 6072
+   488→                  </a>
+   489→                  <span className="flex items-center gap-1.5 text-muted-foreground">
+   490→                    <MapPin className="h-3.5 w-3.5" /> Magam, Kashmir 193401
+   491→                  </span>
+   492→                </div>
+   493→              </div>
+   494→
+   495→              <div className="mt-6 flex flex-wrap gap-2">
+   496→                {(['privacy', 'terms', 'cancellation'] as LegalType[])
+   497→                  .filter((t) => t !== type)
+   498→                  .map((t) => (
+   499→                    <Button
+   500→                      key={t}
+   501→                      variant="outline"
+   502→                      size="sm"
+   503→                      onClick={() => navigate(t)}
+   504→                      className="gap-1.5"
+   505→                    >
+   506→                      {t === 'privacy' && <Shield className="h-3.5 w-3.5" />}
+   507→                      {t === 'terms' && <FileText className="h-3.5 w-3.5" />}
+   508→                      {t === 'cancellation' && <RotateCcw className="h-3.5 w-3.5" />}
+   509→                      View {configs[t].title}
+   510→                    </Button>
+   511→                  ))}
+   512→              </div>
+   513→            </Card>
+   514→          </motion.div>
+   515→        </div>
+   516→      </section>
+   517→    </div>
+   518→  )
+   519→}
+   520→

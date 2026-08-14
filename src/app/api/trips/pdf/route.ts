@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     cover.drawText(dateLine, { x: MARGIN, y: 100, size: 10, font: font, color: COLORS.white, opacity: 0.9 })
 
     cover.drawText('Made & maintained by GuardianX', { x: MARGIN, y: 40, size: 9, font: fontOblique, color: COLORS.amber })
-    cover.drawText('himalayanfreak.com  |  +91 600 626 6072  |  Magam, Kashmir 193401', { x: MARGIN, y: 24, size: 8, font: font, color: COLORS.white, opacity: 0.5 })
+    cover.drawText('info@himalayanfreak.in  |  +91 600 626 6072  |  Magam, Kashmir 193401', { x: MARGIN, y: 24, size: 8, font: font, color: COLORS.white, opacity: 0.5 })
 
     // === PAGE 2: TRIP OVERVIEW ===
     const p2 = pdfDoc.addPage([PAGE_W, PAGE_H])
@@ -320,7 +320,9 @@ export async function POST(req: NextRequest) {
       'Al Falah Complex, Srinagar-Gulmarg Road,',
       'Magam, Jammu & Kashmir 193401, India',
       '+91 600 626 6072  |  +91 979 705 1060',
-      'hello@himalayanfreak.com',
+      'info@himalayanfreak.in',
+      'Instagram: @himalayanfreaktravels  |  Facebook: /thehimalayan1',
+      'Founder & CEO: Syed Shamshul Razvi',
     ]
     contactLines.forEach((line) => {
       summary.drawText(line, { x: MARGIN, y: sy, size: 9, font: font, color: COLORS.slate })
@@ -368,7 +370,7 @@ function drawHeader(page: any, font: any, fontBold: any, title: string, x: numbe
 
 function drawFooter(page: any, font: any, fontOblique: any, pageNum: number) {
   const PAGE_W = 595.28
-  page.drawText('Himalayan Freak  |  himalayanfreak.com  |  +91 600 626 6072', {
+  page.drawText('Himalayan Freak  |  info@himalayanfreak.in  |  +91 600 626 6072', {
     x: 50, y: 30, size: 8, font: font, color: COLORS.slate,
   })
   page.drawText('Made & maintained by GuardianX', {

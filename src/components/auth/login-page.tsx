@@ -3,9 +3,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { Mail, Lock, ArrowRight, Eye, EyeOff, Mountain, Loader2, User } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Eye, EyeOff, Shield, Loader2, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -221,8 +220,4 @@ export function LoginPage() {
       </div>
     </div>
   )
-}
-
-function Shield() {
-  return <Mountain className="h-3.5 w-3.5" />
 }
