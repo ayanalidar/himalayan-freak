@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { destinations, packages, hotelTiers, mealOptions, addOns } from '@/lib/data'
+import { writeFileSync, existsSync, mkdirSync } from 'fs'
+import { join } from 'path'
+import { tmpdir } from 'os'
 
 const SYSTEM_PROMPT = `You are "Freak" - the AI travel agent for Himalayan Freak, a custom Himalayan travel agency based in Magam, Kashmir.
 
@@ -53,40 +56,85 @@ CONVERSATION RULES:
 
 When user says "create booking" or "book this", respond with: "BOOKING_REQUEST_READY" plus a short summary of what they want (destinations, dates, pax, hotel tier) - the system will then prompt for contact details.`
 
-// Use Z.ai internal API directly (works on both sandbox and Vercel)
+// Multi-provider AI call - tries multiple backends in order
 async function callAI(messages: Array<{ role: string; content: string }>): Promise<string> {
-  // Try z-ai-web-dev-sdk first (sandbox), fall back to direct API (Vercel)
-  try {
-    const ZAI = (await import('z-ai-web-dev-sdk')).default
-    const zai = await ZAI.create()
-    const completion = await zai.chat.completions.create({
-      messages: messages as any,
-      thinking: { type: 'disabled' },
-      temperature: 0.7,
-      max_tokens: 800,
-    })
-    return completion.choices[0]?.message?.content || ''
-  } catch {
-    // Fallback: use Z.ai internal API directly
-    const response = await fetch('https://internal-api.z.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer Z.ai',
-      },
-      body: JSON.stringify({
-        model: 'glm-4.6',
+  const errors: string[] = []
+
+  // 1. Try xAI Grok API (if XAI_API_KEY is set)
+  const xaiKey = process.env.XAI_API_KEY
+  if (xaiKey) {
+    try {
+      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${xaiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'grok-beta',
+          messages: messages as any,
+          temperature: 0.7,
+          max_tokens: 800,
+        }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const content = data.choices?.[0]?.message?.content
+        if (content) return content
+      } else {
+        errors.push(`xAI returned ${response.status}`)
+      }
+    } catch (e) {
+      errors.push(`xAI: ${(e as Error).message}`)
+    }
+  }
+
+  // 2. Try z-ai-web-dev-sdk (works in sandbox)
+  if (!process.env.VERCEL) {
+    try {
+      const ZAI = (await import('z-ai-web-dev-sdk')).default
+      const zai = await ZAI.create()
+      const completion = await zai.chat.completions.create({
         messages: messages as any,
+        thinking: { type: 'disabled' },
         temperature: 0.7,
         max_tokens: 800,
-      }),
-    })
-    if (!response.ok) {
-      throw new Error(`AI API returned ${response.status}`)
+      })
+      const content = completion.choices[0]?.message?.content
+      if (content) return content
+    } catch (e) {
+      errors.push(`z-ai-sdk: ${(e as Error).message.slice(0, 100)}`)
     }
-    const data = await response.json()
-    return data.choices?.[0]?.message?.content || ''
   }
+
+  // 3. Try OpenAI-compatible API (if OPENAI_API_KEY is set)
+  const openaiKey = process.env.OPENAI_API_KEY
+  if (openaiKey) {
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: messages as any,
+          temperature: 0.7,
+          max_tokens: 800,
+        }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const content = data.choices?.[0]?.message?.content
+        if (content) return content
+      }
+    } catch (e) {
+      errors.push(`OpenAI: ${(e as Error).message}`)
+    }
+  }
+
+  throw new Error(`All AI providers failed: ${errors.join('; ')}`)
 }
 
 export async function POST(req: NextRequest) {
@@ -99,7 +147,6 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions)
     const user = session?.user as any
 
-    // Build context-aware system prompt
     let systemPrompt = SYSTEM_PROMPT
     if (user) {
       systemPrompt += `\n\nCURRENT USER: ${user.name} (${user.email}). They are signed in. You may address them by first name.`
@@ -116,7 +163,6 @@ export async function POST(req: NextRequest) {
       throw new Error('Empty response from AI')
     }
 
-    // Check for booking intent
     if (response.includes('BOOKING_REQUEST_READY')) {
       return NextResponse.json({
         response: response.replace('BOOKING_REQUEST_READY', '').trim(),
@@ -125,7 +171,6 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Optional: log communication if user is signed in
     try {
       if (user?.id && messages.length > 0) {
         await db.communication.create({
@@ -139,7 +184,7 @@ export async function POST(req: NextRequest) {
         })
       }
     } catch {
-      // Don't fail the chat if logging fails
+      // Don't fail if logging fails
     }
 
     return NextResponse.json({ response, sessionId })
@@ -148,7 +193,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: 'Failed to get response',
-        response: "I'm having trouble right now. Please call +91 600 626 6072 and our team will help you immediately."
+        response: "I'm having trouble connecting to my AI brain right now. Please call +91 600 626 6072 and our human team will help you immediately. We're available 24x7."
       },
       { status: 500 }
     )
