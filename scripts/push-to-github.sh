@@ -1,30 +1,47 @@
 #!/bin/bash
 # Himalayan Freak - GitHub Push Script
-# Run this script to push the project to your GitHub repository.
+# Pushes the project to: https://github.com/ayanalidar/himalayan-freak
 #
 # Usage:
-#   1. Create a new (empty) repository on GitHub.com (don't add README/license)
-#   2. Copy the HTTPS clone URL (e.g. https://github.com/your-username/himalayan-freak.git)
-#   3. Run: bash scripts/push-to-github.sh https://github.com/your-username/himalayan-freak.git
+#   1. Create an empty repository at https://github.com/new
+#      - Owner: ayanalidar
+#      - Name: himalayan-freak (or any name you prefer)
+#      - Do NOT add README/license (keep it empty)
+#   2. Generate a Personal Access Token:
+#      GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+#      → Generate new token → scope: "repo" (full control of private repositories)
+#   3. Run this script:
+#      bash scripts/push-to-github.sh <TOKEN>
 #
-# Or with a GitHub Personal Access Token (recommended for private repos):
-#   bash scripts/push-to-github.sh https://<TOKEN>@github.com/your-username/himalayan-freak.git
-#
-# To get a token:
-#   GitHub.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token
-#   Scopes needed: repo (full control of private repositories)
+# Example:
+#   bash scripts/push-to-github.sh ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 set -e
 
-REPO_URL="${1:-}"
-if [ -z "$REPO_URL" ]; then
-  echo "Usage: bash scripts/push-to-github.sh <github-repo-url>"
+TOKEN="${1:-}"
+REPO_NAME="${2:-himalayan-freak}"
+GITHUB_USER="ayanalidar"
+
+if [ -z "$TOKEN" ]; then
+  echo "=========================================="
+  echo "Himalayan Freak - GitHub Push"
+  echo "=========================================="
   echo ""
-  echo "Examples:"
-  echo "  bash scripts/push-to-github.sh https://github.com/your-username/himalayan-freak.git"
-  echo "  bash scripts/push-to-github.sh https://<TOKEN>@github.com/your-username/himalayan-freak.git"
+  echo "Usage: bash scripts/push-to-github.sh <github-token> [repo-name]"
+  echo ""
+  echo "Default repo: https://github.com/$GITHUB_USER/$REPO_NAME"
+  echo ""
+  echo "Get a token from:"
+  echo "  GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)"
+  echo "  → Generate new token → scope: 'repo'"
+  echo ""
+  echo "Example:"
+  echo "  bash scripts/push-to-github.sh ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  echo "  bash scripts/push-to-github.sh ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx my-custom-repo"
   exit 1
 fi
+
+REPO_URL="https://${TOKEN}@github.com/${GITHUB_USER}/${REPO_NAME}.git"
 
 cd /home/z/my-project
 
@@ -32,7 +49,7 @@ echo "=========================================="
 echo "Himalayan Freak - Pushing to GitHub"
 echo "=========================================="
 echo ""
-echo "Repository: $REPO_URL"
+echo "Repository: https://github.com/${GITHUB_USER}/${REPO_NAME}"
 echo ""
 
 # Check git is initialized
@@ -64,11 +81,6 @@ echo ""
 echo "Staging changes..."
 git add -A
 
-# Show what will be committed
-echo ""
-echo "Files to be committed:"
-git status --short | head -30
-
 # Commit if there are changes
 if ! git diff --cached --quiet; then
   echo ""
@@ -87,6 +99,7 @@ Features:
 - Itinerary PDF export (branded multi-page PDF)
 - Authentication (NextAuth.js - admin & user roles)
 - Dark mode, responsive design, Himalayan branding
+- No animated scroll indicator on hero
 
 Tech Stack:
 - Next.js 16 + TypeScript + Tailwind CSS 4 + shadcn/ui
@@ -105,25 +118,24 @@ fi
 # Push
 echo ""
 echo "Pushing to GitHub..."
-echo "(You may be prompted for credentials if not using a token URL)"
 git push -u origin main || {
   echo ""
   echo "Push failed. Common fixes:"
-  echo "  1. If using HTTPS: use a Personal Access Token instead of password"
-  echo "  2. If repo has existing content: git pull --rebase origin main first"
-  echo "  3. If permission denied: check your token has 'repo' scope"
+  echo "  1. Make sure the repo exists at https://github.com/$GITHUB_USER/$REPO_NAME"
+  echo "  2. Verify your token has 'repo' scope"
+  echo "  3. If repo has existing content, run: git pull --rebase origin main"
   exit 1
 }
 
 echo ""
 echo "=========================================="
-echo "Success! Your project is on GitHub."
+echo "Success! Your project is live on GitHub."
 echo "=========================================="
 echo ""
-echo "Repository: $REPO_URL"
+echo "Repository: https://github.com/${GITHUB_USER}/${REPO_NAME}"
 echo ""
 echo "Next steps:"
 echo "  1. Add collaborators in repo settings"
-echo "  2. Set up environment secrets in repo settings (for Amadeus, RailwayAPI, NextAuth)"
+echo "  2. Set up environment secrets for production (Amadeus, RailwayAPI, NextAuth)"
 echo "  3. Deploy to Vercel / Netlify / your own hosting"
 echo ""
