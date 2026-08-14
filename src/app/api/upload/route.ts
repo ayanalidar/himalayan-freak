@@ -77,8 +77,17 @@ export async function POST(req: NextRequest) {
           provider: 'vercel-blob',
         })
       } catch (err) {
-        console.error('Vercel Blob upload failed, falling back:', err)
-        // Fall through to local storage
+        const errMsg = err instanceof Error ? err.message : String(err)
+        console.error('Vercel Blob upload failed:', errMsg)
+
+        // If the store is private, give a specific error
+        if (errMsg.includes('private')) {
+          return NextResponse.json({
+            error: 'Your Vercel Blob store is set to "Private" access. Please create a new Blob store with "Public" access at https://vercel.com/dashboard/stores and update BLOB_READ_WRITE_TOKEN. Alternatively, use "Paste URL" to add images by URL.',
+            hint: 'Private stores require authenticated URLs which cannot be used in <img> tags. Create a Public store instead.',
+          }, { status: 500 })
+        }
+        // Fall through to local storage for other errors
       }
     }
 
