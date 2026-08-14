@@ -25,6 +25,7 @@ import {
   UserPlus,
   CalendarDays,
   Mountain,
+  Plane,
   CheckSquare,
   MessageSquare,
   ListChecks,
@@ -314,7 +315,15 @@ export function CrmPage() {
               className="gap-1.5"
               onClick={() => navigate('admin-destinations')}
             >
-              <Mountain className="h-3.5 w-3.5" /> Edit Destinations
+              <Mountain className="h-3.5 w-3.5" /> Destinations
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => navigate('admin-packages')}
+            >
+              <Plane className="h-3.5 w-3.5" /> Packages
             </Button>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={refresh}>
               <Filter className="h-3.5 w-3.5" /> Refresh

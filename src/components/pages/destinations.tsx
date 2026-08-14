@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, MapPin, Filter, Mountain, Star, Compass } from 'lucide-react'
+import { Search, MapPin, Filter, Mountain, Star, Compass, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,8 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useApp } from '@/lib/store'
-import { destinations, type Region } from '@/lib/data'
 import { DestinationCard } from '@/components/cards'
+import type { DestinationData, Region } from '@/lib/data'
 
 const regions: (Region | 'All')[] = ['All', 'Kashmir', 'Jammu', 'Ladakh', 'Himachal', 'Uttarakhand']
 const difficulties = ['All', 'Easy', 'Moderate', 'Challenging']
@@ -25,7 +25,7 @@ const sortOptions = [
   { id: 'rating', label: 'Highest rated' },
   { id: 'elevation-desc', label: 'Highest elevation' },
   { id: 'elevation-asc', label: 'Lowest elevation' },
-  { id: 'name', label: 'A → Z' },
+  { id: 'name', label: 'A -> Z' },
 ]
 
 export function DestinationsPage() {
@@ -34,6 +34,16 @@ export function DestinationsPage() {
   const [region, setRegion] = useState<Region | 'All'>('All')
   const [difficulty, setDifficulty] = useState<string>('All')
   const [sortBy, setSortBy] = useState<string>('featured')
+  const [destinations, setDestinations] = useState<DestinationData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/destinations')
+      .then((r) => r.json())
+      .then((data) => setDestinations(data))
+      .catch(() => setDestinations([]))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = useMemo(() => {
     let list = destinations.filter((d) => {
@@ -63,7 +73,7 @@ export function DestinationsPage() {
         list = [...list].sort((a, b) => Number(b.featured) - Number(a.featured))
     }
     return list
-  }, [search, region, difficulty, sortBy])
+  }, [destinations, search, region, difficulty, sortBy])
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,7 +94,7 @@ export function DestinationsPage() {
             transition={{ duration: 0.7 }}
             className="max-w-3xl"
           >
-            <Badge className="mb-4 bg-primary/20 text-primary backdrop-blur">18 destinations · 5 Himalayan states</Badge>
+            <Badge className="mb-4 bg-primary/20 text-primary backdrop-blur">{destinations.length} destinations across 5 Himalayan states</Badge>
             <h1 className="font-display text-4xl font-extrabold tracking-tight text-white text-shadow-lg sm:text-5xl lg:text-6xl text-balance">
               Every major stop across the Indian Himalaya
             </h1>
@@ -162,7 +172,19 @@ export function DestinationsPage() {
       {/* GRID */}
       <section className="py-10 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden p-0">
+                  <div className="aspect-[4/3] animate-pulse bg-muted" />
+                  <div className="p-4">
+                    <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+                    <div className="mt-2 h-3 w-full animate-pulse rounded bg-muted" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
             <Card className="p-12 text-center ring-1 ring-border/40">
               <Compass className="mx-auto h-10 w-10 text-muted-foreground" />
               <h3 className="mt-4 font-display text-lg font-semibold">No destinations match your filters</h3>

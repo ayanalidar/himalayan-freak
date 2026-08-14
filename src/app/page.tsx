@@ -13,6 +13,7 @@ import { TicketsPage } from '@/components/tickets/tickets-page'
 import { GroupBookingPage } from '@/components/pages/group-booking'
 import { CrmPage } from '@/components/crm/crm-page'
 import { AdminDestinationsPage } from '@/components/admin/admin-destinations-page'
+import { AdminPackagesPage } from '@/components/admin/admin-packages-page'
 import { DashboardPage } from '@/components/dashboard/dashboard-page'
 import { LoginPage } from '@/components/auth/login-page'
 import { SignupPage } from '@/components/auth/signup-page'
@@ -41,6 +42,7 @@ export default function Home() {
         {page === 'group-booking' && <GroupBookingPage />}
         {page === 'crm' && <CrmPage />}
         {page === 'admin-destinations' && <AdminDestinationsPage />}
+        {page === 'admin-packages' && <AdminPackagesPage />}
         {page === 'dashboard' && <DashboardPage />}
       </main>
       <Footer />

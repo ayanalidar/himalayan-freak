@@ -28,13 +28,27 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useApp } from '@/lib/store'
-import { destinations, generateMockWeather } from '@/lib/data'
+import { destinations as staticDestinations, generateMockWeather, type DestinationData } from '@/lib/data'
 
 export function DestinationDetailPage() {
   const { selectedDestinationSlug, navigate, openDestination } = useApp()
   const [activeImage, setActiveImage] = useState(0)
   const [prevSlug, setPrevSlug] = useState<string | null>(null)
-  const d = destinations.find((x) => x.slug === selectedDestinationSlug) || destinations[0]
+  const [d, setD] = useState<DestinationData>(
+    staticDestinations.find((x) => x.slug === selectedDestinationSlug) || staticDestinations[0]
+  )
+
+  // Fetch latest from API (so admin edits reflect)
+  useEffect(() => {
+    if (!selectedDestinationSlug) return
+    fetch('/api/destinations')
+      .then((r) => r.json())
+      .then((data: DestinationData[]) => {
+        const found = data.find((x) => x.slug === selectedDestinationSlug)
+        if (found) setD(found)
+      })
+      .catch(() => {})
+  }, [selectedDestinationSlug])
 
   // Reset gallery index when destination changes (without useEffect)
   if (prevSlug !== d.slug) {

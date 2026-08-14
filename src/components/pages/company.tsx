@@ -99,7 +99,7 @@ export function CompanyPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1599661046827-dacde6976549?auto=format&fit=crop&w=2400&q=80"
+            src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=2400&q=80"
             alt="Kashmir mountains"
             className="h-full w-full object-cover"
           />
@@ -376,7 +376,7 @@ export function CompanyPage() {
             >
               <Card className="relative h-full overflow-hidden ring-1 ring-border/40">
                 <img
-                  src="https://images.unsplash.com/photo-1605649461784-ef21f4e6a8ec?auto=format&fit=crop&w=1200&q=80"
+                  src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=1200&q=80"
                   alt="Himalayan Freak team"
                   className="absolute inset-0 h-full w-full object-cover"
                 />

@@ -45,6 +45,7 @@ import {
 import { useApp } from '@/lib/store'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { ImageUpload, MultiImageUpload } from '@/components/image-upload'
 
 type Destination = {
   id?: string
@@ -309,20 +310,13 @@ export function AdminDestinationsPage() {
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-              {/* Image preview */}
-              {editing.heroImage && (
-                <div className="relative aspect-video overflow-hidden rounded-lg">
-                  <img src={editing.heroImage} alt="Preview" className="h-full w-full object-cover" />
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="absolute right-2 top-2 h-7 w-7"
-                    onClick={() => setEditing({ ...editing, heroImage: '' })}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
+              {/* Hero image with upload */}
+              <ImageUpload
+                value={editing.heroImage}
+                onChange={(url) => setEditing({ ...editing, heroImage: url })}
+                subfolder="destinations"
+                label="Hero image"
+              />
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
@@ -416,16 +410,13 @@ export function AdminDestinationsPage() {
                 <Textarea rows={3} value={editing.howToReach} onChange={(e) => setEditing({ ...editing, howToReach: e.target.value })} />
               </div>
 
-              {/* Gallery URLs */}
-              <div>
-                <Label>Gallery image URLs (one per line)</Label>
-                <Textarea
-                  rows={4}
-                  value={editing.gallery.join('\n')}
-                  onChange={(e) => setEditing({ ...editing, gallery: e.target.value.split('\n').filter(Boolean) })}
-                  placeholder="https://...&#10;https://..."
-                />
-              </div>
+              {/* Gallery images */}
+              <MultiImageUpload
+                values={editing.gallery}
+                onChange={(urls) => setEditing({ ...editing, gallery: urls })}
+                subfolder="destinations"
+                label="Gallery images"
+              />
 
               {/* Attractions (array) */}
               <div>

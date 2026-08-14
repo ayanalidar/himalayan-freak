@@ -67,15 +67,20 @@ export async function PATCH(req: NextRequest) {
     const { id, ...rest } = body
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-    const data: any = { ...rest }
-    if (rest.elevation !== undefined) data.elevation = Number(rest.elevation)
-    if (rest.latitude !== undefined) data.latitude = Number(rest.latitude)
-    if (rest.longitude !== undefined) data.longitude = Number(rest.longitude)
-    if (rest.rating !== undefined) data.rating = Number(rest.rating)
-    if (rest.featured !== undefined) data.featured = Boolean(rest.featured)
-    if (Array.isArray(rest.gallery)) data.gallery = JSON.stringify(rest.gallery)
-    if (Array.isArray(rest.attractions)) data.attractions = JSON.stringify(rest.attractions)
-    if (Array.isArray(rest.activities)) data.activities = JSON.stringify(rest.activities)
+    // Strict allowlist of updatable fields (prevents mass-assignment)
+    const data: any = {}
+    const allowedStringFields = ['slug', 'name', 'region', 'state', 'tagline', 'description', 'bestTime', 'duration', 'difficulty', 'heroImage', 'howToReach']
+    for (const f of allowedStringFields) {
+      if (typeof rest[f] === 'string') data[f] = rest[f]
+    }
+    if (rest.elevation !== undefined && !isNaN(Number(rest.elevation))) data.elevation = Number(rest.elevation)
+    if (rest.latitude !== undefined && !isNaN(Number(rest.latitude))) data.latitude = Number(rest.latitude)
+    if (rest.longitude !== undefined && !isNaN(Number(rest.longitude))) data.longitude = Number(rest.longitude)
+    if (rest.rating !== undefined && !isNaN(Number(rest.rating))) data.rating = Math.min(5, Math.max(0, Number(rest.rating)))
+    if (typeof rest.featured === 'boolean') data.featured = rest.featured
+    if (Array.isArray(rest.gallery)) data.gallery = JSON.stringify(rest.gallery.filter((g: any) => typeof g === 'string'))
+    if (Array.isArray(rest.attractions)) data.attractions = JSON.stringify(rest.attractions.filter((a: any) => typeof a === 'string'))
+    if (Array.isArray(rest.activities)) data.activities = JSON.stringify(rest.activities.filter((a: any) => typeof a === 'string'))
 
     const dest = await db.destination.update({ where: { id: String(id) }, data })
     return NextResponse.json(dest)

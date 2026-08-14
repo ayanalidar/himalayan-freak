@@ -203,7 +203,7 @@ export function TripPlannerPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1626621341577-58edc5d25d4a?auto=format&fit=crop&w=2400&q=80"
+            src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=2400&q=80"
             alt="Himalaya"
             className="h-full w-full object-cover"
           />

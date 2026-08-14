@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -22,12 +22,26 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useApp } from '@/lib/store'
-import { packages, hotelTiers, type PackageData } from '@/lib/data'
+import { packages as staticPackages, hotelTiers, type PackageData } from '@/lib/data'
 import { toast } from 'sonner'
 
 export function PackageDetailPage() {
   const { selectedPackageSlug, navigate } = useApp()
-  const p: PackageData = packages.find((x) => x.slug === selectedPackageSlug) || packages[0]
+  const [p, setP] = useState<PackageData>(
+    staticPackages.find((x) => x.slug === selectedPackageSlug) || staticPackages[0]
+  )
+
+  // Fetch latest from API (so admin edits reflect)
+  useEffect(() => {
+    if (!selectedPackageSlug) return
+    fetch('/api/packages')
+      .then((r) => r.json())
+      .then((data: PackageData[]) => {
+        const found = data.find((x) => x.slug === selectedPackageSlug)
+        if (found) setP(found)
+      })
+      .catch(() => {})
+  }, [selectedPackageSlug])
 
   const [duration, setDuration] = useState(p.duration)
   const [pax, setPax] = useState(2)

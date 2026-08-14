@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { destinations as seedDestinations } from '@/lib/data'
+import { safeParse } from '@/lib/safe'
 
 // Merge static seed data + DB-edited records
 // DB records override by slug if present
@@ -33,9 +34,9 @@ export async function GET() {
     difficulty: d.difficulty,
     rating: d.rating,
     heroImage: d.heroImage,
-    gallery: JSON.parse(d.gallery || '[]'),
-    attractions: JSON.parse(d.attractions || '[]'),
-    activities: JSON.parse(d.activities || '[]'),
+    gallery: safeParse<string[]>(d.gallery, []),
+    attractions: safeParse<string[]>(d.attractions, []),
+    activities: safeParse<string[]>(d.activities, []),
     howToReach: d.howToReach,
     featured: d.featured,
     isCustom: true,

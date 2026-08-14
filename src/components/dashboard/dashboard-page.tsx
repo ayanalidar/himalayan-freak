@@ -150,11 +150,8 @@ export function DashboardPage() {
 
   const removeSaved = async (id: string) => {
     try {
-      await fetch('/api/saved', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      })
+      const res = await fetch(`/api/saved/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed')
       toast.success('Removed from saved')
       refresh()
     } catch {

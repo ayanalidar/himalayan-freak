@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { packages as seedPackages } from '@/lib/data'
+import { safeParse } from '@/lib/safe'
 
 export async function GET() {
   let dbPackages: any[] = []
@@ -24,10 +25,10 @@ export async function GET() {
     nights: p.nights,
     price: p.price,
     description: p.description,
-    highlights: JSON.parse(p.highlights || '[]'),
-    inclusions: JSON.parse(p.inclusions || '[]'),
-    exclusions: JSON.parse(p.exclusions || '[]'),
-    itinerary: JSON.parse(p.itinerary || '[]'),
+    highlights: safeParse<string[]>(p.highlights, []),
+    inclusions: safeParse<string[]>(p.inclusions, []),
+    exclusions: safeParse<string[]>(p.exclusions, []),
+    itinerary: safeParse<any[]>(p.itinerary, []),
     heroImage: p.heroImage,
     rating: p.rating,
     featured: p.featured,

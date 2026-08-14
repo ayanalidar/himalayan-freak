@@ -234,6 +234,9 @@ export function Navbar() {
                     <DropdownMenuItem onClick={() => go('admin-destinations')} className="gap-2 cursor-pointer">
                       <Mountain className="h-4 w-4" /> Manage Destinations
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => go('admin-packages')} className="gap-2 cursor-pointer">
+                      <Plane className="h-4 w-4" /> Manage Packages
+                    </DropdownMenuItem>
                   </>
                 )}
                 <DropdownMenuSeparator />

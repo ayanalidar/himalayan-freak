@@ -3,11 +3,17 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 
+// GET is admin-only
 export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user as any)?.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin only' }, { status: 403 })
+  }
   const pkgs = await db.package.findMany({ orderBy: { createdAt: 'desc' } })
   return NextResponse.json(pkgs)
 }
 
+// POST is admin-only with strict allowlist
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || (session.user as any)?.role !== 'admin') {
@@ -15,28 +21,25 @@ export async function POST(req: NextRequest) {
   }
   try {
     const body = await req.json()
-    const {
-      slug, title, region, duration, nights, price, description,
-      highlights, inclusions, exclusions, itinerary, heroImage, rating, featured,
-    } = body
-    if (!slug || !title) return NextResponse.json({ error: 'slug, title required' }, { status: 400 })
-
+    if (!body.slug || !body.title) {
+      return NextResponse.json({ error: 'slug, title required' }, { status: 400 })
+    }
     const pkg = await db.package.create({
       data: {
-        slug,
-        title,
-        region: region || 'Kashmir',
-        duration: Number(duration) || 5,
-        nights: Number(nights) || 4,
-        price: Number(price) || 0,
-        description: description || '',
-        highlights: JSON.stringify(highlights || []),
-        inclusions: JSON.stringify(inclusions || []),
-        exclusions: JSON.stringify(exclusions || []),
-        itinerary: JSON.stringify(itinerary || []),
-        heroImage: heroImage || '',
-        rating: Number(rating) || 4.6,
-        featured: Boolean(featured),
+        slug: String(body.slug).slice(0, 100),
+        title: String(body.title).slice(0, 200),
+        region: body.region ? String(body.region).slice(0, 50) : 'Kashmir',
+        duration: Number(body.duration) || 5,
+        nights: Number(body.nights) || 4,
+        price: Number(body.price) || 0,
+        description: body.description ? String(body.description).slice(0, 5000) : '',
+        highlights: JSON.stringify(Array.isArray(body.highlights) ? body.highlights.filter((h: any) => typeof h === 'string') : []),
+        inclusions: JSON.stringify(Array.isArray(body.inclusions) ? body.inclusions.filter((i: any) => typeof i === 'string') : []),
+        exclusions: JSON.stringify(Array.isArray(body.exclusions) ? body.exclusions.filter((e: any) => typeof e === 'string') : []),
+        itinerary: JSON.stringify(Array.isArray(body.itinerary) ? body.itinerary : []),
+        heroImage: body.heroImage ? String(body.heroImage).slice(0, 500) : '',
+        rating: Math.min(5, Math.max(0, Number(body.rating) || 4.6)),
+        featured: Boolean(body.featured),
       },
     })
     return NextResponse.json(pkg, { status: 201 })

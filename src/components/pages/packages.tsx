@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Plane, Star, Compass, ArrowRight, Filter } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -15,8 +15,26 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useApp } from '@/lib/store'
-import { packages, type Region } from '@/lib/data'
+import { type Region } from '@/lib/data'
 import { PackageCard } from '@/components/cards'
+
+type PackageData = {
+  slug: string
+  title: string
+  region: Region | 'Multi-Region'
+  duration: number
+  nights: number
+  price: number
+  description: string
+  highlights: string[]
+  inclusions: string[]
+  exclusions: string[]
+  itinerary: { day: number; title: string; description: string }[]
+  heroImage: string
+  rating: number
+  featured: boolean
+  isCustom?: boolean
+}
 
 const regions: (Region | 'Multi-Region' | 'All')[] = ['All', 'Kashmir', 'Jammu', 'Ladakh', 'Himachal', 'Multi-Region']
 const sortOptions = [
@@ -33,6 +51,16 @@ export function PackagesPage() {
   const [region, setRegion] = useState<Region | 'Multi-Region' | 'All'>('All')
   const [maxPrice, setMaxPrice] = useState<number>(50000)
   const [sortBy, setSortBy] = useState<string>('featured')
+  const [packages, setPackages] = useState<PackageData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/packages')
+      .then((r) => r.json())
+      .then((data) => setPackages(data))
+      .catch(() => setPackages([]))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = useMemo(() => {
     let list = packages.filter((p) => {
@@ -61,7 +89,7 @@ export function PackagesPage() {
         list = [...list].sort((a, b) => Number(b.featured) - Number(a.featured))
     }
     return list
-  }, [search, region, maxPrice, sortBy])
+  }, [packages, search, region, maxPrice, sortBy])
 
   return (
     <div className="min-h-screen bg-background">
@@ -83,7 +111,7 @@ export function PackagesPage() {
             className="max-w-3xl"
           >
             <Badge className="mb-4 bg-primary/20 text-primary backdrop-blur">
-              <Plane className="mr-1.5 h-3 w-3" /> Curated packages
+              <Plane className="mr-1.5 h-3 w-3" /> {packages.length} curated packages
             </Badge>
             <h1 className="font-display text-4xl font-extrabold tracking-tight text-white text-shadow-lg sm:text-5xl lg:text-6xl text-balance">
               Ready-made journeys, fully customisable
@@ -151,7 +179,7 @@ export function PackagesPage() {
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-muted accent-primary lg:max-w-xs"
             />
-            <span className="font-medium text-foreground">₹{maxPrice.toLocaleString('en-IN')}</span>
+            <span className="font-medium text-foreground">Rs.{maxPrice.toLocaleString('en-IN')}</span>
             <span className="ml-auto">Showing <span className="font-medium text-foreground">{filtered.length}</span> packages</span>
           </div>
         </div>
@@ -160,7 +188,19 @@ export function PackagesPage() {
       {/* GRID */}
       <section className="py-10 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden p-0">
+                  <div className="aspect-[16/9] animate-pulse bg-muted" />
+                  <div className="p-4">
+                    <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+                    <div className="mt-2 h-3 w-full animate-pulse rounded bg-muted" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
             <Card className="p-12 text-center ring-1 ring-border/40">
               <Compass className="mx-auto h-10 w-10 text-muted-foreground" />
               <h3 className="mt-4 font-display text-lg font-semibold">No packages match your filters</h3>

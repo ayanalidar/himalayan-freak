@@ -65,7 +65,7 @@ export function SignupPage() {
       <div className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1605649461784-ef21f4e6a8ec?auto=format&fit=crop&w=2400&q=80"
+            src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=2400&q=80"
             alt="Kashmir"
             className="h-full w-full object-cover"
           />

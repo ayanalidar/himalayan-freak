@@ -49,5 +49,12 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || 'hf-dev-secret-change-in-prod',
+  // Fail fast in production if secret is missing
+  secret: (() => {
+    const s = process.env.NEXTAUTH_SECRET
+    if (!s && process.env.NODE_ENV === 'production') {
+      throw new Error('NEXTAUTH_SECRET must be set in production')
+    }
+    return s
+  })(),
 }

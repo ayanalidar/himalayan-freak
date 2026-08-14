@@ -1,8 +1,7 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
-import Image from 'next/image'
+import { useRef, useState, useEffect } from 'react'
 import {
   Mountain,
   Plane,
@@ -24,7 +23,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useApp } from '@/lib/store'
-import { destinations, packages } from '@/lib/data'
+import { packages, type DestinationData } from '@/lib/data'
 import { DestinationCard, PackageCard } from '@/components/cards'
 
 export function HomePage() {
@@ -34,6 +33,14 @@ export function HomePage() {
   const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '40%'])
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 0.7], [1, 1.1])
+
+  const [destinations, setDestinations] = useState<DestinationData[]>([])
+  useEffect(() => {
+    fetch('/api/destinations')
+      .then((r) => r.json())
+      .then(setDestinations)
+      .catch(() => setDestinations([]))
+  }, [])
 
   const featuredDest = destinations.filter((d) => d.featured)
   const featuredPkg = packages.filter((p) => p.featured)
@@ -125,7 +132,7 @@ export function HomePage() {
           >
             {[
               { icon: Users, label: '4,500+ happy travellers' },
-              { icon: MapPin, label: '18 destinations curated' },
+              { icon: MapPin, label: `${destinations.length} destinations curated` },
               { icon: Award, label: '4.9 ★ avg rating' },
               { icon: Shield, label: 'Locally rooted team' },
             ].map(({ icon: Icon, label }) => (
@@ -184,7 +191,7 @@ export function HomePage() {
               </p>
             </div>
             <Button variant="ghost" className="gap-1.5 text-primary" onClick={() => navigate('destinations')}>
-              View all 18 destinations <ArrowRight className="h-4 w-4" />
+              View all {destinations.length} destinations <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
 
@@ -241,7 +248,7 @@ export function HomePage() {
             className="grid grid-cols-2 gap-4"
           >
             {[
-              { src: 'https://images.unsplash.com/photo-1605649461784-ef21f4e6a8ec?auto=format&fit=crop&w=800&q=80', label: 'Dal Lake' },
+              { src: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80', label: 'Dal Lake' },
               { src: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80', label: 'Gulmarg' },
               { src: 'https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=800&q=80', label: 'Ladakh' },
               { src: 'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=800&q=80', label: 'Pangong' },

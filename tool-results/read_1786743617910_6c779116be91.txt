@@ -1,0 +1,856 @@
+     1→'use client'
+     2→
+     3→import { useMemo, useState } from 'react'
+     4→import { motion, AnimatePresence } from 'framer-motion'
+     5→import {
+     6→  Check,
+     7→  ChevronLeft,
+     8→  ChevronRight,
+     9→  MapPin,
+    10→  Mountain,
+    11→  Utensils,
+    12→  Camera,
+    13→  User,
+    14→  Car,
+    15→  Calendar,
+    16→  Users,
+    17→  Trash2,
+    18→  Plus,
+    19→  Minus,
+    20→  Sparkles,
+    21→  Compass,
+    22→  Phone,
+    23→  Mail,
+    24→  Hotel,
+    25→  Clock,
+    26→  HeartPulse,
+    27→  FileDown,
+    28→  Loader2,
+    29→} from 'lucide-react'
+    30→import { Button } from '@/components/ui/button'
+    31→import { Card } from '@/components/ui/card'
+    32→import { Badge } from '@/components/ui/badge'
+    33→import { Input } from '@/components/ui/input'
+    34→import { Label } from '@/components/ui/label'
+    35→import { Separator } from '@/components/ui/separator'
+    36→import { useApp, useTripBuilder } from '@/lib/store'
+    37→import { destinations, hotelTiers, mealOptions, addOns } from '@/lib/data'
+    38→import { cn } from '@/lib/utils'
+    39→import { toast } from 'sonner'
+    40→
+    41→const steps = [
+    42→  { id: 0, label: 'Destinations', icon: MapPin },
+    43→  { id: 1, label: 'Dates & Pax', icon: Calendar },
+    44→  { id: 2, label: 'Hotels', icon: Hotel },
+    45→  { id: 3, label: 'Meals', icon: Utensils },
+    46→  { id: 4, label: 'Add-ons', icon: Camera },
+    47→  { id: 5, label: 'Contact', icon: User },
+    48→  { id: 6, label: 'Review', icon: Check },
+    49→]
+    50→
+    51→const addOnIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    52→  Camera,
+    53→  MapPin,
+    54→  Car,
+    55→  Bus: Car,
+    56→  HeartPulse,
+    57→  Mountain,
+    58→}
+    59→
+    60→export function TripPlannerPage() {
+    61→  const { navigate } = useApp()
+    62→  const trip = useTripBuilder()
+    63→  const [currentStep, setStep] = useStepState()
+    64→
+    65→  const selectedDestObjs = destinations.filter((d) =>
+    66→    trip.selectedDestinations.includes(d.slug)
+    67→  )
+    68→
+    69→  const estimate = useMemo(() => {
+    70→    const hotel = hotelTiers.find((t) => t.id === trip.hotelTier)!
+    71→    const hotelCost = hotel.perNight * Math.max(0, trip.duration - 1) * Math.ceil(trip.pax / 2)
+    72→
+    73→    const mealsPerDay = trip.meals
+    74→      .filter((m) => m !== 'wazwan')
+    75→      .reduce((sum, m) => {
+    76→        const meal = mealOptions.find((x) => x.id === m)!
+    77→        return sum + meal.perPersonPerDay!
+    78→      }, 0)
+    79→    const wazwanCost = trip.meals.includes('wazwan')
+    80→      ? mealOptions.find((x) => x.id === 'wazwan')!.perPerson! * trip.pax
+    81→      : 0
+    82→    const mealsCost = mealsPerDay * trip.duration * trip.pax + wazwanCost
+    83→
+    84→    const addOnsCost = trip.addOns.reduce((sum, a) => {
+    85→      const add = addOns.find((x) => x.id === a.id)!
+    86→      const base = add.perDay || add.perTrip || add.perPerson || 0
+    87→      const multiplier = add.perDay ? trip.duration : add.perPerson ? trip.pax : 1
+    88→      return sum + base * multiplier
+    89→    }, 0)
+    90→
+    91→    const transportPerDay = trip.pax <= 4 ? 3800 : trip.pax <= 8 ? 5200 : 6500
+    92→    const transportCost = transportPerDay * trip.duration
+    93→
+    94→    const basePerPaxPerDay = 2500 // activities + permits + guides baseline
+    95→    const baseCost = basePerPaxPerDay * trip.duration * trip.pax
+    96→
+    97→    const total = hotelCost + mealsCost + addOnsCost + transportCost + baseCost
+    98→
+    99→    return {
+   100→      hotel: hotelCost,
+   101→      meals: mealsCost,
+   102→      addOns: addOnsCost,
+   103→      transport: transportCost,
+   104→      base: baseCost,
+   105→      total,
+   106→      perPerson: Math.round(total / Math.max(1, trip.pax)),
+   107→    }
+   108→  }, [trip])
+   109→
+   110→  const canProceed = useMemo(() => {
+   111→    switch (currentStep) {
+   112→      case 0:
+   113→        return trip.selectedDestinations.length > 0
+   114→      case 1:
+   115→        return trip.startDate !== '' && trip.duration > 0 && trip.pax > 0
+   116→      case 5:
+   117→        return (
+   118→          trip.contact.name.trim().length > 1 &&
+   119→          /^\S+@\S+\.\S+$/.test(trip.contact.email) &&
+   120→          trip.contact.phone.replace(/\D/g, '').length >= 10
+   121→        )
+   122→      default:
+   123→        return true
+   124→    }
+   125→  }, [currentStep, trip])
+   126→
+   127→  const onSubmit = async () => {
+   128→    try {
+   129→      const payload = {
+   130→        name: trip.contact.name,
+   131→        email: trip.contact.email,
+   132→        phone: trip.contact.phone,
+   133→        destinations: trip.selectedDestinations,
+   134→        startDate: trip.startDate,
+   135→        duration: trip.duration,
+   136→        pax: trip.pax,
+   137→        hotelTier: trip.hotelTier,
+   138→        meals: trip.meals,
+   139→        addOns: trip.addOns.map((a) => a.id),
+   140→        estimatedPrice: estimate.total,
+   141→      }
+   142→      const res = await fetch('/api/trips', {
+   143→        method: 'POST',
+   144→        headers: { 'Content-Type': 'application/json' },
+   145→        body: JSON.stringify(payload),
+   146→      })
+   147→      if (!res.ok) throw new Error('Failed')
+   148→      const data = await res.json()
+   149→      toast.success('Trip saved!', {
+   150→        description: `Ref: ${data.refCode}. Our team will WhatsApp you within 30 minutes.`,
+   151→      })
+   152→      navigate('crm')
+   153→      trip.reset()
+   154→      setStep(0)
+   155→    } catch {
+   156→      toast.error('Could not save trip', { description: 'Please try again or call us directly.' })
+   157→    }
+   158→  }
+   159→
+   160→  const [pdfLoading, setPdfLoading] = useState(false)
+   161→  const onDownloadPdf = async () => {
+   162→    setPdfLoading(true)
+   163→    try {
+   164→      const payload = {
+   165→        name: trip.contact.name || 'Traveller',
+   166→        email: trip.contact.email,
+   167→        phone: trip.contact.phone,
+   168→        destinationSlugs: trip.selectedDestinations,
+   169→        startDate: trip.startDate,
+   170→        duration: trip.duration,
+   171→        pax: trip.pax,
+   172→        hotelTier: trip.hotelTier,
+   173→        meals: trip.meals,
+   174→        addOnIds: trip.addOns.map((a) => a.id),
+   175→        estimatedPrice: estimate.total,
+   176→      }
+   177→      const res = await fetch('/api/trips/pdf', {
+   178→        method: 'POST',
+   179→        headers: { 'Content-Type': 'application/json' },
+   180→        body: JSON.stringify(payload),
+   181→      })
+   182→      if (!res.ok) throw new Error('PDF failed')
+   183→      const blob = await res.blob()
+   184→      const url = URL.createObjectURL(blob)
+   185→      const a = document.createElement('a')
+   186→      a.href = url
+   187→      a.download = `himalayan-freak-itinerary.pdf`
+   188→      document.body.appendChild(a)
+   189→      a.click()
+   190→      document.body.removeChild(a)
+   191→      URL.revokeObjectURL(url)
+   192→      toast.success('Itinerary PDF downloaded!')
+   193→    } catch {
+   194→      toast.error('Could not generate PDF. Please try again.')
+   195→    } finally {
+   196→      setPdfLoading(false)
+   197→    }
+   198→  }
+   199→
+   200→  return (
+   201→    <div className="min-h-screen bg-background">
+   202→      {/* HERO */}
+   203→      <section className="relative overflow-hidden border-b border-border">
+   204→        <div className="absolute inset-0">
+   205→          <img
+   206→            src="https://images.unsplash.com/photo-1626621341577-58edc5d25d4a?auto=format&fit=crop&w=2400&q=80"
+   207→            alt="Himalaya"
+   208→            className="h-full w-full object-cover"
+   209→          />
+   210→          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
+   211→        </div>
+   212→        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+   213→          <motion.div
+   214→            initial={{ opacity: 0, y: 24 }}
+   215→            animate={{ opacity: 1, y: 0 }}
+   216→            transition={{ duration: 0.7 }}
+   217→            className="max-w-3xl"
+   218→          >
+   219→            <Badge className="mb-4 bg-primary/20 text-primary backdrop-blur">
+   220→              <Sparkles className="mr-1.5 h-3 w-3" /> Custom Trip Planner
+   221→            </Badge>
+   222→            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white text-shadow-lg sm:text-5xl lg:text-6xl text-balance">
+   223→              Build your own Himalayan journey - step by step.
+   224→            </h1>
+   225→            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
+   226→              Choose destinations, dates, hotels, meals, photographer, guide and cabs.
+   227→              Get an instant estimate. No deposits, no pressure.
+   228→            </p>
+   229→          </motion.div>
+   230→        </div>
+   231→      </section>
+   232→
+   233→      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+   234→        {/* Stepper */}
+   235→        <div className="mb-8 overflow-x-auto scrollbar-hidden">
+   236→          <div className="flex min-w-max items-center gap-2">
+   237→            {steps.map((s, i) => {
+   238→              const active = i === currentStep
+   239→              const done = i < currentStep
+   240→              return (
+   241→                <button
+   242→                  key={s.id}
+   243→                  onClick={() => i < currentStep && setStep(i)}
+   244→                  className={cn(
+   245→                    'flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-all',
+   246→                    active
+   247→                      ? 'bg-primary text-primary-foreground shadow'
+   248→                      : done
+   249→                      ? 'bg-primary/10 text-primary hover:bg-primary/20'
+   250→                      : 'bg-muted text-muted-foreground'
+   251→                  )}
+   252→                >
+   253→                  <div
+   254→                    className={cn(
+   255→                      'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold',
+   256→                      active ? 'bg-white/20' : done ? 'bg-primary text-primary-foreground' : 'bg-background'
+   257→                    )}
+   258→                  >
+   259→                    {done ? <Check className="h-3 w-3" /> : i + 1}
+   260→                  </div>
+   261→                  <span className="hidden sm:inline">{s.label}</span>
+   262→                  <s.icon className="h-3.5 w-3.5 sm:hidden" />
+   263→                </button>
+   264→              )
+   265→            })}
+   266→          </div>
+   267→        </div>
+   268→
+   269→        <div className="grid gap-6 lg:grid-cols-3">
+   270→          {/* MAIN */}
+   271→          <div className="lg:col-span-2">
+   272→            <AnimatePresence mode="wait">
+   273→              <motion.div
+   274→                key={currentStep}
+   275→                initial={{ opacity: 0, x: 24 }}
+   276→                animate={{ opacity: 1, x: 0 }}
+   277→                exit={{ opacity: 0, x: -24 }}
+   278→                transition={{ duration: 0.3 }}
+   279→              >
+   280→                {/* STEP 0 - DESTINATIONS */}
+   281→                {currentStep === 0 && (
+   282→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   283→                    <div className="flex items-center justify-between">
+   284→                      <div>
+   285→                        <h2 className="font-display text-2xl font-bold">Pick your destinations</h2>
+   286→                        <p className="mt-1 text-sm text-muted-foreground">
+   287→                          Choose one or many - we&apos;ll connect them by road, train or flight.
+   288→                        </p>
+   289→                      </div>
+   290→                      <Badge variant="outline" className="gap-1.5">
+   291→                        <MapPin className="h-3 w-3" />
+   292→                        {trip.selectedDestinations.length} selected
+   293→                      </Badge>
+   294→                    </div>
+   295→
+   296→                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+   297→                      {destinations.map((d) => {
+   298→                        const selected = trip.selectedDestinations.includes(d.slug)
+   299→                        return (
+   300→                          <button
+   301→                            key={d.slug}
+   302→                            onClick={() => trip.toggleDestination(d.slug)}
+   303→                            className={cn(
+   304→                              'group relative flex items-center gap-3 overflow-hidden rounded-xl border p-3 text-left transition-all',
+   305→                              selected
+   306→                                ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
+   307→                                : 'border-border hover:border-primary/40'
+   308→                            )}
+   309→                          >
+   310→                            <img
+   311→                              src={d.heroImage}
+   312→                              alt={d.name}
+   313→                              className="h-16 w-16 shrink-0 rounded-lg object-cover"
+   314→                              loading="lazy"
+   315→                            />
+   316→                            <div className="flex-1 min-w-0">
+   317→                              <div className="flex items-center gap-2">
+   318→                                <span className="font-display font-bold text-sm truncate">{d.name}</span>
+   319→                                <Badge variant="outline" className="px-1.5 py-0 text-[10px]">{d.region}</Badge>
+   320→                              </div>
+   321→                              <div className="text-xs text-muted-foreground truncate">{d.tagline}</div>
+   322→                              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+   323→                                <Mountain className="h-3 w-3" />
+   324→                                {d.elevation.toLocaleString()}m · {d.duration}
+   325→                              </div>
+   326→                            </div>
+   327→                            <div
+   328→                              className={cn(
+   329→                                'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+   330→                                selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border'
+   331→                              )}
+   332→                            >
+   333→                              {selected && <Check className="h-3.5 w-3.5" />}
+   334→                            </div>
+   335→                          </button>
+   336→                        )
+   337→                      })}
+   338→                    </div>
+   339→                  </Card>
+   340→                )}
+   341→
+   342→                {/* STEP 1 - DATES & PAX */}
+   343→                {currentStep === 1 && (
+   344→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   345→                    <h2 className="font-display text-2xl font-bold">Dates & travellers</h2>
+   346→                    <p className="mt-1 text-sm text-muted-foreground">
+   347→                      When would you like to travel, and with how many people?
+   348→                    </p>
+   349→
+   350→                    <div className="mt-6 grid gap-5 sm:grid-cols-2">
+   351→                      <div>
+   352→                        <Label htmlFor="startDate" className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   353→                          <Calendar className="h-3.5 w-3.5" /> Start date
+   354→                        </Label>
+   355→                        <Input
+   356→                          id="startDate"
+   357→                          type="date"
+   358→                          value={trip.startDate}
+   359→                          onChange={(e) => trip.setStartDate(e.target.value)}
+   360→                          min={new Date().toISOString().slice(0, 10)}
+   361→                        />
+   362→                      </div>
+   363→
+   364→                      <div>
+   365→                        <Label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   366→                          <Users className="h-3.5 w-3.5" /> Travellers
+   367→                        </Label>
+   368→                        <div className="flex items-center gap-2">
+   369→                          <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => trip.setPax(trip.pax - 1)}>
+   370→                            <Minus className="h-4 w-4" />
+   371→                          </Button>
+   372→                          <div className="flex-1 text-center font-display text-xl font-bold">{trip.pax}</div>
+   373→                          <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => trip.setPax(trip.pax + 1)}>
+   374→                            <Plus className="h-4 w-4" />
+   375→                          </Button>
+   376→                        </div>
+   377→                      </div>
+   378→
+   379→                      <div className="sm:col-span-2">
+   380→                        <Label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   381→                          <Clock className="h-3.5 w-3.5" /> Duration - {trip.duration} days / {Math.max(0, trip.duration - 1)} nights
+   382→                        </Label>
+   383→                        <input
+   384→                          type="range"
+   385→                          min={2}
+   386→                          max={21}
+   387→                          value={trip.duration}
+   388→                          onChange={(e) => trip.setDuration(Number(e.target.value))}
+   389→                          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
+   390→                        />
+   391→                        <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+   392→                          <span>2 days</span>
+   393→                          <span>21 days</span>
+   394→                        </div>
+   395→                      </div>
+   396→                    </div>
+   397→
+   398→                    {selectedDestObjs.length > 0 && (
+   399→                      <div className="mt-6 rounded-xl bg-muted/40 p-4">
+   400→                        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   401→                          Selected destinations for this trip
+   402→                        </div>
+   403→                        <div className="mt-2 flex flex-wrap gap-1.5">
+   404→                          {selectedDestObjs.map((d) => (
+   405→                            <Badge key={d.slug} variant="outline" className="gap-1">
+   406→                              <MapPin className="h-3 w-3" /> {d.name}
+   407→                            </Badge>
+   408→                          ))}
+   409→                        </div>
+   410→                      </div>
+   411→                    )}
+   412→                  </Card>
+   413→                )}
+   414→
+   415→                {/* STEP 2 - HOTELS */}
+   416→                {currentStep === 2 && (
+   417→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   418→                    <h2 className="font-display text-2xl font-bold">Choose your hotel tier</h2>
+   419→                    <p className="mt-1 text-sm text-muted-foreground">
+   420→                      Same itinerary, different comfort levels. Mix and match - our team can split hotels across destinations.
+   421→                    </p>
+   422→
+   423→                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+   424→                      {hotelTiers.map((t) => {
+   425→                        const selected = trip.hotelTier === t.id
+   426→                        return (
+   427→                          <button
+   428→                            key={t.id}
+   429→                            onClick={() => trip.setHotelTier(t.id)}
+   430→                            className={cn(
+   431→                              'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
+   432→                              selected ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:border-primary/40'
+   433→                            )}
+   434→                          >
+   435→                            <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground')}>
+   436→                              <Hotel className="h-5 w-5" />
+   437→                            </div>
+   438→                            <div className="flex-1">
+   439→                              <div className="flex items-center justify-between">
+   440→                                <div className="font-display font-bold">{t.name}</div>
+   441→                                <div className="font-display text-sm font-bold text-primary">₹{t.perNight.toLocaleString('en-IN')}</div>
+   442→                              </div>
+   443→                              <div className="text-xs text-muted-foreground">{t.desc}</div>
+   444→                              <div className="mt-0.5 text-[10px] text-muted-foreground">per night · twin-share</div>
+   445→                            </div>
+   446→                            <div className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2', selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
+   447→                              {selected && <Check className="h-3 w-3" />}
+   448→                            </div>
+   449→                          </button>
+   450→                        )
+   451→                      })}
+   452→                    </div>
+   453→                  </Card>
+   454→                )}
+   455→
+   456→                {/* STEP 3 - MEALS */}
+   457→                {currentStep === 3 && (
+   458→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   459→                    <h2 className="font-display text-2xl font-bold">Pick your meals</h2>
+   460→                    <p className="mt-1 text-sm text-muted-foreground">
+   461→                      From daily breakfast to a once-in-a-trip Kashmiri Wazwan feast.
+   462→                    </p>
+   463→
+   464→                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+   465→                      {mealOptions.map((m) => {
+   466→                        const selected = trip.meals.includes(m.id)
+   467→                        const price = m.perPersonPerDay || m.perPerson || 0
+   468→                        const unit = m.perPerson ? 'one time' : 'per day'
+   469→                        return (
+   470→                          <button
+   471→                            key={m.id}
+   472→                            onClick={() => trip.toggleMeal(m.id)}
+   473→                            className={cn(
+   474→                              'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
+   475→                              selected ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:border-primary/40'
+   476→                            )}
+   477→                          >
+   478→                            <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground')}>
+   479→                              <Utensils className="h-5 w-5" />
+   480→                            </div>
+   481→                            <div className="flex-1">
+   482→                              <div className="flex items-center justify-between">
+   483→                                <div className="font-display font-bold">{m.name}</div>
+   484→                                <div className="font-display text-sm font-bold text-primary">₹{price.toLocaleString('en-IN')}</div>
+   485→                              </div>
+   486→                              <div className="text-xs text-muted-foreground">per person · {unit}</div>
+   487→                            </div>
+   488→                            <div className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2', selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
+   489→                              {selected && <Check className="h-3 w-3" />}
+   490→                            </div>
+   491→                          </button>
+   492→                        )
+   493→                      })}
+   494→                    </div>
+   495→                  </Card>
+   496→                )}
+   497→
+   498→                {/* STEP 4 - ADD-ONS */}
+   499→                {currentStep === 4 && (
+   500→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   501→                    <h2 className="font-display text-2xl font-bold">Add experiences & services</h2>
+   502→                    <p className="mt-1 text-sm text-muted-foreground">
+   503→                      Photographer, guide, cabs, medical kit, trek equipment - pick what makes your trip sing.
+   504→                    </p>
+   505→
+   506→                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+   507→                      {addOns.map((a) => {
+   508→                        const selected = trip.addOns.some((x) => x.id === a.id)
+   509→                        const price = a.perDay || a.perTrip || a.perPerson || 0
+   510→                        const unit = a.perDay ? 'per day' : a.perPerson ? 'per person' : 'per trip'
+   511→                        const Icon = addOnIconMap[a.icon] || Camera
+   512→                        return (
+   513→                          <button
+   514→                            key={a.id}
+   515→                            onClick={() => trip.toggleAddOn(a.id)}
+   516→                            className={cn(
+   517→                              'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
+   518→                              selected ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:border-primary/40'
+   519→                            )}
+   520→                          >
+   521→                            <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground')}>
+   522→                              <Icon className="h-5 w-5" />
+   523→                            </div>
+   524→                            <div className="flex-1">
+   525→                              <div className="flex items-center justify-between">
+   526→                                <div className="font-display font-bold text-sm">{a.name}</div>
+   527→                                <div className="font-display text-sm font-bold text-primary">₹{price.toLocaleString('en-IN')}</div>
+   528→                              </div>
+   529→                              <div className="text-xs text-muted-foreground">{unit}</div>
+   530→                            </div>
+   531→                            <div className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2', selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
+   532→                              {selected && <Check className="h-3 w-3" />}
+   533→                            </div>
+   534→                          </button>
+   535→                        )
+   536→                      })}
+   537→                    </div>
+   538→                  </Card>
+   539→                )}
+   540→
+   541→                {/* STEP 5 - CONTACT */}
+   542→                {currentStep === 5 && (
+   543→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   544→                    <h2 className="font-display text-2xl font-bold">Your contact details</h2>
+   545→                    <p className="mt-1 text-sm text-muted-foreground">
+   546→                      We&apos;ll send you a personalised quote on WhatsApp within 30 minutes.
+   547→                    </p>
+   548→
+   549→                    <div className="mt-6 space-y-4">
+   550→                      <div>
+   551→                        <Label htmlFor="name" className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   552→                          <User className="h-3.5 w-3.5" /> Full name
+   553→                        </Label>
+   554→                        <Input
+   555→                          id="name"
+   556→                          value={trip.contact.name}
+   557→                          onChange={(e) => trip.setContact({ name: e.target.value })}
+   558→                          placeholder="e.g. Aarav Mehta"
+   559→                        />
+   560→                      </div>
+   561→                      <div>
+   562→                        <Label htmlFor="email" className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   563→                          <Mail className="h-3.5 w-3.5" /> Email
+   564→                        </Label>
+   565→                        <Input
+   566→                          id="email"
+   567→                          type="email"
+   568→                          value={trip.contact.email}
+   569→                          onChange={(e) => trip.setContact({ email: e.target.value })}
+   570→                          placeholder="you@email.com"
+   571→                        />
+   572→                      </div>
+   573→                      <div>
+   574→                        <Label htmlFor="phone" className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+   575→                          <Phone className="h-3.5 w-3.5" /> Phone / WhatsApp
+   576→                        </Label>
+   577→                        <Input
+   578→                          id="phone"
+   579→                          value={trip.contact.phone}
+   580→                          onChange={(e) => trip.setContact({ phone: e.target.value })}
+   581→                          placeholder="+91 60000 00000"
+   582→                        />
+   583→                      </div>
+   584→                    </div>
+   585→
+   586→                    <div className="mt-6 rounded-xl bg-muted/40 p-4 text-xs text-muted-foreground">
+   587→                      <ShieldNote />
+   588→                    </div>
+   589→                  </Card>
+   590→                )}
+   591→
+   592→                {/* STEP 6 - REVIEW */}
+   593→                {currentStep === 6 && (
+   594→                  <Card className="p-6 ring-1 ring-border/40 sm:p-8">
+   595→                    <div className="flex items-center justify-between">
+   596→                      <div>
+   597→                        <h2 className="font-display text-2xl font-bold">Review your trip</h2>
+   598→                        <p className="mt-1 text-sm text-muted-foreground">
+   599→                          Look good? Submit - we&apos;ll send a personalised quote within 30 minutes.
+   600→                        </p>
+   601→                      </div>
+   602→                      <Button variant="ghost" size="sm" className="gap-1" onClick={() => { trip.reset(); setStep(0) }}>
+   603→                        <Trash2 className="h-3.5 w-3.5" /> Reset
+   604→                      </Button>
+   605→                    </div>
+   606→
+   607→                    <div className="mt-6 space-y-4">
+   608→                      <ReviewRow icon={MapPin} label="Destinations">
+   609→                        <div className="flex flex-wrap gap-1.5">
+   610→                          {selectedDestObjs.map((d) => (
+   611→                            <Badge key={d.slug} variant="outline" className="gap-1">
+   612→                              {d.name}
+   613→                            </Badge>
+   614→                          ))}
+   615→                        </div>
+   616→                      </ReviewRow>
+   617→                      <ReviewRow icon={Calendar} label="Dates & travellers">
+   618→                        <span className="text-sm">
+   619→                          {trip.startDate || 'Date TBD'} · {trip.duration}D / {Math.max(0, trip.duration - 1)}N · {trip.pax} pax
+   620→                        </span>
+   621→                      </ReviewRow>
+   622→                      <ReviewRow icon={Hotel} label="Hotels">
+   623→                        <span className="text-sm">
+   624→                          {hotelTiers.find((t) => t.id === trip.hotelTier)?.name}
+   625→                        </span>
+   626→                      </ReviewRow>
+   627→                      <ReviewRow icon={Utensils} label="Meals">
+   628→                        <div className="flex flex-wrap gap-1.5">
+   629→                          {trip.meals.length === 0 ? (
+   630→                            <span className="text-sm text-muted-foreground">None selected</span>
+   631→                          ) : (
+   632→                            trip.meals.map((m) => (
+   633→                              <Badge key={m} variant="outline" className="gap-1">
+   634→                                {mealOptions.find((x) => x.id === m)?.name}
+   635→                              </Badge>
+   636→                            ))
+   637→                          )}
+   638→                        </div>
+   639→                      </ReviewRow>
+   640→                      <ReviewRow icon={Camera} label="Add-ons">
+   641→                        <div className="flex flex-wrap gap-1.5">
+   642→                          {trip.addOns.length === 0 ? (
+   643→                            <span className="text-sm text-muted-foreground">None selected</span>
+   644→                          ) : (
+   645→                            trip.addOns.map((a) => (
+   646→                              <Badge key={a.id} variant="outline" className="gap-1">
+   647→                                {addOns.find((x) => x.id === a.id)?.name}
+   648→                              </Badge>
+   649→                            ))
+   650→                          )}
+   651→                        </div>
+   652→                      </ReviewRow>
+   653→                      <ReviewRow icon={User} label="Contact">
+   654→                        <div className="text-sm">
+   655→                          <div className="font-medium">{trip.contact.name || '-'}</div>
+   656→                          <div className="text-muted-foreground">{trip.contact.email} · {trip.contact.phone}</div>
+   657→                        </div>
+   658→                      </ReviewRow>
+   659→                    </div>
+   660→
+   661→                    <Separator className="my-6" />
+   662→
+   663→                    <div className="rounded-xl bg-gradient-to-br from-primary/10 to-accent/5 p-4">
+   664→                      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Estimated total</div>
+   665→                      <div className="mt-1 flex items-baseline gap-2">
+   666→                        <span className="font-display text-3xl font-bold text-primary">
+   667→                          ₹{estimate.total.toLocaleString('en-IN')}
+   668→                        </span>
+   669→                        <span className="text-sm text-muted-foreground">
+   670→                          ≈ ₹{estimate.perPerson.toLocaleString('en-IN')}/person
+   671→                        </span>
+   672→                      </div>
+   673→                      <p className="mt-2 text-xs text-muted-foreground">
+   674→                        Final price confirmed by our team after a 30-min call. No deposit required to submit.
+   675→                      </p>
+   676→                    </div>
+   677→                  </Card>
+   678→                )}
+   679→              </motion.div>
+   680→            </AnimatePresence>
+   681→
+   682→            {/* Nav buttons */}
+   683→            <div className="mt-6 flex items-center justify-between">
+   684→              <Button
+   685→                variant="ghost"
+   686→                onClick={() => setStep(Math.max(0, currentStep - 1))}
+   687→                disabled={currentStep === 0}
+   688→                className="gap-1.5"
+   689→              >
+   690→                <ChevronLeft className="h-4 w-4" /> Back
+   691→              </Button>
+   692→              {currentStep < steps.length - 1 ? (
+   693→                <Button
+   694→                  onClick={() => setStep(currentStep + 1)}
+   695→                  disabled={!canProceed}
+   696→                  className="gap-1.5"
+   697→                >
+   698→                  Continue <ChevronRight className="h-4 w-4" />
+   699→                </Button>
+   700→              ) : (
+   701→                <div className="flex flex-wrap gap-2">
+   702→                  <Button onClick={onSubmit} className="gap-1.5" size="lg">
+   703→                    <Check className="h-4 w-4" /> Submit my trip
+   704→                  </Button>
+   705→                  <Button
+   706→                    onClick={onDownloadPdf}
+   707→                    disabled={pdfLoading}
+   708→                    variant="outline"
+   709→                    size="lg"
+   710→                    className="gap-1.5"
+   711→                  >
+   712→                    {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+   713→                    Download PDF
+   714→                  </Button>
+   715→                </div>
+   716→              )}
+   717→            </div>
+   718→          </div>
+   719→
+   720→          {/* SIDEBAR - Live summary */}
+   721→          <div className="lg:col-span-1">
+   722→            <div className="sticky top-32 space-y-4">
+   723→              <Card className="overflow-hidden ring-1 ring-primary/30">
+   724→                <div className="bg-gradient-to-br from-primary/15 to-accent/10 p-5">
+   725→                  <div className="flex items-center justify-between">
+   726→                    <h3 className="font-display text-lg font-bold">Trip summary</h3>
+   727→                    <Badge className="bg-primary/15 text-primary">Live estimate</Badge>
+   728→                  </div>
+   729→                </div>
+   730→                <div className="space-y-3 p-5 text-sm">
+   731→                  <SummaryRow icon={MapPin} label="Destinations" value={`${trip.selectedDestinations.length} selected`} />
+   732→                  <SummaryRow icon={Calendar} label="Start date" value={trip.startDate || 'Not set'} />
+   733→                  <SummaryRow icon={Clock} label="Duration" value={`${trip.duration}D / ${Math.max(0, trip.duration - 1)}N`} />
+   734→                  <SummaryRow icon={Users} label="Travellers" value={`${trip.pax} pax`} />
+   735→                  <SummaryRow icon={Hotel} label="Hotel tier" value={hotelTiers.find((t) => t.id === trip.hotelTier)?.name || '-'} />
+   736→                  <SummaryRow icon={Utensils} label="Meals" value={`${trip.meals.length} selected`} />
+   737→                  <SummaryRow icon={Camera} label="Add-ons" value={`${trip.addOns.length} selected`} />
+   738→
+   739→                  <Separator />
+   740→
+   741→                  <div className="space-y-1.5">
+   742→                    <LineItem label="Hotels" value={estimate.hotel} />
+   743→                    <LineItem label="Meals" value={estimate.meals} />
+   744→                    <LineItem label="Transport" value={estimate.transport} />
+   745→                    <LineItem label="Add-ons" value={estimate.addOns} />
+   746→                    <LineItem label="Activities & permits" value={estimate.base} />
+   747→                  </div>
+   748→
+   749→                  <Separator />
+   750→
+   751→                  <div className="flex items-baseline justify-between">
+   752→                    <span className="font-display text-base font-bold">Total</span>
+   753→                    <div className="text-right">
+   754→                      <div className="font-display text-2xl font-bold text-primary">
+   755→                        ₹{estimate.total.toLocaleString('en-IN')}
+   756→                      </div>
+   757→                      <div className="text-xs text-muted-foreground">
+   758→                        ≈ ₹{estimate.perPerson.toLocaleString('en-IN')}/person
+   759→                      </div>
+   760→                    </div>
+   761→                  </div>
+   762→
+   763→                  <p className="text-center text-[10px] text-muted-foreground">
+   764→                    Estimate only · Final quote shared after onboarding call
+   765→                  </p>
+   766→                </div>
+   767→              </Card>
+   768→
+   769→              <Card className="p-5 ring-1 ring-border/40">
+   770→                <div className="flex items-center gap-2">
+   771→                  <Phone className="h-4 w-4 text-primary" />
+   772→                  <h3 className="text-sm font-semibold">Prefer to talk?</h3>
+   773→                </div>
+   774→                <p className="mt-2 text-xs text-muted-foreground">
+   775→                  Call us - we usually pick up within 30 seconds.
+   776→                </p>
+   777→                <a href="tel:+916006266072" className="mt-3 block">
+   778→                  <Button variant="outline" className="w-full justify-start gap-2 text-sm">
+   779→                    <Phone className="h-3.5 w-3.5" /> +91 600 626 6072
+   780→                  </Button>
+   781→                </a>
+   782→              </Card>
+   783→            </div>
+   784→          </div>
+   785→        </div>
+   786→      </div>
+   787→    </div>
+   788→  )
+   789→}
+   790→
+   791→// Helper hook
+   792→function useStepState() {
+   793→  const [step, set] = useState(0)
+   794→  return [step, set] as const
+   795→}
+   796→
+   797→function ShieldNote() {
+   798→  return (
+   799→    <span>
+   800→      Your data is shared only with our trip-design team - never sold or used for marketing
+   801→      outside Himalayan Freak. We typically respond within 30 minutes during business hours.
+   802→    </span>
+   803→  )
+   804→}
+   805→
+   806→function ReviewRow({
+   807→  icon: Icon,
+   808→  label,
+   809→  children,
+   810→}: {
+   811→  icon: React.ComponentType<{ className?: string }>
+   812→  label: string
+   813→  children: React.ReactNode
+   814→}) {
+   815→  return (
+   816→    <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-4">
+   817→      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+   818→        <Icon className="h-4 w-4" />
+   819→      </div>
+   820→      <div className="flex-1">
+   821→        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</div>
+   822→        <div className="mt-1">{children}</div>
+   823→      </div>
+   824→    </div>
+   825→  )
+   826→}
+   827→
+   828→function SummaryRow({
+   829→  icon: Icon,
+   830→  label,
+   831→  value,
+   832→}: {
+   833→  icon: React.ComponentType<{ className?: string }>
+   834→  label: string
+   835→  value: string
+   836→}) {
+   837→  return (
+   838→    <div className="flex items-center justify-between text-sm">
+   839→      <span className="flex items-center gap-2 text-muted-foreground">
+   840→        <Icon className="h-3.5 w-3.5" />
+   841→        {label}
+   842→      </span>
+   843→      <span className="font-medium">{value}</span>
+   844→    </div>
+   845→  )
+   846→}
+   847→
+   848→function LineItem({ label, value }: { label: string; value: number }) {
+   849→  return (
+   850→    <div className="flex justify-between text-xs">
+   851→      <span className="text-muted-foreground">{label}</span>
+   852→      <span className="font-medium">₹{value.toLocaleString('en-IN')}</span>
+   853→    </div>
+   854→  )
+   855→}
+   856→

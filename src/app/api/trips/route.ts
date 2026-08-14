@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
@@ -25,18 +27,23 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Get session to optionally link trip to user
+    const session = await getServerSession(authOptions)
+    const userId = (session?.user as any)?.id
+
     const refCode = 'HF' + Math.random().toString(36).slice(2, 8).toUpperCase()
 
     const trip = await db.customTrip.create({
       data: {
-        name,
-        email,
-        phone,
+        userId: userId || null,
+        name: String(name).slice(0, 200),
+        email: String(email).toLowerCase().slice(0, 200),
+        phone: String(phone).slice(0, 50),
         destinations: JSON.stringify(destinations || []),
-        startDate: startDate || '',
+        startDate: startDate ? String(startDate).slice(0, 50) : '',
         duration: Number(duration) || 5,
         pax: Number(pax) || 2,
-        hotelTier: hotelTier || 'standard',
+        hotelTier: hotelTier ? String(hotelTier).slice(0, 50) : 'standard',
         meals: JSON.stringify(meals || []),
         addOns: JSON.stringify(addOns || []),
         estimatedPrice: Number(estimatedPrice) || 0,
@@ -48,13 +55,13 @@ export async function POST(req: NextRequest) {
     // Also create a Lead so it shows up in CRM pipeline
     const lead = await db.lead.create({
       data: {
-        name,
-        email,
-        phone,
-        destination: Array.isArray(destinations) ? destinations.join(', ') : '',
-        travelDate: startDate || '',
+        name: String(name).slice(0, 200),
+        email: String(email).toLowerCase().slice(0, 200),
+        phone: String(phone).slice(0, 50),
+        destination: Array.isArray(destinations) ? destinations.join(', ').slice(0, 500) : '',
+        travelDate: startDate ? String(startDate).slice(0, 50) : '',
         pax: Number(pax) || 2,
-        budget: `~₹${Number(estimatedPrice || 0).toLocaleString('en-IN')}`,
+        budget: `~Rs. ${Number(estimatedPrice || 0).toLocaleString('en-IN')}`,
         source: 'Trip Planner',
         status: 'New',
         notes: `Auto-created from Trip Planner. Ref: ${refCode}. Duration: ${duration}D, Hotel: ${hotelTier}.`,
@@ -76,7 +83,12 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// GET is admin-only (returns all submitted trips with PII)
 export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user as any)?.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin only' }, { status: 403 })
+  }
   try {
     const trips = await db.customTrip.findMany({
       orderBy: { createdAt: 'desc' },

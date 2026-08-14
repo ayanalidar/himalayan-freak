@@ -27,6 +27,11 @@ export function DestinationCard({ d, index = 0 }: { d: DestinationData; index?: 
             alt={d.name}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.onerror = null
+              target.src = `https://placehold.co/800x600/1e293b/f59e0b?text=${encodeURIComponent(d.name)}`
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
@@ -83,6 +88,11 @@ export function PackageCard({ p, index = 0 }: { p: import('@/lib/data').PackageD
             alt={p.title}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.onerror = null
+              target.src = `https://placehold.co/800x450/1e293b/f59e0b?text=${encodeURIComponent(p.title.slice(0, 30))}`
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
