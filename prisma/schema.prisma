@@ -1,0 +1,125 @@
+// Himalayan Freak — Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Destination {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  region      String   // Kashmir | Jammu | Ladakh | Himachal | Uttarakhand
+  state       String
+  elevation  Int      // meters
+  latitude    Float
+  longitude   Float
+  tagline     String
+  description String
+  bestTime    String
+  duration    String
+  difficulty  String   // Easy | Moderate | Challenging
+  rating      Float    @default(4.5)
+  heroImage   String
+  gallery     String   // JSON array of image URLs
+  attractions String   // JSON array
+  activities  String   // JSON array
+  howToReach  String
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  region      String
+  duration    Int      // days
+  nights      Int
+  price       Float    // base price INR
+  description String
+  highlights  String   // JSON array
+  inclusions  String   // JSON array
+  exclusions  String   // JSON array
+  itinerary   String   // JSON array of {day, title, description}
+  heroImage   String
+  rating      Float    @default(4.6)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  destination String?
+  travelDate  String?
+  pax         Int      @default(2)
+  budget      String?
+  source      String   @default("Website") // Website | WhatsApp | Referral | Social
+  status      String   @default("New")     // New | Contacted | Qualified | Proposal | Negotiation | Won | Lost
+  notes       String?
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  city        String?
+  state       String?
+  totalTrips  Int      @default(0)
+  totalSpent  Float    @default(0)
+  type        String   @default("Individual") // Individual | Family | Group | Corporate
+  tags        String?  // JSON array
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  refCode     String   @unique
+  customerId   String?
+  leadId      String?
+  packageSlug String?
+  tripName    String
+  startDate   String
+  endDate     String
+  pax         Int      @default(2)
+  amount      Float
+  status      String   @default("Pending") // Pending | Confirmed | InProgress | Completed | Cancelled
+  paymentStatus String @default("Unpaid") // Unpaid | Partial | Paid
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CustomTrip {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  destinations String  // JSON array of slugs
+  startDate   String
+  duration    Int
+  pax         Int      @default(2)
+  hotelTier   String   @default("Standard") // Budget | Standard | Premium | Luxury
+  meals       String   // JSON array
+  addOns      String   // JSON array: photographer, guide, cab, etc.
+  estimatedPrice Float
+  status      String   @default("Draft") // Draft | Submitted | Quoted | Confirmed
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
