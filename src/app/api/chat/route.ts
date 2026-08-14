@@ -60,9 +60,39 @@ When user says "create booking" or "book this", respond with: "BOOKING_REQUEST_R
 async function callAI(messages: Array<{ role: string; content: string }>): Promise<string> {
   const errors: string[] = []
 
-  // 1. Try xAI Grok API (if XAI_API_KEY is set)
+  // 1. Try Groq API (fast, free tier, llama-3.3-70b)
+  const groqKey = process.env.XAI_API_KEY || process.env.GROQ_API_KEY
+  if (groqKey) {
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: messages as any,
+          temperature: 0.7,
+          max_tokens: 800,
+        }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const content = data.choices?.[0]?.message?.content
+        if (content) return content
+      } else {
+        const errText = await response.text()
+        errors.push(`Groq ${response.status}: ${errText.slice(0, 100)}`)
+      }
+    } catch (e) {
+      errors.push(`Groq: ${(e as Error).message.slice(0, 100)}`)
+    }
+  }
+
+  // 2. Try xAI Grok API (if XAI_API_KEY is set with xai- prefix)
   const xaiKey = process.env.XAI_API_KEY
-  if (xaiKey) {
+  if (xaiKey && xaiKey.startsWith('xai-')) {
     try {
       const response = await fetch('https://api.x.ai/v1/chat/completions', {
         method: 'POST',
@@ -81,15 +111,13 @@ async function callAI(messages: Array<{ role: string; content: string }>): Promi
         const data = await response.json()
         const content = data.choices?.[0]?.message?.content
         if (content) return content
-      } else {
-        errors.push(`xAI returned ${response.status}`)
       }
     } catch (e) {
       errors.push(`xAI: ${(e as Error).message}`)
     }
   }
 
-  // 2. Try z-ai-web-dev-sdk (works in sandbox)
+  // 3. Try z-ai-web-dev-sdk (works in sandbox)
   if (!process.env.VERCEL) {
     try {
       const ZAI = (await import('z-ai-web-dev-sdk')).default
@@ -107,7 +135,7 @@ async function callAI(messages: Array<{ role: string; content: string }>): Promi
     }
   }
 
-  // 3. Try OpenAI-compatible API (if OPENAI_API_KEY is set)
+  // 4. Try OpenAI-compatible API (if OPENAI_API_KEY is set)
   const openaiKey = process.env.OPENAI_API_KEY
   if (openaiKey) {
     try {

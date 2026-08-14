@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Plane,
@@ -112,7 +112,11 @@ export function TicketsPage() {
         fetch(`/api/tickets/flights?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&date=${date}`),
         fetch(`/api/tickets/trains?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&date=${date}`),
       ])
-      const [f, t] = await Promise.all([fRes.json(), tRes.json()])
+      const fData = await fRes.json()
+      const tData = await tRes.json()
+      // API may return {flights: [...], source, configured} or just [...]
+      const f = Array.isArray(fData) ? fData : (fData.flights || [])
+      const t = Array.isArray(tData) ? tData : (tData.trains || [])
       setFlights(f)
       setTrains(t)
     } catch {
@@ -277,7 +281,7 @@ export function TicketsPage() {
                       key={f.id + i}
                       flight={f}
                       pax={pax}
-                      onBook={() => onBook('Flight', `${f.airline} ${f.flightNo}`, f.finalPrice * pax)}
+                      onBook={() => onBook('Flight', `${f.airline} ${f.flightNo}`, (f.finalPrice || f.price || 0) * pax)}
                     />
                   ))
                 )}
@@ -368,7 +372,8 @@ function NoResults({ type }: { type: 'flights' | 'trains' }) {
 }
 
 function FlightCard({ flight, pax, onBook }: { flight: Flight; pax: number; onBook: () => void }) {
-  const total = flight.finalPrice * pax
+  const pricePerPax = flight.finalPrice || flight.price || 0
+  const total = pricePerPax * pax
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -427,7 +432,7 @@ function FlightCard({ flight, pax, onBook }: { flight: Flight; pax: number; onBo
           <div className="flex flex-col items-end justify-center border-t border-border/60 bg-muted/30 p-5 md:border-l md:border-t-0">
             <div className="text-xs text-muted-foreground">Starting from</div>
             <div className="font-display text-2xl font-bold text-primary">
-              ₹{flight.finalPrice.toLocaleString('en-IN')}
+              ₹{pricePerPax.toLocaleString('en-IN')}
             </div>
             <div className="text-xs text-muted-foreground">per person · incl. taxes</div>
             <div className="mt-1 text-xs text-muted-foreground">
