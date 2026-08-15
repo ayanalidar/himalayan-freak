@@ -47,7 +47,7 @@ const navItems: { id: PageId; label: string }[] = [
   { id: 'company', label: 'Company' },
   { id: 'destinations', label: 'Destinations' },
   { id: 'packages', label: 'Packages' },
-  { id: 'tickets', label: 'Flights & Trains' },
+  { id: 'tickets', label: 'Tickets' },
   { id: 'trip-planner', label: 'Trip Planner' },
   { id: 'group-booking', label: 'Groups' },
 ]
@@ -221,7 +221,7 @@ export function Navbar() {
                   <LayoutDashboard className="h-4 w-4" /> My Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => go('tickets')} className="gap-2 cursor-pointer">
-                  <Plane className="h-4 w-4" /> Flights & Trains
+                  <Plane className="h-4 w-4" /> Tickets
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => go('trip-planner')} className="gap-2 cursor-pointer">
                   <Sparkles className="h-4 w-4" /> Plan a Trip

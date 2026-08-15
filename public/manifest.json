@@ -53,7 +53,7 @@
       "icons": [{ "src": "/logo.webp", "sizes": "96x96", "type": "image/webp" }]
     },
     {
-      "name": "Flights & Trains",
+      "name": "Tickets",
       "short_name": "Tickets",
       "description": "Search flights and trains to the Himalaya",
       "url": "/?page=tickets",

@@ -93,7 +93,7 @@ export function Footer() {
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('packages')}>Packages</button></li>
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('trip-planner')}>Trip Planner</button></li>
               <li><button className="hover:text-primary transition-colors" onClick={() => navigate('group-booking')}>Group Booking</button></li>
-              <li><button className="hover:text-primary transition-colors" onClick={() => navigate('tickets')}>Flights &amp; Trains</button></li>
+              <li><button className="hover:text-primary transition-colors" onClick={() => navigate('tickets')}>Tickets</button></li>
             </ul>
           </div>
 

@@ -157,20 +157,27 @@ export function AdminPackagesPage() {
     }
     setSaving(true)
     try {
-      const method = isNew ? 'POST' : 'PATCH'
+      // If no DB id (seed data being edited for the first time), CREATE instead of PATCH
+      const isNewRecord = isNew || !editing.id
+      const method = isNewRecord ? 'POST' : 'PATCH'
       const body: any = { ...editing }
-      if (!isNew && editing.id) body.id = editing.id
+      if (!isNewRecord && editing.id) body.id = editing.id
       const res = await fetch('/api/admin/packages', {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (!res.ok) throw new Error('Failed')
-      toast.success(isNew ? 'Package created!' : 'Package updated!')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || `HTTP ${res.status}`)
+      }
+      toast.success(isNewRecord ? 'Package saved!' : 'Package updated!')
       setEditing(null)
       refresh()
-    } catch {
-      toast.error('Save failed')
+    } catch (err) {
+      toast.error('Save failed', {
+        description: err instanceof Error ? err.message : 'Please try again.',
+      })
     } finally {
       setSaving(false)
     }
