@@ -16,6 +16,7 @@ import { CrmPage } from '@/components/crm/crm-page'
 import { AdminDestinationsPage } from '@/components/admin/admin-destinations-page'
 import { AdminPackagesPage } from '@/components/admin/admin-packages-page'
 import { AdminTeamPage } from '@/components/admin/admin-team-page'
+import { AdminPagesPage } from '@/components/admin/admin-pages-page'
 import { DashboardPage } from '@/components/dashboard/dashboard-page'
 import { LoginPage } from '@/components/auth/login-page'
 import { SignupPage } from '@/components/auth/signup-page'
@@ -68,6 +69,7 @@ export default function Home() {
         {page === 'admin-destinations' && <AdminDestinationsPage />}
         {page === 'admin-packages' && <AdminPackagesPage />}
         {page === 'admin-team' && <AdminTeamPage />}
+        {page === 'admin-pages' && <AdminPagesPage />}
         {page === 'dashboard' && <DashboardPage />}
         {page === 'privacy' && <LegalPage type="privacy" />}
         {page === 'terms' && <LegalPage type="terms" />}

@@ -18,6 +18,7 @@ import {
   Plane,
   Sparkles,
   Users,
+  FileText,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -240,6 +241,9 @@ export function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => go('admin-team')} className="gap-2 cursor-pointer">
                       <Users className="h-4 w-4" /> Manage Team
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => go('admin-pages')} className="gap-2 cursor-pointer">
+                      <FileText className="h-4 w-4" /> Manage Pages
                     </DropdownMenuItem>
                   </>
                 )}

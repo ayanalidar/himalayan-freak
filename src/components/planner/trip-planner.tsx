@@ -60,6 +60,12 @@ const addOnIconMap: Record<string, React.ComponentType<{ className?: string }>> 
 export function TripPlannerPage() {
   const { navigate } = useApp()
   const trip = useTripBuilder()
+  const heroBg = useSectionContent("trip-planner", "hero", {
+    image: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=2400&q=80",
+    badge: "Custom Trip Planner",
+    title: "Build your own Himalayan journey - step by step.",
+    description: "Choose destinations, hotels, meals, photographer, guide and cabs. Get an instant estimate. No deposits, no pressure.",
+  })
   const [currentStep, setStep] = useStepState()
 
   const selectedDestObjs = destinations.filter((d) =>
@@ -217,7 +223,7 @@ export function TripPlannerPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Himalaya"
             className="h-full w-full object-cover"
           />

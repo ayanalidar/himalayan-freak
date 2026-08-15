@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useSectionContent } from '@/lib/use-site-content'
 import { motion } from 'framer-motion'
 import { Search, MapPin, Filter, Mountain, Star, Compass, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -45,6 +46,12 @@ export function DestinationsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const hero = useSectionContent("destinations", "hero", {
+    image: "https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80",
+    badge: "",
+    title: "Every major stop across the Indian Himalaya",
+  })
+
   const filtered = useMemo(() => {
     let list = destinations.filter((d) => {
       const matchSearch =
@@ -81,8 +88,9 @@ export function DestinationsPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80"
+            src={hero.image}
             alt="Himalayan peaks"
+            onError={(e) => { const t = e.target as HTMLImageElement; t.onerror=null; t.src="https://placehold.co/2400/1e293b/f59e0b?text=Destinations" }}
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
@@ -100,8 +108,6 @@ export function DestinationsPage() {
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">
               From the floating gardens of Srinagar to the sand dunes of Nubra - every
-              destination card opens an in-depth guide with live weather, attractions,
-              activities, best time to visit and how to reach.
             </p>
           </motion.div>
         </div>

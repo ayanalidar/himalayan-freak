@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import { useSectionContent } from '@/lib/use-site-content'
 import {
   Target,
   Eye,
@@ -72,6 +73,12 @@ const milestones = [
 export function CompanyPage() {
   const { navigate } = useApp()
   const [team, setTeam] = useState<any[]>(fallbackTeam)
+  const heroBg = useSectionContent("company", "hero", {
+    image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=2400&q=80",
+    badge: "About Himalayan Freak",
+    title: "A small team of mountain obsessives, born and based in Kashmir.",
+    description: "We are not a call-centre travel agency. We are six people who live on the Srinagar-Gulmarg road, who have walked every meadow in Pahalgam and driven every pass in Ladakh. We plan trips the way we would plan them for our own cousins - carefully, honestly, and with a deep love for the land.",
+  })
 
   useEffect(() => {
     fetch('/api/team')
@@ -86,7 +93,7 @@ export function CompanyPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Kashmir mountains"
             className="h-full w-full object-cover"
           />

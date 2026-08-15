@@ -26,6 +26,7 @@ import {
   CalendarDays,
   Mountain,
   Plane,
+  FileText,
   CheckSquare,
   MessageSquare,
   ListChecks,
@@ -343,6 +344,14 @@ export function CrmPage() {
               onClick={() => navigate('admin-team')}
             >
               <Users className="h-3.5 w-3.5" /> Team
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => navigate('admin-pages')}
+            >
+              <FileText className="h-3.5 w-3.5" /> Pages
             </Button>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={refresh}>
               <Filter className="h-3.5 w-3.5" /> Refresh

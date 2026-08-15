@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useApp } from '@/lib/store'
+import { useSectionContent } from '@/lib/use-site-content'
 import { packages, type DestinationData } from '@/lib/data'
 import { DestinationCard, PackageCard } from '@/components/cards'
 
@@ -42,6 +43,15 @@ export function HomePage() {
       .catch(() => setDestinations([]))
   }, [])
 
+  // Editable hero content with fallbacks
+  const hero = useSectionContent('home', 'hero', {
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=2400&q=80',
+    badge: 'Kashmir-based · Custom Himalayan Travel',
+    title: 'Where the Himalaya',
+    titleHighlight: 'Becomes Personal',
+    description: 'Bespoke journeys across Kashmir, Ladakh, Jammu, Himachal & Uttarakhand - designed around your pace, your stories and your budget. From a shikara at sunrise to Khardung La at dusk.',
+  })
+
   const featuredDest = destinations.filter((d) => d.featured)
   const featuredPkg = packages.filter((p) => p.featured)
 
@@ -51,10 +61,15 @@ export function HomePage() {
       <section className="relative h-[100svh] min-h-[640px] overflow-hidden">
         <motion.div style={{ y: yBg, scale }} className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=2400&q=80"
+            src={hero.image}
             alt="Himalayan range"
             className="h-full w-full object-cover"
             fetchPriority="high"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.onerror = null
+              target.src = 'https://placehold.co/2400/1e293b/f59e0b?text=Himalayan+Freak'
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/80" />
           <div className="absolute inset-0 hero-gradient opacity-60" />
@@ -72,7 +87,7 @@ export function HomePage() {
           >
             <Sparkles className="h-3.5 w-3.5 text-amber-300" />
             <span className="text-xs font-medium uppercase tracking-[0.18em] text-white/90">
-              Kashmir-based · Custom Himalayan Travel
+              {hero.badge}
             </span>
           </motion.div>
 
@@ -82,9 +97,9 @@ export function HomePage() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white text-shadow-lg sm:text-6xl lg:text-7xl text-balance"
           >
-            Where the Himalaya <br className="hidden sm:block" />
+            {hero.title} <br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500 bg-clip-text text-transparent">
-              Becomes Personal
+              {hero.titleHighlight}
             </span>
           </motion.h1>
 
@@ -94,9 +109,7 @@ export function HomePage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mt-6 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg text-balance"
           >
-            Bespoke journeys across Kashmir, Ladakh, Jammu, Himachal & Uttarakhand -
-            designed around your pace, your stories and your budget. From a shikara at
-            sunrise to Khardung La at dusk.
+            {hero.description}
           </motion.p>
 
           <motion.div

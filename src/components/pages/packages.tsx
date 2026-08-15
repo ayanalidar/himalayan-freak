@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useSectionContent } from '@/lib/use-site-content'
 import { motion } from 'framer-motion'
 import { Search, Plane, Star, Compass, ArrowRight, Filter } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -62,6 +63,13 @@ export function PackagesPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const hero = useSectionContent("packages", "hero", {
+    image: "https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=2400&q=80",
+    badge: "",
+    title: "Ready-made journeys, fully customisable",
+    description: "Start from a tried-and-tested itinerary - adjust hotels, duration, transport and add-ons to make it truly yours. Every package is operated by our own team.",
+  })
+
   const filtered = useMemo(() => {
     let list = packages.filter((p) => {
       const matchSearch =
@@ -97,7 +105,7 @@ export function PackagesPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=2400&q=80"
+            src={hero.image}
             alt="Pangong Lake"
             className="h-full w-full object-cover"
           />

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { Mail, Lock, ArrowRight, Eye, EyeOff, Shield, Loader2, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionContent } from '@/lib/use-site-content'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,6 +18,9 @@ import { toast } from 'sonner'
 export function LoginPage() {
   const { navigate } = useApp()
   const [email, setEmail] = useState('')
+  const heroBg = useSectionContent("login", "hero", {
+    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=2400&q=80",
+  })
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -64,7 +68,7 @@ export function LoginPage() {
         {/* Background */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Himalaya"
             className="h-full w-full object-cover"
           />

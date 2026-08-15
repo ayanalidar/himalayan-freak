@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSectionContent } from '@/lib/use-site-content'
 import { motion } from 'framer-motion'
 import {
   Plane,
@@ -92,6 +93,12 @@ export function TicketsPage() {
   const { navigate } = useApp()
   const [tab, setTab] = useState<'flights' | 'trains'>('flights')
   const [origin, setOrigin] = useState('Delhi')
+  const heroBg = useSectionContent("tickets", "hero", {
+    image: "https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80",
+    badge: "Real-time Flights & Trains",
+    title: "Flights & trains to the Himalaya",
+    description: "Search real airline and railway routes to Srinagar, Leh, Jammu, Katla and beyond. Compare fares, timings, classes - and add tickets to your trip plan in one click.",
+  })
   const [dest, setDest] = useState('Srinagar')
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [pax, setPax] = useState(1)
@@ -144,7 +151,7 @@ export function TicketsPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Himalayan peaks"
             className="h-full w-full object-cover"
           />

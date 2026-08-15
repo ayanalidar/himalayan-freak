@@ -16,6 +16,7 @@ export type PageId =
   | 'admin-destinations'
   | 'admin-packages'
   | 'admin-team'
+  | 'admin-pages'
   | 'dashboard'
   | 'login'
   | 'signup'

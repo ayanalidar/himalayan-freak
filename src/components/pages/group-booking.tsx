@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSectionContent } from '@/lib/use-site-content'
 import { motion } from 'framer-motion'
 import {
   Users,
@@ -51,9 +52,15 @@ interface RoomMate {
 export function GroupBookingPage() {
   const { navigate } = useApp()
   const [loading, setLoading] = useState(false)
-  const [step, setStep] = useState(1)
   const [success, setSuccess] = useState(false)
   const [refCode, setRefCode] = useState('')
+  const heroBg = useSectionContent("group-booking", "hero", {
+    image: "https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80",
+    badge: "For 10+ travellers",
+    title: "Group Booking Portal",
+    description: "Planning a trip for 10 or more travellers? Get dedicated support, custom pricing, room-sharing roster, and a single point of contact from quote to departure.",
+  })
+  const [step, setStep] = useState(1)
 
   const [form, setForm] = useState({
     // Organizer
@@ -183,7 +190,7 @@ export function GroupBookingPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Group travel"
             className="h-full w-full object-cover"
           />

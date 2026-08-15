@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionContent } from '@/lib/use-site-content'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,9 @@ import { toast } from 'sonner'
 
 export function SignupPage() {
   const { navigate } = useApp()
+  const heroBg = useSectionContent("signup", "hero", {
+    image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=2400&q=80",
+  })
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -65,7 +69,7 @@ export function SignupPage() {
       <div className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=2400&q=80"
+            src={heroBg.image}
             alt="Kashmir"
             className="h-full w-full object-cover"
           />
